@@ -46,3 +46,27 @@ tiltCards.forEach((card) => {
     card.style.setProperty('--tilt-y', '0deg');
   });
 });
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  window.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (event.button !== 0) {
+        return;
+      }
+
+      const pulse = document.createElement('span');
+      pulse.className = 'wave-pulse';
+      pulse.style.left = `${event.clientX}px`;
+      pulse.style.top = `${event.clientY}px`;
+      document.body.appendChild(pulse);
+
+      pulse.addEventListener('animationend', () => {
+        pulse.remove();
+      });
+    },
+    { passive: true }
+  );
+}
