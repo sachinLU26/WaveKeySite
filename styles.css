@@ -1,0 +1,257 @@
+:root {
+  color-scheme: dark;
+  --bg: #040914;
+  --surface: rgba(12, 20, 36, 0.7);
+  --text: #f4f7ff;
+  --muted: #a7b2d3;
+  --line: rgba(145, 171, 255, 0.24);
+  --accent: #4de3ff;
+  --accent-2: #8b8fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 20% 0%, #102041 0%, var(--bg) 45%), var(--bg);
+  line-height: 1.6;
+}
+
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 65% 20%, rgba(77, 227, 255, 0.17), transparent 45%),
+    radial-gradient(circle at 20% 60%, rgba(139, 143, 255, 0.15), transparent 50%);
+}
+
+.site-header,
+.section,
+.site-footer {
+  width: min(1080px, calc(100% - 3rem));
+  margin: 0 auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(4, 9, 20, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  gap: 1.3rem;
+}
+
+nav a,
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+nav a:hover,
+.site-footer a:hover,
+.card a:hover {
+  color: var(--text);
+}
+
+.section {
+  padding: 5.6rem 0;
+  position: relative;
+}
+
+.hero {
+  padding-top: 7.4rem;
+}
+
+.kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.9rem;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 6vw, 4.3rem);
+  max-width: 15ch;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+.lead {
+  max-width: 60ch;
+  color: var(--muted);
+  margin-top: 1.4rem;
+}
+
+.hero-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(120deg, var(--accent-2), var(--accent));
+  color: #02040a;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.6rem 1.1rem;
+}
+
+.button-ghost {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--text);
+}
+
+.section-head {
+  margin-bottom: 1.6rem;
+}
+
+.product-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.card,
+.flow-panel,
+.product-page {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.card {
+  padding: 1.2rem;
+}
+
+.card p,
+.flow-panel p,
+.product-page p {
+  color: var(--muted);
+}
+
+.card a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.flow-panel {
+  padding: 2rem;
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: 1.3fr 1fr;
+}
+
+.flow-panel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.flow-panel li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+.flow-panel span {
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 2rem;
+  padding-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.product-page {
+  margin-top: 4rem;
+  padding: 2rem;
+}
+
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 780px) {
+  nav {
+    display: none;
+  }
+
+  .flow-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .site-header,
+  .section,
+  .site-footer {
+    width: min(1080px, calc(100% - 1.5rem));
+  }
+}
