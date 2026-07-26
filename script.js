@@ -70,3 +70,57 @@ if (!prefersReducedMotion) {
     { passive: true }
   );
 }
+
+if (!prefersReducedMotion) {
+  const navigationLinks = [...document.querySelectorAll('a[href]')];
+  const currentPage = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+
+  navigationLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || link.target === '_blank' || link.hasAttribute('download')) {
+        return;
+      }
+
+      let destination;
+      try {
+        destination = new URL(link.href, window.location.href);
+      } catch {
+        return;
+      }
+
+      if (
+        destination.origin !== window.location.origin ||
+        destination.protocol === 'mailto:' ||
+        destination.protocol === 'tel:'
+      ) {
+        return;
+      }
+
+      const destinationPage = `${destination.origin}${destination.pathname}${destination.search}`;
+      if (destinationPage === currentPage) {
+        return;
+      }
+
+      event.preventDefault();
+      document.body.style.setProperty('--transition-x', `${event.clientX}px`);
+      document.body.style.setProperty('--transition-y', `${event.clientY}px`);
+      document.body.classList.add('page-transitioning');
+
+      window.setTimeout(() => {
+        window.location.assign(destination.href);
+      }, 360);
+    });
+  });
+}
