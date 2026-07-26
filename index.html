@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaveKey | Frictionless MFA for Every App</title>
+    <title>WaveKey | Presence-Led Session Security</title>
     <meta
       name="description"
-      content="WaveKey delivers frictionless MFA with ultrasonic-wave intelligence across BYO apps, SDK integrations, and Chrome workflows."
+      content="WaveKey adds presence-led session assurance after sign-in with minimal user friction."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,75 +18,88 @@
   </head>
   <body>
     <div class="bg-glow" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
     <header class="site-header">
-      <a class="brand" href="#top">WaveKey</a>
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">∞</span>
+        <span>WaveKey</span>
+      </a>
       <nav>
         <a href="#products">Products</a>
-        <a href="#mfa">Frictionless MFA</a>
-        <a href="#contact">Contact</a>
+        <a href="#difference">Why WaveKey</a>
+        <a href="contact.html">Contact</a>
       </nav>
-      <a class="button button-ghost" href="#products">Explore</a>
+      <a class="button button-ghost" href="contact.html">Book a demo</a>
     </header>
 
     <main id="top">
-      <section class="hero section">
-        <p class="kicker">Ultrasonic Identity Layer</p>
-        <h1>Frictionless MFA that feels like one motion.</h1>
+      <section class="hero section panel">
+        <p class="kicker">Presence Security Layer</p>
+        <h1>Secure the session, not just the sign-in.</h1>
         <p class="lead">
-          WaveKey blends proximity, ultrasonic wave intelligence, and modern cryptography to verify users
-          without interrupting flow.
+          MFA proves identity once. WaveKey adds continuous authorized presence during the active session so a
+          stolen token is less useful to an attacker.
         </p>
         <div class="hero-actions">
           <a class="button" href="#products">View Products</a>
-          <a class="button button-ghost" href="#mfa">How it works</a>
+          <a class="button button-ghost" href="#difference">How it works</a>
         </div>
+        <p class="micro-note">One deliberate user action to start, then seamless background assurance.</p>
       </section>
 
       <section id="products" class="section">
         <div class="section-head">
           <p class="kicker">Products</p>
-          <h2>Build once. Authenticate everywhere.</h2>
+          <h2>Deploy where your users already work.</h2>
         </div>
         <div class="product-grid">
-          <article class="card">
+          <article class="card tilt-card">
             <h3>BYO App</h3>
-            <p>Launch a branded auth experience with WaveKey APIs and adaptive MFA controls.</p>
+            <p>Launch a branded login and session-assurance experience in your own customer app.</p>
             <a href="products/byo-app.html">Learn more <span aria-hidden="true">→</span></a>
           </article>
-          <article class="card">
+          <article class="card tilt-card">
             <h3>WaveKey SDK</h3>
-            <p>Embed frictionless identity checks in mobile, web, and desktop stacks in minutes.</p>
+            <p>Embed presence checks in mobile and web journeys with a low-friction developer toolkit.</p>
             <a href="products/sdk.html">Learn more <span aria-hidden="true">→</span></a>
           </article>
-          <article class="card">
+          <article class="card tilt-card">
             <h3>Chrome Plug-in</h3>
-            <p>Secure workforce workflows with continuous, low-friction session verification.</p>
+            <p>Add session continuity controls to browser-based workforce workflows.</p>
             <a href="products/chrome-plugin.html">Learn more <span aria-hidden="true">→</span></a>
           </article>
         </div>
       </section>
 
-      <section id="mfa" class="section flow-panel">
+      <section id="difference" class="section flow-panel">
         <div>
-          <p class="kicker">Frictionless UX</p>
-          <h2>MFA that disappears into the experience.</h2>
+          <p class="kicker">Why it matters</p>
+          <h2>From sign-in certainty to session certainty.</h2>
           <p>
-            Step-up only when risk shifts. Ultrasonic context signals and device trust maintain continuous
-            confidence with fewer prompts.
+            NIST emphasizes explicit authentication intent and allows long session windows. WaveKey pairs one
+            explicit start action with continuous presence verification through the session window to reduce
+            exposure without repeated prompts.
           </p>
         </div>
         <ol>
-          <li><span>01</span> Passive proximity and device handshake</li>
-          <li><span>02</span> Real-time risk scoring and intent checks</li>
-          <li><span>03</span> Invisible re-verification during active sessions</li>
+          <li><span>01</span> User starts the session with one deliberate action</li>
+          <li><span>02</span> Endpoint verifies ongoing authorized presence signals</li>
+          <li><span>03</span> Session is terminated when presence is lost</li>
         </ol>
+      </section>
+
+      <section class="section cta-panel reveal">
+        <h2>Security that feels native.</h2>
+        <p>Designed to stay clear, fast, and nearly invisible for desktop, iPad, and mobile use.</p>
+        <a class="button" href="contact.html">Talk to WaveKey</a>
       </section>
     </main>
 
-    <footer id="contact" class="site-footer section">
+    <footer class="site-footer section">
       <p>WaveKey</p>
-      <p>Modern identity for secure, seamless access.</p>
+      <p>Presence-led access assurance.</p>
       <div>
+        <a href="contact.html">Contact page</a>
         <a href="mailto:hello@wavekey.app">hello@wavekey.app</a>
       </div>
     </footer>

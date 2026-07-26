@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact WaveKey</title>
+    <meta
+      name="description"
+      content="Contact WaveKey to discuss presence-led session security for your team."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">∞</span>
+        <span>WaveKey</span>
+      </a>
+      <nav>
+        <a href="index.html#products">Products</a>
+        <a href="index.html#difference">Why WaveKey</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+      </nav>
+      <a class="button button-ghost" href="index.html">Back home</a>
+    </header>
+
+    <main>
+      <section class="section contact-shell">
+        <div class="panel contact-intro reveal">
+          <p class="kicker">Contact</p>
+          <h1>Let’s design your session-security rollout.</h1>
+          <p class="lead">
+            Share your environment and goals. We’ll show where continuous presence assurance fits with your
+            existing identity stack.
+          </p>
+          <div class="contact-points">
+            <p><strong>Email:</strong> <a href="mailto:hello@wavekey.app">hello@wavekey.app</a></p>
+            <p><strong>Focus:</strong> Zero-friction session assurance</p>
+          </div>
+        </div>
+
+        <form class="panel contact-form reveal" action="mailto:hello@wavekey.app" method="post" enctype="text/plain">
+          <label>
+            Name
+            <input type="text" name="name" placeholder="Your name" required />
+          </label>
+          <label>
+            Work email
+            <input type="email" name="email" placeholder="you@company.com" required />
+          </label>
+          <label>
+            Company
+            <input type="text" name="company" placeholder="Company name" />
+          </label>
+          <label>
+            Message
+            <textarea name="message" rows="5" placeholder="What are you trying to secure?" required></textarea>
+          </label>
+          <button class="button" type="submit">Send message</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
