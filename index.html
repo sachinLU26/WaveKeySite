@@ -8,6 +8,10 @@
       name="description"
       content="WaveKey adds presence-led session assurance after sign-in with minimal user friction."
     />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230c1019'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='%23f7f8fb' font-family='Arial, sans-serif'%3E%E2%88%9E%3C/text%3E%3C/svg%3E"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,12 +33,21 @@
         <a href="#difference">Why WaveKey</a>
         <a href="contact.html">Contact</a>
       </nav>
-      <a class="button button-ghost" href="contact.html">Book a demo</a>
+      <div class="header-actions">
+        <a class="button button-ghost" href="contact.html">Book a demo</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <main id="top">
       <section class="hero section panel">
         <p class="kicker">Presence Security Layer</p>
+        <div class="presence-badge">
+          <span class="presence-dot" aria-hidden="true"></span>
+          Session actively verified
+        </div>
         <h1>Secure the session, not just the sign-in.</h1>
         <p class="lead">
           MFA proves identity once. WaveKey adds continuous authorized presence during the active session so a
@@ -54,16 +67,25 @@
         </div>
         <div class="product-grid">
           <article class="card tilt-card">
+            <span class="icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 9.5h18"></path><circle cx="6.4" cy="7.2" r="0.55" fill="currentColor" stroke="none"></circle></svg>
+            </span>
             <h3>BYO App</h3>
             <p>Launch a branded login and session-assurance experience in your own customer app.</p>
             <a href="products/byo-app.html">Learn more <span aria-hidden="true">→</span></a>
           </article>
           <article class="card tilt-card">
+            <span class="icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path><path d="M13.5 5l-3 14"></path></svg>
+            </span>
             <h3>WaveKey SDK</h3>
             <p>Embed presence checks in mobile and web journeys with a low-friction developer toolkit.</p>
             <a href="products/sdk.html">Learn more <span aria-hidden="true">→</span></a>
           </article>
           <article class="card tilt-card">
+            <span class="icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 4.5h3v1.7a1.8 1.8 0 003.6 0V4.5h3v3h-1.7a1.8 1.8 0 000 3.6h1.7v3h-3v-1.7a1.8 1.8 0 00-3.6 0v1.7h-3v-3H7.3a1.8 1.8 0 010-3.6H9v-3z"></path></svg>
+            </span>
             <h3>Chrome Plug-in</h3>
             <p>Add session continuity controls to browser-based workforce workflows.</p>
             <a href="products/chrome-plugin.html">Learn more <span aria-hidden="true">→</span></a>
@@ -82,9 +104,18 @@
           </p>
         </div>
         <ol>
-          <li><span>01</span> User starts the session with one deliberate action</li>
-          <li><span>02</span> Endpoint verifies ongoing authorized presence signals</li>
-          <li><span>03</span> Session is terminated when presence is lost</li>
+          <li>
+            <span class="step-index" aria-hidden="true">01</span>
+            <span class="step-body"><strong>Deliberate start</strong><span>User starts the session with one deliberate action</span></span>
+          </li>
+          <li>
+            <span class="step-index" aria-hidden="true">02</span>
+            <span class="step-body"><strong>Continuous presence</strong><span>Endpoint verifies ongoing authorized presence signals</span></span>
+          </li>
+          <li>
+            <span class="step-index" aria-hidden="true">03</span>
+            <span class="step-body"><strong>Automatic lockout</strong><span>Session is terminated the moment presence is lost</span></span>
+          </li>
         </ol>
       </section>
 
