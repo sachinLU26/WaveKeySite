@@ -3,19 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaveKey BYO App</title>
+    <title>WaveKey BYO App | Presence-Led Session Security</title>
+    <meta
+      name="description"
+      content="Launch a branded login and session-assurance experience in your own customer app with WaveKey."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230c1019'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='%23f7f8fb' font-family='Arial, sans-serif'%3E%E2%88%9E%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
-    <main class="product-page section">
-      <a class="back-link" href="../index.html">← Back to WaveKey</a>
-      <p class="kicker">BYO App</p>
-      <h1>Custom MFA experiences, shipped your way.</h1>
-      <p>
-        Compose your own branded flow while WaveKey handles trusted-device checks, adaptive prompts, and
-        high-confidence recovery journeys.
-      </p>
+    <div class="bg-glow" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark" aria-hidden="true">∞</span>
+        <span>WaveKey</span>
+      </a>
+      <nav>
+        <a href="../index.html#products">Products</a>
+        <a href="../index.html#difference">Why WaveKey</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a class="button button-ghost" href="../contact.html">Book a demo</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="product-page section reveal">
+        <p class="breadcrumb">
+          <a href="../index.html">WaveKey</a>
+          <span aria-hidden="true">/</span>
+          <a href="../index.html#products">Products</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">BYO App</span>
+        </p>
+
+        <div class="product-hero">
+          <span class="icon-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 9.5h18"></path><circle cx="6.4" cy="7.2" r="0.55" fill="currentColor" stroke="none"></circle></svg>
+          </span>
+          <p class="kicker">BYO App</p>
+          <h1>Custom MFA experiences, shipped your way.</h1>
+          <p class="lead">
+            Compose your own branded flow while WaveKey handles trusted-device checks, adaptive prompts, and
+            high-confidence recovery journeys.
+          </p>
+
+          <ul class="feature-list">
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.3l2.5 2.5L16 9.3"></path></svg>
+              Branded login &amp; session UI that matches your product
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.3l2.5 2.5L16 9.3"></path></svg>
+              Adaptive step-up prompts based on risk signals
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.3l2.5 2.5L16 9.3"></path></svg>
+              Trusted-device recognition to cut repeat prompts
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.3l2.5 2.5L16 9.3"></path></svg>
+              High-confidence, low-friction account recovery
+            </li>
+          </ul>
+
+          <div class="product-cta">
+            <a class="button" href="../contact.html">Talk to WaveKey</a>
+            <a class="button button-ghost" href="../index.html#products">See all products</a>
+          </div>
+        </div>
     </main>
+
+    <footer class="site-footer section">
+      <p>WaveKey</p>
+      <p>Presence-led access assurance.</p>
+      <div>
+        <a href="../contact.html">Contact page</a>
+        <a href="mailto:hello@wavekey.app">hello@wavekey.app</a>
+      </div>
+    </footer>
+
     <script src="../script.js"></script>
   </body>
 </html>
