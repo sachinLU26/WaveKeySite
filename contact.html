@@ -8,6 +8,10 @@
       name="description"
       content="Contact WaveKey to discuss presence-led session security for your team."
     />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230c1019'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='%23f7f8fb' font-family='Arial, sans-serif'%3E%E2%88%9E%3C/text%3E%3C/svg%3E"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,13 +33,22 @@
         <a href="index.html#difference">Why WaveKey</a>
         <a href="contact.html" aria-current="page">Contact</a>
       </nav>
-      <a class="button button-ghost" href="index.html">Back home</a>
+      <div class="header-actions">
+        <a class="button button-ghost" href="index.html">Back home</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <main>
       <section class="section contact-shell">
         <div class="panel contact-intro reveal">
           <p class="kicker">Contact</p>
+          <div class="presence-badge">
+            <span class="presence-dot" aria-hidden="true"></span>
+            Usually respond within 1 business day
+          </div>
           <h1>Let’s design your session-security rollout.</h1>
           <p class="lead">
             Share your environment and goals. We’ll show where continuous presence assurance fits with your
