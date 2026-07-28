@@ -26,6 +26,24 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    /* Proximity (not mandatory) only pulls the page toward a nearby section —
+       it never forces a jump from mid-scroll, so a fast flick or a pause
+       partway through a tall section can never get trapped. */
+    scroll-snap-type: y proximity;
+    /* Reserve space for the sticky header so "start" snapping doesn't pull a
+       section's top content behind it (the classic sticky+snap conflict). */
+    scroll-padding-top: 6.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -49,20 +67,6 @@ h2,
 h3,
 p {
   overflow-wrap: break-word;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 24;
-  opacity: 0;
-  background: radial-gradient(
-    circle at var(--transition-x, 50%) var(--transition-y, 50%),
-    rgba(241, 244, 255, 0.14),
-    rgba(241, 244, 255, 0) 36%
-  );
 }
 
 @property --pointer-x {
@@ -241,6 +245,49 @@ nav a:hover,
 .section {
   padding: 5.2rem 0;
   position: relative;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Ultrasonic "signal sweep" — a scan line that travels across the top edge
+   the moment a section arrives, echoing the presence-detection wave motif. */
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(241, 244, 255, 0.85), transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.section.visible::before {
+  animation: signal-sweep 1.2s var(--ease-out) both;
+}
+
+@keyframes signal-sweep {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.9;
+  }
+  65% {
+    transform: scaleX(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section::before {
+    display: none;
+  }
 }
 
 .hero {
@@ -383,6 +430,7 @@ h2 {
 }
 
 .icon-badge {
+  position: relative;
   width: 2.6rem;
   height: 2.6rem;
   display: inline-flex;
@@ -394,6 +442,39 @@ h2 {
   color: var(--text);
   margin-bottom: 1rem;
   transition: border-color var(--dur-sm) var(--ease-out), transform var(--dur-sm) var(--ease-out);
+}
+
+/* Presence "ping" — plays once when the card scrolls into view, as if the
+   product is announcing itself, same visual language as the click ripple. */
+.icon-badge::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(126, 242, 192, 0.55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card.visible .icon-badge::after {
+  animation: presence-ping 1.1s var(--ease-out) 0.25s both;
+}
+
+@keyframes presence-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-badge::after {
+    display: none;
+  }
 }
 
 .icon-badge svg {
@@ -435,9 +516,18 @@ h2 {
 .card {
   padding: 1.4rem;
   transform-style: preserve-3d;
-  transition: transform var(--dur-sm) var(--ease-out), border-color var(--dur-sm) var(--ease-out),
-    background-color var(--dur-sm) var(--ease-out), box-shadow var(--dur-sm) var(--ease-out);
   will-change: transform;
+}
+
+/* .card.reveal (two classes) is written deliberately more specific than the
+   generic .reveal rule below, so this full property list always wins instead
+   of the generic one silently dropping border-color/background/box-shadow
+   from the transition (equal-specificity rules don't merge — one wins outright). */
+.card.reveal {
+  transition: transform var(--dur-sm) var(--ease-out), border-color var(--dur-sm) var(--ease-out),
+    background-color var(--dur-sm) var(--ease-out), box-shadow var(--dur-sm) var(--ease-out),
+    opacity var(--dur-lg) var(--ease-out);
+  transition-delay: 0s, 0s, 0s, 0s, var(--reveal-delay, 0s);
 }
 
 .card:hover {
@@ -496,8 +586,13 @@ h2 {
   border-radius: 12px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
+  /* This selector (class+element) is already more specific than the generic
+     .reveal rule, so it wins the transition-property cascade outright — the
+     opacity entry here is what makes the fade-in actually animate instead of
+     silently snapping (see the .card.reveal comment above for why that matters). */
   transition: border-color var(--dur-sm) var(--ease-out), background-color var(--dur-sm) var(--ease-out),
-    transform var(--dur-sm) var(--ease-out);
+    transform var(--dur-sm) var(--ease-out), opacity var(--dur-lg) var(--ease-out);
+  transition-delay: 0s, 0s, 0s, var(--reveal-delay, 0s);
 }
 
 .flow-panel li:hover {
@@ -507,6 +602,7 @@ h2 {
 }
 
 .flow-panel .step-index {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -518,6 +614,26 @@ h2 {
   color: #f4f6ff;
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.flow-panel .step-index::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 242, 192, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flow-panel li.visible .step-index::after {
+  animation: presence-ping 1s var(--ease-out) 0.2s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-panel .step-index::after {
+    display: none;
+  }
 }
 
 .flow-panel .step-body strong {
@@ -609,7 +725,9 @@ h2 {
   background: rgba(255, 255, 255, 0.02);
   color: var(--text);
   font-size: 0.95rem;
-  transition: border-color var(--dur-sm) var(--ease-out), transform var(--dur-sm) var(--ease-out);
+  transition: border-color var(--dur-sm) var(--ease-out), transform var(--dur-sm) var(--ease-out),
+    opacity var(--dur-lg) var(--ease-out);
+  transition-delay: 0s, 0s, var(--reveal-delay, 0s);
 }
 
 .feature-list li:hover {
@@ -783,18 +901,6 @@ section.cta-panel {
   animation-delay: 0.16s;
 }
 
-body.page-transitioning::after {
-  animation: page-transition-wave 0.85s var(--ease-out) forwards;
-}
-
-body.page-transitioning .site-header,
-body.page-transitioning main,
-body.page-transitioning .site-footer {
-  opacity: 0;
-  transform: translateY(-10px) scale(0.99);
-  transition: opacity var(--dur-md) var(--ease-in-out), transform var(--dur-md) var(--ease-in-out);
-}
-
 .site-header,
 .site-footer {
   animation: page-enter var(--dur-md) var(--ease-out) both;
@@ -830,17 +936,6 @@ body.page-transitioning .site-footer {
   to {
     opacity: 0;
     transform: scale(8.8);
-  }
-}
-
-@keyframes page-transition-wave {
-  from {
-    opacity: 0.9;
-    transform: scale(0.16);
-  }
-  to {
-    opacity: 0;
-    transform: scale(2.2);
   }
 }
 
