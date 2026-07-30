@@ -188,205 +188,14 @@ if (header && navToggle && siteNav) {
 }
 
 // ---------------------------------------------------------------------------
-// In-place view routing.
-//
-// The URL bar never changes for internal navigation: instead of following a
-// link, we fetch the destination page, lift its <main>, and swap it into the
-// current document. contact.html (and every other page) still works as a
-// normal, real, bookmarkable/shareable URL when opened directly — that fetch
-// target has to keep existing as a real page for this to work at all — but
-// clicking to it *from inside the site* never touches window.location.
-//
-// Falls back to a real navigation if fetch/parsing ever fails, so the site
-// never breaks outright (e.g. if it's opened via file:// instead of a server).
+// Keep standard multi-page navigation so URLs change and work correctly on
+// GitHub Pages subpaths. Only enhance same-page hash links with smooth scroll.
 // ---------------------------------------------------------------------------
-const viewCache = new Map();
-let currentView = detectInitialView();
-let swapToken = 0;
-
-function detectInitialView() {
-  const path = window.location.pathname;
-  if (/\/contact\.html$/.test(path)) return 'contact';
-  if (/\/byo-app\.html$/.test(path)) return 'byo-app';
-  if (/\/sdk\.html$/.test(path)) return 'sdk';
-  if (/\/chrome-plugin\.html$/.test(path)) return 'chrome-plugin';
-  return 'home';
-}
-
-function viewNameForPath(pathname) {
-  if (/\/contact\.html$/.test(pathname)) return 'contact';
-  if (/\/byo-app\.html$/.test(pathname)) return 'byo-app';
-  if (/\/sdk\.html$/.test(pathname)) return 'sdk';
-  if (/\/chrome-plugin\.html$/.test(pathname)) return 'chrome-plugin';
-  return 'home';
-}
-
-function isHomeTarget(href, pathname) {
-  return href.startsWith('#') || /\/index\.html$/.test(pathname) || /\/$/.test(pathname);
-}
-
-// Links inside fetched content are relative to *their* source file. Once
-// lifted into whichever page is currently showing, those relative paths
-// would resolve against the wrong location — so rewrite them to absolute
-// URLs (not root-relative, so this still works under a GitHub Pages
-// subpath) before they ever enter the live DOM.
-function absolutizeLinks(scope, baseUrl) {
-  scope.querySelectorAll('[href]').forEach((el) => {
-    const raw = el.getAttribute('href');
-    if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
-    try {
-      el.setAttribute('href', new URL(raw, baseUrl).href);
-    } catch {
-      /* leave malformed hrefs alone */
-    }
-  });
-  scope.querySelectorAll('[src]').forEach((el) => {
-    const raw = el.getAttribute('src');
-    if (!raw) return;
-    try {
-      el.setAttribute('src', new URL(raw, baseUrl).href);
-    } catch {
-      /* leave malformed srcs alone */
-    }
-  });
-}
-
-function updateNavActiveState(view) {
-  document.querySelectorAll('.site-header nav a').forEach((a) => {
-    const href = a.getAttribute('href');
-    if (!href) return;
-    let resolved;
-    try {
-      resolved = new URL(href, window.location.href);
-    } catch {
-      return;
-    }
-    const isContactLink = /\/contact\.html$/.test(resolved.pathname);
-    if (view === 'contact' && isContactLink) {
-      a.setAttribute('aria-current', 'page');
-    } else {
-      a.removeAttribute('aria-current');
-    }
-  });
-}
-
-function fadeOutMain(mainEl) {
-  if (prefersReducedMotion || typeof mainEl.animate !== 'function') return Promise.resolve();
-  return mainEl.animate(
-    [
-      { opacity: 1, transform: 'translateY(0)' },
-      { opacity: 0, transform: 'translateY(10px)' },
-    ],
-    { duration: 320, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' }
-  ).finished;
-}
-
-function fadeInMain(mainEl) {
-  if (prefersReducedMotion || typeof mainEl.animate !== 'function') return Promise.resolve();
-  return mainEl.animate(
-    [
-      { opacity: 0, transform: 'translateY(10px)' },
-      { opacity: 1, transform: 'translateY(0)' },
-    ],
-    { duration: 460, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
-  ).finished;
-}
-
-async function fetchView(url) {
-  if (viewCache.has(url)) return viewCache.get(url);
-
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-
-  const html = await response.text();
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const newMain = doc.querySelector('main');
-  if (!newMain) throw new Error('No <main> in fetched document');
-
-  absolutizeLinks(newMain, response.url);
-
-  const result = { main: newMain, title: doc.title };
-  viewCache.set(url, result);
-  return result;
-}
-
-async function swapToUrl(url) {
-  const token = ++swapToken;
-  const view = viewNameForPath(new URL(url, window.location.href).pathname);
-
-  let fetched;
-  try {
-    fetched = await fetchView(url);
-  } catch {
-    // Fetch/parse failed (e.g. opened via file://) — degrade to a real
-    // navigation rather than leaving the click doing nothing.
-    window.location.assign(url);
-    return;
-  }
-
-  if (token !== swapToken) return; // a newer navigation has since started
-
-  const currentMain = document.querySelector('main');
-  await fadeOutMain(currentMain);
-  if (token !== swapToken) return;
-
-  const newMain = fetched.main.cloneNode(true);
-  currentMain.replaceWith(newMain);
-  document.title = fetched.title || document.title;
-  currentView = view;
-  updateNavActiveState(view);
-  setupReveals();
-  window.scrollTo({ top: 0, behavior: 'auto' });
-
-  newMain.setAttribute('tabindex', '-1');
-  newMain.focus({ preventScroll: true });
-
-  fadeInMain(newMain);
-}
-
 function scrollToHash(hash) {
   if (!hash) return;
   const target = document.querySelector(hash);
   if (!target) return;
   target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-}
-
-async function handleInternalLinkClick(event, link) {
-  const href = link.getAttribute('href');
-  if (!href || link.target === '_blank' || link.hasAttribute('download')) return;
-
-  let destination;
-  try {
-    destination = new URL(link.href, window.location.href);
-  } catch {
-    return;
-  }
-
-  if (
-    destination.origin !== window.location.origin ||
-    destination.protocol === 'mailto:' ||
-    destination.protocol === 'tel:'
-  ) {
-    return;
-  }
-
-  event.preventDefault();
-
-  if (isHomeTarget(href, destination.pathname)) {
-    if (currentView !== 'home') {
-      await swapToUrl(`${destination.origin}/index.html`);
-    }
-    scrollToHash(destination.hash);
-    return;
-  }
-
-  const targetView = viewNameForPath(destination.pathname);
-  if (targetView === currentView) {
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-    return;
-  }
-
-  swapToUrl(destination.href);
 }
 
 document.addEventListener('click', (event) => {
@@ -401,7 +210,9 @@ document.addEventListener('click', (event) => {
     closeMobileNav();
   }
 
-  handleInternalLinkClick(event, link);
-});
+  const href = link.getAttribute('href');
+  if (!href || !href.startsWith('#')) return;
 
-updateNavActiveState(currentView);
+  event.preventDefault();
+  scrollToHash(href);
+});
