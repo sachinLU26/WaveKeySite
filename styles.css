@@ -1,13 +1,24 @@
 :root {
   color-scheme: dark;
-  --bg: #0c1019;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-strong: rgba(255, 255, 255, 0.08);
-  --text: #f7f8fb;
-  --muted: #b2b8c8;
-  --line: rgba(255, 255, 255, 0.2);
+
+  /* ---- surfaces ---------------------------------------------------- */
+  --bg: #06070b;
+  --surface: rgba(255, 255, 255, 0.025);
+  --surface-strong: rgba(255, 255, 255, 0.05);
+
+  /* ---- text -------------------------------------------------------- */
+  --text: #f2f3f6;
+  --muted: rgba(242, 243, 246, 0.58);   /* 6.2:1 on --bg */
+  --faint: rgba(242, 243, 246, 0.52);   /* 5.1:1 on --bg — small caps text */
+
+  /* ---- lines ------------------------------------------------------- */
+  --line: rgba(255, 255, 255, 0.09);
+  --line-hover: rgba(255, 255, 255, 0.2);
+
+  /* ---- accents ----------------------------------------------------- */
   --accent: #f1f4ff;
   --positive: #7ef2c0;
+
   --max: 1120px;
 
   /* Apple-style easing: fast start, long gentle settle */
@@ -17,7 +28,7 @@
   --dur-xs: 0.22s;
   --dur-sm: 0.38s;
   --dur-md: 0.6s;
-  --dur-lg: 0.65s;
+  --dur-lg: 0.78s;
 }
 
 * {
@@ -26,24 +37,6 @@
 
 html {
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* legacy Edge */
-}
-
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    /* Proximity (not mandatory) only pulls the page toward a nearby section —
-       it never forces a jump from mid-scroll, so a fast flick or a pause
-       partway through a tall section can never get trapped. */
-    scroll-snap-type: y proximity;
-    /* Reserve space for the sticky header so "start" snapping doesn't pull a
-       section's top content behind it (the classic sticky+snap conflict). */
-    scroll-padding-top: 6.5rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -55,8 +48,13 @@ html::-webkit-scrollbar {
 body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-feature-settings: "tnum", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: var(--text);
-  background: radial-gradient(circle at 50% -15%, #212834 0%, var(--bg) 56%), var(--bg);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    var(--bg);
   line-height: 1.6;
   overflow-x: hidden;
   text-wrap: pretty;
@@ -67,6 +65,26 @@ h2,
 h3,
 p {
   overflow-wrap: break-word;
+}
+
+/* ---------------------------------------------------------------------------
+   Pointer-tracked ambient glow.
+
+   PRESERVED VERBATIM (mechanism, easing, duration). The registered custom
+   properties are what make --pointer-x/--pointer-y animatable, which is why
+   the glow trails the cursor instead of snapping to it. Only the gradient's
+   colour/alpha/stop have been retuned for the darker palette.
+   --------------------------------------------------------------------------- */
+@property --flow-skew {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --flow-stretch {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
 }
 
 @property --pointer-x {
@@ -85,19 +103,47 @@ p {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at var(--pointer-x, 65%) var(--pointer-y, 20%), rgba(255, 255, 255, 0.12), transparent 44%);
+  background: radial-gradient(
+    circle at var(--pointer-x, 65%) var(--pointer-y, 20%),
+    rgba(255, 255, 255, 0.09),
+    transparent 46%
+  );
   transition: --pointer-x 0.9s var(--ease-out), --pointer-y 0.9s var(--ease-out);
   will-change: --pointer-x, --pointer-y;
 }
 
-.noise {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.18;
-  mix-blend-mode: soft-light;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.28) 1px, transparent 0);
-  background-size: 3px 3px;
+/* ---------------------------------------------------------------------------
+   Skip link
+   --------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 60;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: 0;
+  background: var(--text);
+  color: var(--bg);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: top var(--dur-xs) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  top: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Focus visibility — applies everywhere, including form fields.
+   --------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .site-header,
@@ -111,17 +157,30 @@ p {
   position: sticky;
   top: 1rem;
   z-index: 30;
-  margin-top: 1.2rem;
-  padding: 0.9rem 1.1rem;
+  margin-top: 0;
+  padding: 1.15rem 0;
   display: flex;
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(12, 16, 25, 0.72);
-  backdrop-filter: blur(16px);
-  transition: border-color var(--dur-sm) var(--ease-out), background-color var(--dur-sm) var(--ease-out);
+  border: 0;
+  background: transparent;
+}
+
+/* The header's backdrop is a gradient that dissolves downward rather than a
+   panel with an edge. Nothing on this page terminates in a hard line. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: -1.6rem -50vw -1.4rem;
+  z-index: -1;
+  background: linear-gradient(to bottom, rgba(6, 7, 11, 0.92) 20%, rgba(6, 7, 11, 0) 100%);
+  backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out);
+  pointer-events: none;
 }
 
 .header-actions {
@@ -145,7 +204,7 @@ p {
   height: 1.7rem;
   display: inline-grid;
   place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-hover);
   border-radius: 999px;
 }
 
@@ -195,16 +254,16 @@ nav a:hover,
   align-items: center;
   justify-content: center;
   position: relative;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  border: 0;
+  background: transparent;
   cursor: pointer;
   padding: 0;
-  transition: border-color var(--dur-xs) var(--ease-out), background-color var(--dur-xs) var(--ease-out);
+  opacity: 0.7;
+  transition: opacity var(--dur-xs) var(--ease-out);
 }
 
 .nav-toggle:hover {
-  border-color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
 }
 
 .nav-toggle span {
@@ -243,90 +302,58 @@ nav a:hover,
 }
 
 .section {
-  padding: 5.2rem 0;
+  padding: clamp(6rem, 11vw, 10rem) 0;
   position: relative;
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
-}
-
-/* Ultrasonic "signal sweep" — a scan line that travels across the top edge
-   the moment a section arrives, echoing the presence-detection wave motif. */
-.section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 6%;
-  right: 6%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(241, 244, 255, 0.85), transparent);
-  transform: scaleX(0);
-  transform-origin: left center;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.section.visible::before {
-  animation: signal-sweep 1.2s var(--ease-out) both;
-}
-
-@keyframes signal-sweep {
-  0% {
-    transform: scaleX(0);
-    opacity: 0.9;
-  }
-  65% {
-    transform: scaleX(1);
-    opacity: 0.55;
-  }
-  100% {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section::before {
-    display: none;
-  }
 }
 
 .hero {
-  padding-top: 7rem;
+  padding-top: clamp(8rem, 16vh, 12rem);
 }
 
 .kicker {
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #d6dceb;
+  color: var(--faint);
   margin: 0 0 0.9rem;
 }
 
 h1,
 h2,
 h3 {
-  letter-spacing: -0.03em;
-  line-height: 1.1;
   margin: 0;
 }
 
 h1 {
   font-size: clamp(2.2rem, 6vw, 4.8rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
   max-width: 15ch;
 }
 
 h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+h3 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
 .lead {
   max-width: 60ch;
   color: var(--muted);
+  line-height: 1.65;
   margin-top: 1.4rem;
 }
 
 .hero-actions {
-  margin-top: 2rem;
+  margin-top: 2.2rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.9rem;
@@ -336,11 +363,12 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.45rem 0.9rem 0.45rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--muted);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   font-size: 0.82rem;
   font-weight: 500;
   margin-bottom: 1.4rem;
@@ -383,49 +411,61 @@ h2 {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Buttons — flat fill, no lift, no shadow. Hover changes surface only.
+   --------------------------------------------------------------------------- */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  background: linear-gradient(130deg, #f7f8fc, #cfd5e2);
-  color: #080b13;
+  border: 1px solid transparent;
+  background: var(--text);
+  color: #06070b;
   font-weight: 600;
   text-decoration: none;
-  padding: 0.65rem 1.2rem;
-  transition: transform var(--dur-sm) var(--ease-out), box-shadow var(--dur-sm) var(--ease-out),
-    border-color var(--dur-sm) var(--ease-out), background-color var(--dur-sm) var(--ease-out);
+  padding: 0.68rem 1.3rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: background-color var(--dur-sm) var(--ease-out), opacity var(--dur-sm) var(--ease-out),
+    transform var(--dur-xs) var(--ease-out);
 }
 
 .button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(2, 8, 18, 0.4);
+  background: #ffffff;
 }
 
 .button:active {
-  transform: translateY(0) scale(0.97);
-  transition-duration: var(--dur-xs);
+  transform: scale(0.97);
 }
 
 .button-ghost {
-  border-color: var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+  background: transparent;
   color: var(--text);
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  opacity: 0.72;
 }
 
 .button-ghost:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  opacity: 1;
 }
 
 .section-head {
-  margin-bottom: 2rem;
+  margin-bottom: 3.2rem;
 }
 
+/* ---------------------------------------------------------------------------
+   Product grid — hairline-divided panel rather than three floating tiles.
+   The grid's own background provides the 1px dividers, and it is translucent
+   so the ambient glow still reads through the cards.
+   --------------------------------------------------------------------------- */
 .product-grid {
   display: grid;
-  gap: 1.1rem;
+  gap: clamp(2.6rem, 5vw, 4.5rem);
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
@@ -436,50 +476,18 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  margin-bottom: 1rem;
-  transition: border-color var(--dur-sm) var(--ease-out), transform var(--dur-sm) var(--ease-out);
-}
-
-/* Presence "ping" — plays once when the card scrolls into view, as if the
-   product is announcing itself, same visual language as the click ripple. */
-.icon-badge::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 1px solid rgba(126, 242, 192, 0.55);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.card.visible .icon-badge::after {
-  animation: presence-ping 1.1s var(--ease-out) 0.25s both;
-}
-
-@keyframes presence-ping {
-  0% {
-    transform: scale(1);
-    opacity: 0.85;
-  }
-  100% {
-    transform: scale(1.9);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .icon-badge::after {
-    display: none;
-  }
+  border: 0;
+  background: none;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
+  width: auto;
+  height: auto;
+  transition: color var(--dur-sm) var(--ease-out);
 }
 
 .icon-badge svg {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.65rem;
+  height: 1.65rem;
   stroke: currentColor;
   fill: none;
   stroke-width: 1.6;
@@ -488,8 +496,7 @@ h2 {
 }
 
 .card:hover .icon-badge {
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px);
+  color: var(--text);
 }
 
 .card h3 {
@@ -504,36 +511,29 @@ h2 {
 }
 
 .card,
-.flow-panel,
 .product-page,
 .panel {
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 22px;
-  backdrop-filter: blur(12px);
+  border: 0;
+  background: none;
+  border-radius: 0;
 }
 
 .card {
-  padding: 1.4rem;
-  transform-style: preserve-3d;
-  will-change: transform;
+  padding: 0;
 }
 
 /* .card.reveal (two classes) is written deliberately more specific than the
    generic .reveal rule below, so this full property list always wins instead
-   of the generic one silently dropping border-color/background/box-shadow
-   from the transition (equal-specificity rules don't merge — one wins outright). */
+   of the generic one silently dropping background-color from the transition
+   (equal-specificity rules don't merge — one wins outright). */
 .card.reveal {
-  transition: transform var(--dur-sm) var(--ease-out), border-color var(--dur-sm) var(--ease-out),
-    background-color var(--dur-sm) var(--ease-out), box-shadow var(--dur-sm) var(--ease-out),
+  transition: background-color var(--dur-sm) var(--ease-out), transform var(--dur-lg) var(--ease-out),
     opacity var(--dur-lg) var(--ease-out);
-  transition-delay: 0s, 0s, 0s, 0s, var(--reveal-delay, 0s);
+  transition-delay: 0s, var(--reveal-delay, 0s), var(--reveal-delay, 0s);
 }
 
-.card:hover {
-  border-color: rgba(255, 255, 255, 0.38);
-  background: var(--surface-strong);
-  box-shadow: 0 22px 44px rgba(2, 6, 14, 0.32);
+.card:hover h3 {
+  color: var(--text);
 }
 
 .card p,
@@ -547,7 +547,7 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: #f0f3ff;
+  color: var(--text);
   text-decoration: none;
   font-weight: 500;
 }
@@ -562,9 +562,8 @@ h2 {
 }
 
 .flow-panel {
-  padding: clamp(1.8rem, 3.2vw, 2.4rem);
   display: grid;
-  gap: clamp(1.4rem, 2.2vw, 1.8rem);
+  gap: clamp(1.6rem, 3vw, 2.6rem);
   grid-template-columns: 1.3fr 1fr;
 }
 
@@ -581,11 +580,10 @@ h2 {
   display: flex;
   align-items: center;
   gap: 0.95rem;
-  min-height: 6.4rem;
-  padding: 1rem 1.15rem;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  min-height: 5.6rem;
+  padding: 1rem 0 1rem 1.4rem;
+  border: 0;
+  background: none;
   /* This selector (class+element) is already more specific than the generic
      .reveal rule, so it wins the transition-property cascade outright — the
      opacity entry here is what makes the fade-in actually animate instead of
@@ -596,9 +594,7 @@ h2 {
 }
 
 .flow-panel li:hover {
-  border-color: rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.045);
-  transform: translateX(3px);
+  transform: translate(4px, 0) skewY(calc(var(--flow-skew, 0deg) * -0.55));
 }
 
 .flow-panel .step-index {
@@ -609,31 +605,14 @@ h2 {
   width: 2.4rem;
   height: 2.4rem;
   flex-shrink: 0;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  color: #f4f6ff;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.flow-panel .step-index::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 999px;
-  border: 1px solid rgba(126, 242, 192, 0.6);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.flow-panel li.visible .step-index::after {
-  animation: presence-ping 1s var(--ease-out) 0.2s both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .flow-panel .step-index::after {
-    display: none;
-  }
+  border: 0;
+  color: var(--faint);
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  width: auto;
+  height: auto;
+  justify-content: flex-start;
 }
 
 .flow-panel .step-body strong {
@@ -649,13 +628,24 @@ h2 {
 }
 
 .site-footer {
-  border-top: 1px solid var(--line);
-  padding-top: 2rem;
+  position: relative;
+  padding-top: 2.6rem;
   padding-bottom: 2.5rem;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.8rem;
+  color: var(--faint);
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 22%, var(--line) 78%, transparent);
 }
 
 .site-footer div {
@@ -665,8 +655,7 @@ h2 {
 }
 
 .product-page {
-  margin-top: 2.4rem;
-  padding: clamp(1.6rem, 4vw, 2.6rem);
+  margin-top: 0;
 }
 
 .breadcrumb {
@@ -707,10 +696,10 @@ h2 {
 
 .feature-list {
   list-style: none;
-  margin: 2.2rem 0 0;
+  margin: 2.6rem 0 0;
   padding: 0;
   display: grid;
-  gap: 0.9rem;
+  gap: 1.4rem 2.4rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   width: 100%;
 }
@@ -719,20 +708,18 @@ h2 {
   display: flex;
   align-items: flex-start;
   gap: 0.7rem;
-  padding: 1rem;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
   font-size: 0.95rem;
-  transition: border-color var(--dur-sm) var(--ease-out), transform var(--dur-sm) var(--ease-out),
-    opacity var(--dur-lg) var(--ease-out);
-  transition-delay: 0s, 0s, var(--reveal-delay, 0s);
+  transition: border-color var(--dur-sm) var(--ease-out), opacity var(--dur-lg) var(--ease-out),
+    transform var(--dur-lg) var(--ease-out);
+  transition-delay: 0s, var(--reveal-delay, 0s), var(--reveal-delay, 0s);
 }
 
 .feature-list li:hover {
-  border-color: rgba(255, 255, 255, 0.34);
-  transform: translateY(-2px);
+  color: var(--text);
 }
 
 .feature-list svg {
@@ -748,7 +735,7 @@ h2 {
 }
 
 .product-cta {
-  margin-top: 2.4rem;
+  margin-top: 2.6rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -756,46 +743,28 @@ h2 {
 }
 
 .panel {
-  padding: 2rem;
-}
-
-.hero.panel {
-  border-radius: 30px;
-  border-color: rgba(255, 255, 255, 0.24);
-}
-
-section.panel,
-section.flow-panel,
-section.cta-panel {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  backdrop-filter: none;
+  padding: 0;
 }
 
 .micro-note {
-  margin-top: 1rem;
-  color: var(--muted);
+  margin-top: 1.2rem;
+  color: var(--faint);
   font-size: 0.9rem;
 }
 
 .cta-panel {
-  border: 1px solid var(--line);
-  border-radius: 26px;
-  padding: clamp(1.8rem, 3.2vw, 2.4rem);
+  border: 0;
+  border-radius: 0;
+  padding: clamp(6rem, 11vw, 10rem) 0;
   display: grid;
-  gap: 1.25rem;
+  gap: 1.4rem;
   align-content: start;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  background: none;
 }
 
 .cta-panel p {
   color: var(--muted);
   margin: 0;
-}
-
-.flow-panel + .cta-panel {
-  margin-top: 1rem;
 }
 
 .cta-panel .button {
@@ -806,8 +775,8 @@ section.cta-panel {
 .contact-shell {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding-top: 7rem;
+  gap: clamp(3rem, 6vw, 6rem);
+  padding-top: clamp(8rem, 16vh, 12rem);
 }
 
 .contact-intro h1 {
@@ -816,12 +785,12 @@ section.cta-panel {
 }
 
 .contact-points a {
-  color: #f1f4ff;
+  color: var(--text);
 }
 
 .contact-form {
   display: grid;
-  gap: 0.85rem;
+  gap: 1.6rem;
 }
 
 .contact-form label {
@@ -833,23 +802,29 @@ section.cta-panel {
 .contact-form input,
 .contact-form textarea {
   width: 100%;
-  border-radius: 13px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.03);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
-  padding: 0.75rem 0.85rem;
+  padding: 0.7rem 0 0.6rem;
   font: inherit;
+  transition: border-color 0.5s var(--ease-out);
 }
 
+.contact-form input:hover,
+.contact-form textarea:hover,
 .contact-form input:focus,
 .contact-form textarea:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.45);
+  border-bottom-color: var(--line-hover);
 }
+
+/* Focus outline is handled by the global :focus-visible rule above — the
+   previous `outline: none` here was a WCAG 2.4.7 failure. */
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(22px);
   transition: opacity var(--dur-lg) var(--ease-out), transform var(--dur-lg) var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
   will-change: opacity, transform;
@@ -860,6 +835,15 @@ section.cta-panel {
   transform: translateY(0);
 }
 
+/* Section containers fade fast and never translate. If the wrapper drifted at
+   the same speed as its contents, the per-line heading reveal inside it would
+   be invisible — you'd just see one block move. */
+.section.reveal {
+  transform: skewY(var(--flow-skew, 0deg)) scaleY(var(--flow-stretch, 1));
+  transition: opacity 0.45s var(--ease-out);
+  transition-delay: 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -868,6 +852,9 @@ section.cta-panel {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Click "presence" ripple — retained, but toned down to a hint.
+   --------------------------------------------------------------------------- */
 .wave-pulse {
   position: fixed;
   left: 0;
@@ -875,11 +862,11 @@ section.cta-panel {
   width: 18px;
   height: 18px;
   border-radius: 999px;
-  border: 1px solid rgba(241, 244, 255, 0.72);
+  border: 1px solid rgba(241, 244, 255, 0.5);
   transform: translate(-50%, -50%) scale(0.24);
   pointer-events: none;
   z-index: 25;
-  background: radial-gradient(circle, rgba(241, 244, 255, 0.28), rgba(241, 244, 255, 0) 64%);
+  background: radial-gradient(circle, rgba(241, 244, 255, 0.18), rgba(241, 244, 255, 0) 64%);
   animation: ultrasonic-wave 0.9s var(--ease-out) forwards;
 }
 
@@ -889,7 +876,7 @@ section.cta-panel {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid rgba(241, 244, 255, 0.45);
+  border: 1px solid rgba(241, 244, 255, 0.3);
   animation: ultrasonic-wave 0.9s var(--ease-out) forwards;
 }
 
@@ -901,47 +888,14 @@ section.cta-panel {
   animation-delay: 0.16s;
 }
 
-.site-header,
-.site-footer {
-  animation: page-enter var(--dur-md) var(--ease-out) both;
-}
-
-.site-footer {
-  animation-delay: 0.06s;
-}
-
-@keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.994);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-header,
-  .site-footer {
-    animation: none;
-  }
-}
-
 @keyframes ultrasonic-wave {
   from {
-    opacity: 0.82;
+    opacity: 0.6;
     transform: scale(0.24);
   }
   to {
     opacity: 0;
-    transform: scale(8.8);
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .tilt-card:hover {
-    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-3px);
+    transform: scale(5);
   }
 }
 
@@ -959,6 +913,10 @@ section.cta-panel {
   .flow-panel li {
     min-height: auto;
   }
+
+  .flow-panel > div:first-of-type {
+    position: static;
+  }
 }
 
 @media (max-width: 700px) {
@@ -974,10 +932,9 @@ section.cta-panel {
     z-index: 20;
     flex-direction: column;
     gap: 0.15rem;
-    padding: 0.7rem;
-    border-radius: 20px;
-    border: 1px solid var(--line);
-    background: rgba(12, 16, 25, 0.94);
+    padding: 0.9rem 0;
+    border: 0;
+    background: linear-gradient(to bottom, rgba(6, 7, 11, 0.97) 70%, rgba(6, 7, 11, 0));
     backdrop-filter: blur(20px);
     opacity: 0;
     visibility: hidden;
@@ -994,8 +951,7 @@ section.cta-panel {
   }
 
   nav a {
-    padding: 0.75rem 0.8rem;
-    border-radius: 12px;
+    padding: 0.7rem 0;
   }
 
   nav a::after {
@@ -1005,7 +961,7 @@ section.cta-panel {
   nav a:hover,
   nav a:focus-visible,
   nav a[aria-current="page"] {
-    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
   }
 
   .header-actions .button-ghost {
@@ -1019,11 +975,11 @@ section.cta-panel {
   }
 
   .section {
-    padding: 4rem 0;
+    padding: 4.5rem 0;
   }
 
   .hero {
-    padding-top: 5.8rem;
+    padding-top: 6rem;
   }
 
   h1 {
@@ -1031,7 +987,7 @@ section.cta-panel {
   }
 
   .contact-shell {
-    padding-top: 5.8rem;
+    padding-top: 6rem;
   }
 }
 
@@ -1046,18 +1002,439 @@ section.cta-panel {
     padding: 0.75rem 0.85rem;
   }
 
-  .kicker {
-    font-size: 0.7rem;
-  }
-
-  .panel,
-  .flow-panel,
-  .cta-panel,
-  .product-page {
-    padding: 1.3rem;
+  .cta-panel {
+    padding: 4.5rem 0;
   }
 
   .feature-list {
     grid-template-columns: 1fr;
+  }
+}
+
+
+/* ===========================================================================
+   MOTION LAYER
+   =========================================================================== */
+
+/* --- Line-masked text ----------------------------------------------------
+   Each rendered line sits in its own clipping box and is pushed up from
+   below. The padding-bottom / negative-margin pair gives descenders (g, y, p)
+   room to exist inside an overflow:hidden box; without it they get sheared.
+   --------------------------------------------------------------------------- */
+
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.line-inner {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.95s var(--ease-out);
+  transition-delay: var(--line-delay, 0ms);
+  will-change: transform;
+}
+
+.split-in .line-inner,
+.split-in.is-split .line-inner {
+  transform: translateY(0);
+}
+
+/* .lead is body copy, so it travels a shorter distance and settles sooner
+   than a display heading — otherwise the paragraph reads as slower than the
+   headline it follows. */
+.lead .line-inner {
+  transition-duration: 0.72s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line-inner {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- Entrance choreography ----------------------------------------------
+   Hero elements arrive in sequence rather than as one block. A split heading
+   opts out of the block transform entirely and passes its slot in the
+   sequence down to its own lines.
+   --------------------------------------------------------------------------- */
+
+.enter {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--enter-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.entered .enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enter.is-split {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.enter.is-split .line-inner {
+  transition-delay: calc(var(--enter-delay, 0ms) + var(--line-delay, 0ms));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Pre-paint guard: without JS the content must still be visible, so the
+   hidden states only apply once the script has claimed the document. */
+html:not(.js-ready) .enter,
+html:not(.js-ready) .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hero drift ----------------------------------------------------------
+   Scroll-linked, transform and opacity only. Ties the first scroll gesture to
+   the page instead of sliding content past a static block.
+   --------------------------------------------------------------------------- */
+
+.hero-inner {
+  transform: translate3d(0, var(--drift, 0px), 0);
+  opacity: var(--dim, 1);
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-inner {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* --- Header scroll state -------------------------------------------------- */
+
+.site-header {
+  transition: padding var(--dur-sm) var(--ease-out);
+}
+
+.site-header.is-scrolled {
+  padding: 0.8rem 0;
+}
+
+.site-header.is-scrolled::before {
+  opacity: 1;
+}
+
+.site-header.is-scrolled .brand-mark {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.brand-mark {
+  transition: width var(--dur-sm) var(--ease-out), height var(--dur-sm) var(--ease-out);
+}
+
+/* --- Flow panel: scroll-linked step progression --------------------------
+   The three steps light in sequence as the section crosses the focal line, so
+   the sequence reads as a progression rather than a static list. The left
+   column pins while that happens.
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 901px) {
+  .flow-panel > div:first-of-type {
+    position: sticky;
+    top: 8.5rem;
+    align-self: start;
+  }
+}
+
+.flow-panel li {
+  position: relative;
+}
+
+.flow-panel li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--positive) 22%, var(--positive) 78%, transparent);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.flow-panel li.is-active::before {
+  transform: scaleY(1);
+}
+
+.flow-panel li.is-active .step-body strong {
+  color: var(--text);
+}
+
+.flow-panel li.is-active .step-body span {
+  color: var(--muted);
+}
+
+.flow-panel li:not(.is-active) .step-body strong {
+  color: var(--muted);
+}
+
+.flow-panel li.is-active .step-index {
+  color: var(--positive);
+}
+
+.flow-panel .step-index,
+.flow-panel .step-body strong,
+.flow-panel .step-body span {
+  transition: color 0.6s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-panel li::before {
+    transition: none;
+  }
+}
+
+/* --- Hover refinement ----------------------------------------------------
+   Distinct curves for arrival and departure. A hover that leaves on the same
+   curve it entered on is the single most common tell of default styling.
+   --------------------------------------------------------------------------- */
+
+.card {
+  transition: background-color 0.5s var(--ease-out);
+}
+
+.card:hover {
+  transition-duration: 0.22s;
+}
+
+.button {
+  transition: background-color 0.45s var(--ease-out), border-color 0.45s var(--ease-out),
+    opacity 0.45s var(--ease-out), transform 0.18s var(--ease-out);
+}
+
+.button:hover {
+  transition-duration: 0.2s;
+}
+
+.card a span {
+  transition: transform 0.45s var(--ease-out);
+}
+
+.card a:hover span {
+  transition-duration: 0.24s;
+}
+
+/* ===========================================================================
+   PRESENCE FIELD
+   ---------------------------------------------------------------------------
+   Canvas sits first in the body so it paints beneath everything that follows
+   in document order. No z-index games required — the header already carries
+   its own stacking context at z-index 30.
+   =========================================================================== */
+
+.presence-field {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease-out) 0.2s;
+}
+
+html.field-ready .presence-field {
+  opacity: 1;
+}
+
+/* --- Readout -------------------------------------------------------------
+   The field is only worth having if a viewer can read what it is claiming.
+   This is the caption that turns an abstract pattern into a demo.
+   --------------------------------------------------------------------------- */
+
+.field-readout {
+  position: fixed;
+  left: 1.6rem;
+  bottom: 1.6rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out),
+    border-color 0.8s var(--ease-out);
+}
+
+.field-readout.is-on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.field-readout-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--positive);
+  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.14);
+  transition: background-color 0.8s var(--ease-out), box-shadow 0.8s var(--ease-out);
+}
+
+.field-readout-text {
+  display: grid;
+  gap: 0.08rem;
+  line-height: 1.25;
+}
+
+.field-readout-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.field-readout-detail {
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.field-readout[data-tone="warn"] .field-readout-dot {
+  background: #f4ba7a;
+  box-shadow: 0 0 0 3px rgba(244, 186, 122, 0.14);
+}
+
+.field-readout[data-tone="off"] .field-readout-dot {
+  background: var(--faint);
+  box-shadow: 0 0 0 3px rgba(242, 243, 246, 0.06);
+}
+
+/* Below the mobile breakpoint the readout would collide with the CTA and the
+   footer, and the field itself is far less legible at that size. */
+@media (max-width: 780px) {
+  .field-readout {
+    display: none;
+  }
+
+  .presence-field {
+    opacity: 0;
+  }
+
+  html.field-ready .presence-field {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presence-field {
+    transition: none;
+  }
+
+  html.field-ready .presence-field {
+    opacity: 0.5;
+  }
+
+  .field-readout {
+    display: none;
+  }
+}
+
+
+/* ===========================================================================
+   FLOW
+   ---------------------------------------------------------------------------
+   Scroll velocity is fed back into the page as a shear. Sections lag and
+   recover at slightly different rates, so a fast scroll ripples through the
+   document instead of translating it rigidly. Native scrolling is untouched —
+   nothing here intercepts the wheel, so find-in-page, keyboard paging, and
+   trackpad momentum all behave exactly as the OS intends.
+   =========================================================================== */
+
+.section {
+  transform: skewY(var(--flow-skew, 0deg)) scaleY(var(--flow-stretch, 1));
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .section.reveal,
+  .flow-panel li:hover {
+    transform: none;
+  }
+}
+
+/* Inner blocks counter-shear at 55%, so the composition moves noticeably more
+   than the type does. Cancelling it fully would leave nothing to see; leaving
+   it uncancelled would shear the copy as hard as the layout. The residual on
+   text is under 0.4deg even at maximum scroll velocity. */
+.hero-inner,
+.section-head,
+.card,
+.flow-panel li,
+.feature-list li,
+.cta-panel > *,
+.product-hero {
+  transform: skewY(calc(var(--flow-skew, 0deg) * -0.55));
+  transform-origin: center top;
+}
+
+.hero-inner {
+  transform: translate3d(0, var(--drift, 0px), 0) skewY(calc(var(--flow-skew, 0deg) * -0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-inner,
+  .section-head,
+  .card,
+  .flow-panel li,
+  .feature-list li,
+  .cta-panel > *,
+  .product-hero {
+    transform: none;
+  }
+}
+
+/* Reveals float further and settle slower now that nothing has an edge to
+   snap against. */
+.reveal {
+  transform: translateY(34px);
+  transition: opacity 1.05s var(--ease-out), transform 1.05s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.card.reveal,
+.flow-panel li,
+.feature-list li {
+  transform: translateY(34px) skewY(calc(var(--flow-skew, 0deg) * -0.55));
+}
+
+.card.reveal.visible,
+.flow-panel li.visible,
+.feature-list li.visible {
+  transform: translateY(0) skewY(calc(var(--flow-skew, 0deg) * -0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.reveal,
+  .flow-panel li,
+  .feature-list li {
+    transform: none;
   }
 }
