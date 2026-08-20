@@ -15,14 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#top">Skip to content</a>
     <div class="bg-glow" aria-hidden="true"></div>
-    <div class="noise" aria-hidden="true"></div>
     <header class="site-header">
       <a class="brand" href="../index.html">
         <span class="brand-mark" aria-hidden="true">∞</span>
@@ -41,7 +41,7 @@
       </div>
     </header>
 
-    <main class="product-page section reveal">
+    <main id="top" class="product-page section">
         <p class="breadcrumb">
           <a href="../index.html">WaveKey</a>
           <span aria-hidden="true">/</span>
@@ -96,6 +96,7 @@
       </div>
     </footer>
 
+    <script src="../field.js"></script>
     <script src="../script.js"></script>
   </body>
 </html>
