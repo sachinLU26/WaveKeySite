@@ -772,56 +772,6 @@ h3 {
   justify-self: start;
 }
 
-.contact-shell {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(3rem, 6vw, 6rem);
-  padding-top: clamp(8rem, 16vh, 12rem);
-}
-
-.contact-intro h1 {
-  font-size: clamp(2rem, 3.4vw, 2.9rem);
-  max-width: 18ch;
-}
-
-.contact-points a {
-  color: var(--text);
-}
-
-.contact-form {
-  display: grid;
-  gap: 1.6rem;
-}
-
-.contact-form label {
-  display: grid;
-  gap: 0.4rem;
-  font-size: 0.95rem;
-}
-
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: transparent;
-  color: var(--text);
-  padding: 0.7rem 0 0.6rem;
-  font: inherit;
-  transition: border-color 0.5s var(--ease-out);
-}
-
-.contact-form input:hover,
-.contact-form textarea:hover,
-.contact-form input:focus,
-.contact-form textarea:focus {
-  border-bottom-color: var(--line-hover);
-}
-
-/* Focus outline is handled by the global :focus-visible rule above — the
-   previous `outline: none` here was a WCAG 2.4.7 failure. */
-
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -900,10 +850,7 @@ h3 {
 }
 
 @media (max-width: 1024px) {
-  .contact-shell {
-    grid-template-columns: 1fr;
   }
-}
 
 @media (max-width: 900px) {
   .flow-panel {
@@ -986,10 +933,7 @@ h3 {
     max-width: 18ch;
   }
 
-  .contact-shell {
-    padding-top: 6rem;
   }
-}
 
 @media (max-width: 420px) {
   .site-header,
@@ -1436,5 +1380,158 @@ html.field-ready .presence-field {
   .flow-panel li,
   .feature-list li {
     transform: none;
+  }
+}
+
+
+/* ===========================================================================
+   STORY + READING ILLUMINATION
+   ---------------------------------------------------------------------------
+   Each word carries its index as --i. The paragraph carries a --head that
+   advances with scroll. One calc() then resolves every word's opacity, so the
+   browser does the per-word work and JavaScript only writes one property per
+   paragraph per frame.
+
+   The --head fallback of 99 means that with JavaScript disabled, or before the
+   first scroll event, every word is fully lit. Text must never depend on a
+   script to be readable.
+   =========================================================================== */
+
+.story {
+  display: grid;
+  gap: 2.2rem;
+  max-width: 46ch;
+  margin-left: auto;
+  font-size: clamp(1.15rem, 2.1vw, 1.6rem);
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.story p {
+  margin: 0;
+}
+
+[data-read] .w {
+  opacity: clamp(0.16, calc(0.16 + (var(--head, 99) - var(--i, 0)) * 0.32), 1);
+  transition: opacity 0.22s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-read] .w {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .story {
+    margin-left: 0;
+    max-width: none;
+  }
+}
+
+/* ===========================================================================
+   REQUEST ACCESS
+   ---------------------------------------------------------------------------
+   Fields are soft fills rather than outlines. This is a deliberate exception
+   to the no-boundaries pass: an input with no edge at all gives a user no
+   target to aim at, and a form is the one place on the page where affordance
+   beats restraint. There are still no borders anywhere in it.
+   =========================================================================== */
+
+.request-title {
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.kicker-dot {
+  display: inline-block;
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 999px;
+  background: var(--positive);
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+
+.request-form {
+  display: grid;
+  gap: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.field {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.field-label {
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.req {
+  color: #f4ba7a;
+  margin-left: 0.1em;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.4rem, 2.6vw, 2.4rem);
+}
+
+.request-form input,
+.request-form textarea {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.038);
+  color: var(--text);
+  font: inherit;
+  padding: 1rem 1.15rem;
+  transition: background-color 0.4s var(--ease-out);
+}
+
+.request-form textarea {
+  resize: vertical;
+  min-height: 11rem;
+  line-height: 1.55;
+}
+
+.request-form input::placeholder,
+.request-form textarea::placeholder {
+  color: var(--faint);
+}
+
+.request-form input:hover,
+.request-form textarea:hover,
+.request-form input:focus,
+.request-form textarea:focus {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.form-note {
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.9rem;
+}
+
+.button-wide {
+  width: 100%;
+  padding: 1.15rem 1.5rem;
+  font-size: 1.05rem;
+  border-radius: 10px;
+}
+
+@media (max-width: 700px) {
+  .field-row {
+    grid-template-columns: 1fr;
   }
 }

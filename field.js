@@ -223,9 +223,15 @@
       anchors = null;
       return;
     }
-    const sel = ['.hero', '#products', '#difference', '.cta-panel'];
-    const tops = sel.map((s) => {
-      const el = document.querySelector(s);
+    // One anchor per act, in the order the page now tells the story:
+    //   hero      -> presence verified
+    //   products  -> coverage extended
+    //   story     -> token exfiltrated   (the copy is about the stolen token)
+    //   difference-> presence lost       (the copy is about losing presence)
+    //   contact   -> session terminated
+    const sel = ['.hero', '#products', '#story', '#difference', '#contact'];
+    const tops = sel.map((q) => {
+      const el = document.querySelector(q);
       if (!el) return null;
       const r = el.getBoundingClientRect();
       return r.top + window.scrollY;
@@ -234,12 +240,7 @@
       anchors = null;
       return;
     }
-    const docEnd = document.documentElement.scrollHeight;
-    // Five acts, four section anchors: acts 3 and 4 share the "why" section,
-    // split at its midpoint, because that is where the copy turns from the
-    // problem to the mechanism.
-    const whyMid = tops[2] + (tops[3] - tops[2]) * 0.5;
-    anchors = [tops[0], tops[1], tops[2], whyMid, tops[3], docEnd];
+    anchors = tops.concat(document.documentElement.scrollHeight);
   }
 
   function actPosition() {

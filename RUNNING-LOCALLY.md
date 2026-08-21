@@ -122,7 +122,22 @@ Motion first — that is what changed most.
     session certainty" still pins correctly while you scroll past it, in both
     Chrome and Safari. This is the single most likely thing to misbehave.
 
-18. **Console + Network.** No errors, no 404s.
+18. **Reading illumination.** Scroll slowly through "Everything happens after
+    the sign-in." Words should light left to right as they cross the reading
+    band, roughly 600px of scroll per paragraph. If it feels like a flash,
+    widen the band in `script.js` (`start`/`end` in the reading-head
+    subscriber). Then disable JavaScript and reload: every word must be fully
+    lit, not dim.
+
+19. **Request Access.** It is now a section on the homepage at `#contact`.
+    Check that "Contact" and "Book a demo" in the header scroll there smoothly
+    from the top of the homepage, and that the same links from a product page
+    swap back to home *and then* scroll to the form.
+
+    Then actually submit it and watch what happens. It posts to `mailto:` and
+    will most likely do nothing useful. Fix that before sending this to anyone.
+
+20. **Console + Network.** No errors, no 404s.
 
 ## Deploying
 

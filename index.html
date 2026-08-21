@@ -31,10 +31,10 @@
       <nav>
         <a href="#products">Products</a>
         <a href="#difference">Why WaveKey</a>
-        <a href="contact.html">Contact</a>
+        <a href="#contact">Contact</a>
       </nav>
       <div class="header-actions">
-        <a class="button button-ghost" href="contact.html">Book a demo</a>
+        <a class="button button-ghost" href="#contact">Book a demo</a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
           <span></span><span></span><span></span>
         </button>
@@ -95,6 +95,37 @@
         </div>
       </section>
 
+
+      <section id="story" class="section">
+        <div class="section-head">
+          <p class="kicker">The gap</p>
+          <h2>Everything happens after the sign-in.</h2>
+        </div>
+        <div class="story">
+          <p data-read>
+            A sign-in is a photograph. It proves who was at the keyboard in one moment. It proves nothing
+            about the next one.
+          </p>
+          <p data-read>
+            The standards accept this. NIST SP 800-63B allows a session to run for twelve hours at its
+            highest assurance level before anyone is asked to prove themselves again. That window is not an
+            oversight. It is the honest limit of what a single check can do.
+          </p>
+          <p data-read>
+            An attacker holding a stolen session token does not need to defeat the second factor. They only
+            need to arrive after it.
+          </p>
+          <p data-read>
+            WaveKey spends that window asking a different question. Not who signed in, but whether the person
+            who signed in is still there.
+          </p>
+          <p data-read>
+            A phone answers continuously, in a band above hearing. When the answer stops, the session stops
+            with it, terminated at the provider rather than cleared on the device.
+          </p>
+        </div>
+      </section>
+
       <section id="difference" class="section flow-panel">
         <div>
           <p class="kicker">Why it matters</p>
@@ -121,10 +152,41 @@
         </ol>
       </section>
 
-      <section class="section cta-panel reveal">
-        <h2>Security that feels native.</h2>
-        <p>Designed to stay clear, fast, and nearly invisible for desktop, iPad, and mobile use.</p>
-        <a class="button" href="contact.html">Talk to WaveKey</a>
+      <section id="contact" class="section request">
+        <p class="kicker"><span class="kicker-dot" aria-hidden="true"></span>Request access to WaveKey</p>
+        <h2 class="request-title">Request Access</h2>
+
+        <form class="request-form" action="mailto:hello@wavekey.app" method="post" enctype="text/plain">
+          <label class="field">
+            <span class="field-label">Full Name<span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="name" placeholder="Jane Okafor" autocomplete="name" required />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field-label">Phone</span>
+              <input type="tel" name="phone" placeholder="+44 20 1234 5678" autocomplete="tel" />
+            </label>
+            <label class="field">
+              <span class="field-label">Email Address<span class="req" aria-hidden="true">*</span></span>
+              <input type="email" name="email" placeholder="jane@company.com" autocomplete="email" required />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field-label">Company Name<span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="company" placeholder="Company" autocomplete="organization" required />
+          </label>
+
+          <label class="field">
+            <span class="field-label">Message</span>
+            <textarea name="message" rows="6" placeholder="Which session surfaces are you trying to cover first?"></textarea>
+          </label>
+
+          <p class="form-note">Information submitted is processed in line with our privacy policy.</p>
+
+          <button class="button button-wide" type="submit">Submit</button>
+        </form>
       </section>
     </main>
 
@@ -132,7 +194,7 @@
       <p>WaveKey</p>
       <p>Presence-led access assurance.</p>
       <div>
-        <a href="contact.html">Contact page</a>
+        <a href="#contact">Contact</a>
         <a href="mailto:hello@wavekey.app">hello@wavekey.app</a>
       </div>
     </footer>

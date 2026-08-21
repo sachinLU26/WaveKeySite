@@ -379,17 +379,134 @@ keep the fluid field but leave the layout rigid.
 
 ---
 
+# Pass 5 — story, reading illumination, on-page Request Access
+
+## The reading illumination
+
+Story copy is split into words at runtime, each carrying its index as `--i`.
+The paragraph carries a `--head` that advances with scroll. Every word's
+opacity then resolves from a single `calc()`:
+
+```
+opacity: clamp(0.16, calc(0.16 + (var(--head, 99) - var(--i, 0)) * 0.32), 1);
+```
+
+So JavaScript writes **one property per paragraph per frame** and the browser
+does all the per-word work. 140 words across five paragraphs cost five style
+writes, not 140.
+
+The `--head` fallback of `99` matters: with JavaScript disabled, or before the
+first scroll event fires, every word is fully lit. Text must never depend on a
+script to be readable.
+
+**The first calibration was wrong**, and the test caught it. Driving progress
+by the paragraph's own height meant a short paragraph went from cold to fully
+lit across about 200px of scroll, which reads as a flash rather than as
+reading. Progress is now measured against a fixed reading band spanning 88% to
+32% of viewport height, plus 60% of the paragraph's height so long paragraphs
+aren't rushed. Measured on a 22-word paragraph at 900px viewport:
+
+| Scroll | Words lit |
+|---|---|
+| 1100 | 0 / 22 |
+| 1400 | 5 / 22 |
+| 1550 | 12 / 22 |
+| 1700 | 19 / 22 |
+| 1850 | 22 / 22 |
+
+Roughly 600px of scroll to read a paragraph. Under `prefers-reduced-motion` no
+splitting happens at all and the text is simply text.
+
+## The story section
+
+A new `#story` section sits between the products and the mechanism. Five
+paragraphs, one per act of the field behind them:
+
+> A sign-in is a photograph. It proves who was at the keyboard in one moment.
+> It proves nothing about the next one.
+>
+> The standards accept this. NIST SP 800-63B allows a session to run for twelve
+> hours at its highest assurance level before anyone is asked to prove
+> themselves again. That window is not an oversight. It is the honest limit of
+> what a single check can do.
+>
+> An attacker holding a stolen session token does not need to defeat the second
+> factor. They only need to arrive after it.
+>
+> WaveKey spends that window asking a different question. Not who signed in,
+> but whether the person who signed in is still there.
+>
+> A phone answers continuously, in a band above hearing. When the answer stops,
+> the session stops with it, terminated at the provider rather than cleared on
+> the device.
+
+Two deliberate choices in that copy. The last clause distinguishes termination
+at the provider from clearing a local session, because conflating those is the
+single most damaging error available in this pitch. And no invented statistics
+appear anywhere: the only number is the NIST reauthentication interval.
+
+**Verify the NIST claim before this goes near an investor.** It is stated from
+knowledge, not from a fetched source, and it is the load-bearing fact of the
+section.
+
+## Field re-anchored
+
+The five acts now map one-to-one onto the new section order, and the awkward
+midpoint split of the old "why" section is gone:
+
+`.hero` → verified · `#products` → coverage · `#story` → token exfiltrated
+(the copy is literally about the stolen token) · `#difference` → presence lost
+· `#contact` → session terminated.
+
+## Request Access
+
+`contact.html` is deleted. The form now lives at `#contact` on the homepage,
+laid out per the reference: eyebrow with a status dot, oversized display
+heading, large type-scale field labels with amber required-markers, a
+two-column Phone / Email row, and a full-width submit.
+
+**One deliberate exception to the no-boundaries pass.** Form fields are soft
+fills (`rgba(255,255,255,0.038)`, 10px radius) rather than nothing at all. An
+input with no edge whatsoever gives the user no target to aim at, and a form is
+the one place where affordance beats restraint. There are still no *borders* in
+it. If you disagree, the fill is one declaration.
+
+The submit button uses `--text` rather than the reference's gold. Introducing a
+second accent for one button would undo the palette discipline from pass 1.
+
+Dead `.contact-*` rules were removed from the stylesheet, and the router no
+longer carries a `contact` view.
+
+### Verified
+
+All four pages parse, and **every file link and every fragment anchor resolves**
+— checked programmatically, including `../index.html#contact` from the product
+pages against the actual set of ids on the homepage. Word splitting preserves
+paragraph text exactly. The router still swaps product page → home with a
+single prefetched fetch and no hard navigation.
+
+---
+
 ## Known issues NOT addressed
 
 - **The router pushes no history.** No `pushState`, no `popstate` listener. After
   navigating home → contact in-page, the browser Back button leaves the site.
   On an investor-facing site that is a poor first impression. Fixing it means
   either adding history management or dropping the in-place routing.
-- **The contact form posts to `mailto:` with `enctype="text/plain"`.** Chrome and
-  most modern browsers handle this badly or not at all; where it does work it
-  opens the user's mail client with a raw text body. It is not a working contact
-  form. Formspree, Basin, or a Cloudflare Worker would each fix it in under an
-  hour.
+- **The Request Access form still posts to `mailto:` with
+  `enctype="text/plain"`.** Rebuilding its layout did not fix its plumbing.
+  Chrome and most modern browsers handle this badly or not at all; where it
+  does work it opens the user's mail client with a raw text body. **An investor
+  who fills in that form is quite likely sending you nothing.** Formspree,
+  Basin, or a Cloudflare Worker would each fix it in under an hour. This is the
+  highest-value hour of work left in the repository.
+- **The form promises a privacy policy that does not exist.** The note reads
+  "processed in line with our privacy policy" with no link, because there is no
+  page to link to. For a UK company collecting names, emails, and phone numbers,
+  that page is a legal requirement, not a nicety. Write it, then link it.
+- **Deleting `contact.html` breaks any existing link to that URL.** If the
+  address has been shared anywhere, add a stub that redirects to
+  `index.html#contact`.
 - **No visual verification was performed on this build.** There is no browser
   in the environment it was produced in — an attempt to install Chromium
   failed on missing Ubuntu packages. The JS was executed in jsdom against a
