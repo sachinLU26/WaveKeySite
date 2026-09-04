@@ -1,16 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WaveKey | Presence-Led Session Security</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WaveKey | Ultrasonic Presence Authentication</title>
     <meta
       name="description"
-      content="WaveKey adds presence-led session assurance after sign-in with minimal user friction."
+      content="WaveKey uses an inaudible signal from the user's phone to protect the sign-in, the active session and every sensitive action."
     />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230c1019'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='%23f7f8fb' font-family='Arial, sans-serif'%3E%E2%88%9E%3C/text%3E%3C/svg%3E"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2306070b'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='%23f2f3f6' font-family='Inter,sans-serif'>∞</text></svg>"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,12 +29,13 @@
         <span>WaveKey</span>
       </a>
       <nav>
-        <a href="#products">Products</a>
-        <a href="#difference">Why WaveKey</a>
-        <a href="contact.html">Contact</a>
+        <a href="#how">How it works</a>
+        <a href="#problem">The problem</a>
+        <!-- <a href="#different">Why it's different</a> -->
+        <a href="#solution">Solution</a>
       </nav>
       <div class="header-actions">
-        <a class="button button-ghost" href="contact.html">Book a demo</a>
+        <a class="button button-ghost" href="#contact">Request Access</a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
           <span></span><span></span><span></span>
         </button>
@@ -43,88 +44,283 @@
 
     <main id="top">
       <section class="hero section">
+        <div class="hero-art" aria-hidden="true">
+          <picture>
+            <source srcset="assets/hero-field_1.webp" type="image/webp" />
+            <img src="assets/try1.jpg" alt="" width="680" height="1208" loading="eager" decoding="async" />
+          </picture>
+        </div>
         <div class="hero-inner">
-          <p class="kicker">Presence Security Layer</p>
           <div class="presence-badge">
             <span class="presence-dot" aria-hidden="true"></span>
-            Session actively verified
+            Presence assured security
           </div>
-          <h1>Secure the session, not just the sign-in.</h1>
+          <h1>One factor. Three checkpoints. Sign-in, session and every sensitive action.</h1>
           <p class="lead">
-            MFA proves identity once. WaveKey adds continuous authorized presence during the active session so a
-            stolen token is less useful to an attacker.
+            A stolen session token is worthless without the person it belongs to. WaveKey ties the live session
+            to a signal only your phone emits, and only your laptop can hear.
           </p>
           <div class="hero-actions">
-            <a class="button" href="#products">View Products</a>
-            <a class="button button-ghost" href="#difference">How it works</a>
+            <a class="button" href="#contact">Request Access</a>
+            <a class="button button-ghost" href="#how">How it works</a>
           </div>
-          <p class="micro-note">One deliberate user action to start, then seamless background assurance.</p>
+          <p class="hero-meta">Ultrasonic MFA · Passive, on-demand · Works offline</p>
         </div>
       </section>
 
-      <section id="products" class="section">
+      <section id="trusted" class="section trusted">
+        <p class="kicker">Working with</p>
+        <div class="marquee">
+          <div class="marquee-track">
+            <div class="marquee-set" aria-label="Partner and programme organisations">
+              <span class="logo-item"><img src="assets/logo-sprintworks.png" alt="Sprintworks" width="395" height="80" /></span>
+              <span class="logo-item"><img src="assets/logo-barclays.png" alt="Barclays Eagle Labs" width="739" height="84" /></span>
+              <span class="logo-item"><img src="assets/logo-pa.png" alt="PA Consulting" width="475" height="421" /></span>
+              <span class="logo-item"><img src="assets/logo-onelogin.png" alt="OneLogin" width="314" height="293" /></span>
+              <span class="logo-item"><img src="assets/logo-parkerneal.png" alt="Parker Neal" width="335" height="118" /></span>
+              <span class="logo-item"><img src="assets/ukri-innovate-uk.png" alt="UKRI Innovate UK" width="484" height="160" /></span>
+            </div>
+            <div class="marquee-set" aria-hidden="true">
+              <span class="logo-item"><img src="assets/logo-sprintworks.png" alt="" width="395" height="80" /></span>
+              <span class="logo-item"><img src="assets/logo-barclays.png" alt="" width="739" height="84" /></span>
+              <span class="logo-item"><img src="assets/logo-pa.png" alt="" width="475" height="421" /></span>
+              <span class="logo-item"><img src="assets/logo-onelogin.png" alt="" width="314" height="293" /></span>
+              <span class="logo-item"><img src="assets/logo-parkerneal.png" alt="" width="335" height="118" /></span>
+              <span class="logo-item"><img src="assets/ukri-innovate-uk.png" alt="" width="484" height="160" /></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how" class="section">
         <div class="section-head">
-          <p class="kicker">Products</p>
-          <h2>Deploy where your users already work.</h2>
+          <p class="kicker">How it works</p>
+          <h2>Three checkpoints, one signal, no prompts.</h2>
         </div>
-        <div class="product-grid">
-          <article class="card">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 9.5h18"></path><circle cx="6.4" cy="7.2" r="0.55" fill="currentColor" stroke="none"></circle></svg>
-            </span>
-            <h3>BYO App</h3>
-            <p>Launch a branded login and session-assurance experience in your own customer app.</p>
-            <a href="products/byo-app.html">Learn more <span aria-hidden="true">→</span></a>
+        <div class="stages" data-progress>
+          <article class="stage">
+            <p class="stage-head">At login</p>
+            <p class="stage-body">One tap signs you in to every enabled service. No codes, no push approvals.</p>
+            <p class="stage-label">What it stops</p>
+            <ul class="stops">
+              <li>Phishing</li>
+              <li>Credential theft</li>
+              <li>MFA relay and fatigue</li>
+            </ul>
           </article>
-          <article class="card">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path><path d="M13.5 5l-3 14"></path></svg>
-            </span>
-            <h3>WaveKey SDK</h3>
-            <p>Embed presence checks in mobile and web journeys with a low-friction developer toolkit.</p>
-            <a href="products/sdk.html">Learn more <span aria-hidden="true">→</span></a>
+          <article class="stage">
+            <p class="stage-head">During the session</p>
+            <p class="stage-body">The signal stops when you walk away. So does the session.</p>
+            <p class="stage-label">What it stops</p>
+            <ul class="stops">
+              <li>Session hijacking</li>
+              <li>Stolen cookies and tokens</li>
+              <li>Remote access and walk-away takeover</li>
+            </ul>
           </article>
-          <article class="card">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M9 4.5h3v1.7a1.8 1.8 0 003.6 0V4.5h3v3h-1.7a1.8 1.8 0 000 3.6h1.7v3h-3v-1.7a1.8 1.8 0 00-3.6 0v1.7h-3v-3H7.3a1.8 1.8 0 010-3.6H9v-3z"></path></svg>
-            </span>
-            <h3>Chrome Plug-in</h3>
-            <p>Add session continuity controls to browser-based workforce workflows.</p>
-            <a href="products/chrome-plugin.html">Learn more <span aria-hidden="true">→</span></a>
+          <article class="stage">
+            <p class="stage-head">At sensitive actions</p>
+            <p class="stage-body">Payments, exports, config changes. Re-verified silently, with no prompt.</p>
+            <p class="stage-label">What it stops</p>
+            <ul class="stops">
+              <li>Lateral movement, once a system is breached</li>
+              <li>Privileged action misuse</li>
+              <li>Remote access and walk-away takeover</li>
+            </ul>
           </article>
         </div>
       </section>
 
-      <section id="difference" class="section flow-panel">
-        <div>
-          <p class="kicker">Why it matters</p>
-          <h2>From sign-in certainty to session certainty.</h2>
-          <p>
-            NIST emphasizes explicit authentication intent and allows long session windows. WaveKey pairs one
-            explicit start action with continuous presence verification through the session window to reduce
-            exposure without repeated prompts.
-          </p>
+      <section id="problem" class="section">
+        <div class="problem-art" aria-hidden="true">
+          <img src="assets/problem.webp" alt="" width="820" height="1457" loading="lazy" decoding="async" />
         </div>
-        <ol>
-          <li>
-            <span class="step-index" aria-hidden="true">01</span>
-            <span class="step-body"><strong>Deliberate start</strong><span>User starts the session with one deliberate action</span></span>
-          </li>
-          <li>
-            <span class="step-index" aria-hidden="true">02</span>
-            <span class="step-body"><strong>Continuous presence</strong><span>Endpoint verifies ongoing authorized presence signals</span></span>
-          </li>
-          <li>
-            <span class="step-index" aria-hidden="true">03</span>
-            <span class="step-body"><strong>Automatic lockout</strong><span>Session is terminated the moment presence is lost</span></span>
-          </li>
+        <div class="problem-top">
+          <div class="section-head">
+            <p class="kicker">The problem</p>
+            <h2>Nothing was hacked. Someone just resumed your session.</h2>
+          </div>
+
+          <div class="story">
+            <p data-read>A sign-in only proves who was at the keyboard for one moment.</p>
+            <p data-read>After that, the session is just a token that can be copied and reused.</p>
+            <p data-read>Attackers steal those tokens rather than attempting a login, so your MFA is never challenged, because it is never reached.</p>
+            <p data-read>And the stricter you make the login, the more people find ways around it. </p>
+            <p data-read>Friction is why controls get bypassed from the inside too.</p>
+            <p data-read>WaveKey exists to close that session gap.</p>
+          </div>
+        </div>
+
+        <div class="figures">
+          <div class="figure">
+            <p class="figure-label">Login attempts required</p>
+            <p class="figure-value">0</p>
+            <p class="figure-note">The attacker never touches your MFA. There is nothing for it to challenge.</p>
+            <p class="figure-source">SpyCloud · 2026</p>
+          </div>
+          <div class="figure">
+            <p class="figure-label">Stolen session tokens</p>
+            <p class="figure-value">8.6bn</p>
+            <p class="figure-note">Last year, 8.6bn session tokens were stolen, many from devices already running AV.</p>
+            <p class="figure-source">SpyCloud · March 2026</p>
+          </div>
+          <div class="figure">
+            <p class="figure-label">No malware needed</p>
+            <p class="figure-value">82%</p>
+            <p class="figure-note">In most cases, attackers simply sign in or reuse a trusted session — no malware at all.</p>
+            <p class="figure-source">CrowdStrike · 2026</p>
+          </div>
+        </div>
+
+        <div class="section-head section-head-sub">
+          <p class="kicker">The gap</p>
+          <h3 class="sub-title">No MFA exists that continuously protects sessions as effortlessly as it protects sign-ins.</h3>
+        </div>
+      </section>
+
+      <section id="solution" class="section">
+        <div class="section-head">
+          <p class="kicker">The solution</p>
+          <h2>WaveKey protects both the login and the session with continuous, presence-based MFA.</h2>
+        </div>
+
+        <ol class="steps">
+          <li><span class="step-num" aria-hidden="true">01</span><span>Your phone passively emits a WaveKey signal.</span></li>
+          <li><span class="step-num" aria-hidden="true">02</span><span>Your laptop hears it and authenticates you.</span></li>
+          <li><span class="step-num" aria-hidden="true">03</span><span>Sign-in, active session and sensitive actions are all protected.</span></li>
         </ol>
+
+        <!-- <p class="patent-note">2 patents granted or pending · more filing underway</p> -->
       </section>
 
-      <section class="section cta-panel reveal">
-        <h2>Security that feels native.</h2>
-        <p>Designed to stay clear, fast, and nearly invisible for desktop, iPad, and mobile use.</p>
-        <a class="button" href="contact.html">Talk to WaveKey</a>
+      <!-- <section id="different" class="section">
+        <div class="section-head">
+          <p class="kicker">Why it's different</p>
+          <h2>Every other control covers the login or the session. Never both.</h2>
+        </div>
+
+        <dl class="compare">
+          <div class="compare-row">
+            <dt>Traditional MFA</dt>
+            <dd>A code every login. Beaten by phishing and relay.</dd>
+          </div>
+          <div class="compare-row">
+            <dt>Passkeys and FIDO keys</dt>
+            <dd>Strong at the login. The session is still stealable afterwards.</dd>
+          </div>
+          <div class="compare-row">
+            <dt>Facial recognition</dt>
+            <dd>Checks at the login. A camera every time, and deepfakes are catching up.</dd>
+          </div>
+          <div class="compare-row">
+            <dt>Google DBSC</dt>
+            <dd>Silent, but it is not MFA, and it relies on the malware not already being on the device.</dd>
+          </div>
+          <div class="compare-row is-us">
+            <dt>WaveKey</dt>
+            <dd>One tap per session, then continuous presence — on both sides of the login.</dd>
+          </div>
+        </dl>
+      </section> -->
+
+      <section id="use-cases" class="section">
+        <div class="section-head">
+          <p class="kicker">Where it fits</p>
+          <h2>Built for the places a login check cannot reach.</h2>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar">
+            <h3>Enterprise MFA</h3>
+            <p>
+              Sits in front of the identity provider you already run. Stronger than a code, lighter than a
+              prompt, and it keeps working after the login completes.
+            </p>
+          </div>
+          <div class="pillar">
+            <h3>Developer and privileged access</h3>
+            <p>
+              Production consoles, deploy pipelines and admin panels re-verify silently at the moment of action,
+              not once at the start of the day.
+            </p>
+          </div>
+          <div class="pillar">
+            <h3>Local network, OT and air-gapped</h3>
+            <p>
+              The signal travels between two devices in a room, not across a network. WaveKey works on isolated
+              sites where passkeys, push MFA and cloud session controls have nothing to talk to.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- <section id="backed" class="section">
+        <div class="section-head">
+          <p class="kicker">Backing and validation</p>
+          <h2>Assessed by government, tested by independents.</h2>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar">
+            <h3>Funded by UK Government</h3>
+            <p>
+              A £290k Innovate UK Contract for Innovation to take WaveKey from proven prototype to
+              deployment-ready, assessed for critical national infrastructure across cloud, local network and
+              air-gapped environments.
+            </p>
+          </div>
+          <div class="pillar">
+            <h3>Independent penetration test</h3>
+            <p>
+              A CREST-accredited test against the live product in October 2026. Evidence that session hijacking
+              is stopped, rather than a claim that it is.
+            </p>
+          </div>
+          <div class="pillar">
+            <h3>Advised by operators</h3>
+            <p>
+              Technical advisors including a Darktrace SVP and an NCSC cyber advisor, alongside chartered
+              security professionals on the board.
+            </p>
+          </div>
+        </div>
+      </section> -->
+
+      <section id="contact" class="section request">
+        <p class="kicker"><span class="kicker-dot" aria-hidden="true"></span>Request access to WaveKey</p>
+        <h2 class="request-title">Request Access</h2>
+
+        <form class="request-form" action="mailto:contact@everlink.co" method="post" enctype="text/plain">
+          <label class="field">
+            <span class="field-label">Full Name<span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="name" placeholder="Jane Okafor" autocomplete="name" required />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field-label">Phone</span>
+              <input type="tel" name="phone" placeholder="+44 20 1234 5678" autocomplete="tel" />
+            </label>
+            <label class="field">
+              <span class="field-label">Email Address<span class="req" aria-hidden="true">*</span></span>
+              <input type="email" name="email" placeholder="jane@company.com" autocomplete="email" required />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field-label">Company Name<span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="company" placeholder="Company" autocomplete="organization" required />
+          </label>
+
+          <label class="field">
+            <span class="field-label">Message</span>
+            <textarea name="message" rows="6" placeholder="Which session surfaces are you trying to cover first?"></textarea>
+          </label>
+
+          <p class="form-note">Information submitted is processed in line with our privacy policy.</p>
+
+          <button class="button button-wide" type="submit">Submit</button>
+        </form>
       </section>
     </main>
 
@@ -132,8 +328,8 @@
       <p>WaveKey</p>
       <p>Presence-led access assurance.</p>
       <div>
-        <a href="contact.html">Contact page</a>
-        <a href="mailto:hello@wavekey.app">hello@wavekey.app</a>
+        <a href="#contact">Contact</a>
+        <a href="mailto:contact@everlink.co">contact@everlink.co</a>
       </div>
     </footer>
 

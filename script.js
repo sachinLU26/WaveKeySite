@@ -60,7 +60,8 @@ window.addEventListener('resize', onScroll, { passive: true });
        padding-bottom / negative-margin pair in the CSS gives them room.
    ------------------------------------------------------------------------- */
 
-const SPLIT_SELECTOR = 'h1, h2, .lead';
+const SPLIT_SELECTOR = 'h1, h2, .lead:not([data-read])';
+const READ_SELECTOR = '[data-read]';
 const splitCache = new WeakMap();
 
 function collectSplitTargets(scope) {
@@ -132,6 +133,44 @@ function unsplit(el) {
   el.classList.remove('is-split', 'split-in');
 }
 
+/* --- Reading illumination ------------------------------------------------
+   Story copy is split into words, each carrying its index. A single --head
+   custom property on the paragraph then drives every word's opacity through
+   one calc(), so scrolling advances a reading position across the text
+   without JavaScript touching a single word node per frame.
+   ------------------------------------------------------------------------- */
+
+function splitIntoWords(el) {
+  if (el.dataset.wordsDone === '1') return;
+  const words = el.textContent.trim().split(/\s+/);
+  if (!words.length) return;
+
+  const frag = document.createDocumentFragment();
+  words.forEach((word, i) => {
+    const span = document.createElement('span');
+    span.className = 'w';
+    span.style.setProperty('--i', String(i));
+    span.textContent = word;
+    frag.appendChild(span);
+    if (i < words.length - 1) frag.appendChild(document.createTextNode(' '));
+  });
+
+  el.textContent = '';
+  el.appendChild(frag);
+  el.dataset.words = String(words.length);
+  el.dataset.wordsDone = '1';
+}
+
+function applyReadSplits(scope) {
+  // Without JS the --head fallback lights every word, so under reduced motion
+  // the honest thing is simply to leave the text alone.
+  if (prefersReducedMotion) return;
+  const self = scope.matches && scope.matches(READ_SELECTOR) ? [scope] : [];
+  [...self, ...scope.querySelectorAll(READ_SELECTOR)].forEach((el) => {
+    if (el.children.length === 0) splitIntoWords(el);
+  });
+}
+
 function applySplits(scope) {
   if (prefersReducedMotion) return;
   collectSplitTargets(scope).forEach((el) => {
@@ -195,9 +234,12 @@ function setupReveals(scope = document) {
     self,
     [...scope.querySelectorAll('.section:not(.hero)')],
     [...scope.querySelectorAll('.panel')],
-    [...scope.querySelectorAll('.product-grid .card')],
     [...scope.querySelectorAll('.feature-list li')],
-    [...scope.querySelectorAll('.flow-panel li')],
+    [...scope.querySelectorAll('.stages .stage')],
+    [...scope.querySelectorAll('.figures .figure')],
+    [...scope.querySelectorAll('.pillars .pillar')],
+    [...scope.querySelectorAll('.compare .compare-row')],
+    [...scope.querySelectorAll('.steps li')],
   ];
 
   groups.forEach((group) => {
@@ -219,7 +261,7 @@ function setupReveals(scope = document) {
    and the headline's own per-line stagger nests inside that sequence.
    ------------------------------------------------------------------------- */
 
-const ENTER_ORDER = ['.kicker', '.presence-badge', '.breadcrumb', '.icon-badge', 'h1', '.lead', '.hero-actions', '.feature-list', '.product-cta', '.micro-note'];
+const ENTER_ORDER = ['.kicker', '.presence-badge', '.breadcrumb', '.icon-badge', 'h1', '.lead', '.hero-actions', '.feature-list', '.product-cta', '.hero-meta', '.micro-note'];
 
 function prepareEntrance(scope) {
   const host = scope.querySelector('.hero-inner') || scope.querySelector('.product-hero');
@@ -283,10 +325,11 @@ function setupScrollEffects(scope) {
     });
   }
 
-  // Flow panel steps light up in sequence as the section passes the focal
-  // line, so the three-step story reads as a progression rather than a list.
-  const flow = scope.querySelector('.flow-panel');
-  const steps = flow ? [...flow.querySelectorAll('li')] : [];
+  // Sequenced highlight: children of [data-progress] light one at a time as
+  // the container crosses the focal line, so a set of stages reads as a
+  // progression rather than as three parallel columns.
+  const flow = scope.querySelector('[data-progress]');
+  const steps = flow ? [...flow.children] : [];
   if (steps.length) {
     scrollSubscribers.add(() => {
       const rect = flow.getBoundingClientRect();
@@ -296,6 +339,32 @@ function setupScrollEffects(scope) {
       steps.forEach((li, i) => {
         li.classList.toggle('is-active', rect.top < window.innerHeight && rect.bottom > 0 && i === active);
       });
+    });
+  }
+
+  // Reading illumination: a head advances through each story paragraph as it
+  // crosses the reading line, lighting words as they are "read". The overshoot
+  // either side means a paragraph is fully lit before it leaves the screen and
+  // not still dim when it arrives.
+  const readEls = [...scope.querySelectorAll(READ_SELECTOR)];
+  if (readEls.length) {
+    scrollSubscribers.add(() => {
+      const vh = window.innerHeight;
+      // Progress is measured against a fixed reading band rather than the
+      // paragraph's own height. Driving it by height meant a short paragraph
+      // lit from cold to complete in ~200px of scroll, which reads as a flash
+      // rather than as reading. The band spans roughly 55% of the viewport,
+      // plus a share of the paragraph's height so long ones aren't rushed.
+      const start = vh * 0.88;
+      const end = vh * 0.32;
+      for (let i = 0; i < readEls.length; i++) {
+        const el = readEls[i];
+        const rect = el.getBoundingClientRect();
+        const span = start - end + rect.height * 0.6;
+        const p = clamp((start - rect.top) / span, -0.12, 1.15);
+        const count = Number(el.dataset.words) || 1;
+        el.style.setProperty('--head', (p * (count + 8) - 3).toFixed(2));
+      }
     });
   }
 
@@ -415,7 +484,6 @@ let currentView = detectInitialView();
 let swapToken = 0;
 
 function viewNameForPath(pathname) {
-  if (/\/contact\.html$/.test(pathname)) return 'contact';
   if (/\/byo-app\.html$/.test(pathname)) return 'byo-app';
   if (/\/sdk\.html$/.test(pathname)) return 'sdk';
   if (/\/chrome-plugin\.html$/.test(pathname)) return 'chrome-plugin';
@@ -456,22 +524,10 @@ function absolutizeLinks(scope, baseUrl) {
   });
 }
 
-function updateNavActiveState(view) {
-  document.querySelectorAll('.site-header nav a').forEach((a) => {
-    const href = a.getAttribute('href');
-    if (!href) return;
-    let resolved;
-    try {
-      resolved = new URL(href, window.location.href);
-    } catch {
-      return;
-    }
-    if (view === 'contact' && /\/contact\.html$/.test(resolved.pathname)) {
-      a.setAttribute('aria-current', 'page');
-    } else {
-      a.removeAttribute('aria-current');
-    }
-  });
+function updateNavActiveState() {
+  // Contact now lives on the homepage, so no nav item is ever a separate
+  // "current page" — the underline is driven by hover and focus alone.
+  document.querySelectorAll('.site-header nav a').forEach((a) => a.removeAttribute('aria-current'));
 }
 
 function fetchView(url) {
@@ -549,7 +605,9 @@ function prepareView(scope) {
 // fallback metrics produces wrap points that are wrong once Inter arrives.
 function activateView(scope) {
   applySplits(scope);
+  applyReadSplits(scope);
   releaseEntrance(scope);
+  onScroll();
 }
 
 async function swapToUrl(url) {
