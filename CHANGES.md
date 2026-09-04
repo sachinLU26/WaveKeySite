@@ -487,6 +487,425 @@ single prefetched fetch and no hard navigation.
 
 ---
 
+# Pass 6 — restructured to the pitch narrative
+
+The page is now six sections: **hero → working with → how it works → the
+problem and the gap → the solution → request access**. The old products grid,
+`#story` and `#difference` sections are gone; the three products now live
+inside the Software-first pillar of the solution section, and the three product
+pages are unchanged and still linked.
+
+## Hero
+
+Removed: the "Presence Security Layer" kicker and the closing "One deliberate
+user action…" line. "Session actively verified" became **"Presence assured
+security"**, green dot retained.
+
+New headline: *"An inaudible signal that protects the sign-in, the session and
+every sensitive action."* Small line beneath the buttons: *"Ultrasonic MFA ·
+Passive, on-demand authentication."* Primary button is now **Request Access**.
+
+Two alternates if that headline is not the one:
+
+- *"Above hearing. Across the whole session."* — shorter, more assertive, but
+  it drops the "sensitive actions" third of the coverage claim.
+- *"Your phone proves you are there. The sign-in, the session and every
+  sensitive action."* — clearer mechanism, less elegant.
+
+## Working with
+
+A masked, continuously scrolling marquee. Two identical sets translating -50%,
+so the seam is invisible. Pauses on hover and on focus-within. Under reduced
+motion the animation stops, the mask is dropped, and the duplicate set is
+hidden from the accessibility tree rather than being read twice.
+
+The UKRI Innovate UK logo was converted from the supplied JPEG into a
+transparent white PNG (`assets/ukri-innovate-uk.png`, 484×160, 12KB): alpha is
+derived from the ink's darkness so the white background drops out entirely.
+The knocked-out "UKRI" letters stay knocked out, which is correct.
+
+## How it works
+
+Three stages from the slide, with the scroll-linked progression previously
+attached to the old flow panel now driving them: each stage lights in turn as
+the section crosses the focal line, with a gradient rule down its left edge.
+Verified passing through all three in order.
+
+The JS hook is now generic: `[data-progress]` on any container, its children
+become the sequence.
+
+## The problem and the gap
+
+One section, four beats:
+
+1. **Reading-illuminated prose** carrying the argument, including the insider
+   angle you asked for: people stay signed in on purpose, leave a laptop
+   unlocked for a colleague, skip the step that costs ten minutes every
+   morning. *"Nobody in that story is malicious. They are busy."* Then:
+   *"Friction is the reason controls get bypassed. Remove the friction and the
+   reason goes with it."*
+2. **Three figures** — 0 / 8.6bn / 82%, with sources.
+3. **A pull line** — *"Modern MFA secured the login. Attackers moved to the
+   session."*
+4. **The gap** — $23.4bn / 20.9% / 0.
+
+Figures are set as large numerals over a hairline that fades out to the right.
+No boxes, consistent with pass 4.
+
+## The solution
+
+Three numbered steps, the patents line, and three pillars: Passive on-demand,
+Presence-enforced, Software-first. The product pages are linked from the third.
+
+## JS and CSS follow-through
+
+Reveal groups repointed to `.stage`, `.figure`, `.pillar`, `.steps li`. The
+flow counter-shear list and the reduced-motion resets were updated to match, or
+the new blocks would have sheared as hard as their containers. `ENTER_ORDER`
+gained `.hero-meta`. Field acts re-anchored to
+`['.hero', '#how', '#problem', '#solution', '#contact']`, which now maps
+one-to-one with no midpoint fudge:
+
+| Section | Act |
+|---|---|
+| hero | Presence verified |
+| how | Coverage extended (login, session, sensitive actions) |
+| problem | Token exfiltrated |
+| solution | Presence lost (the device leaves, the signal stops) |
+| contact | Session terminated |
+
+Verified firing in order across a simulated scroll. Dead `.flow-panel`,
+`.product-grid` and `.card` rules removed.
+
+### Verified
+
+All four pages parse; every file link and fragment anchor resolves, checked
+programmatically — which caught three `../index.html#products` links left
+pointing at a section that no longer exists. Zero runtime errors on the
+homepage and on a product page. 135 words split for reading illumination
+across four paragraphs, 20 reveal targets all firing, 6 figures, 3 stages,
+2 marquee sets.
+
+---
+
+# Pass 7 — type scale unification, alignment fix, hero art
+
+## The type scale
+
+Before this pass, eleven components had each picked their own `clamp()`
+independently. The audit: **nine differently-sized headings with no
+declared relationship to each other**, two real hierarchy inversions, and
+eyebrow-style labels ranging from 0.68rem to 0.82rem with letter-spacing from
+0.02em to 0.16em for what is visually the same kind of text throughout the
+page.
+
+The two inversions, found by literally listing every `font-size` in the
+file and sorting them:
+
+- **The Request Access heading was the single biggest text on the site**
+  (5.5rem max) — bigger than the homepage `h1` (4.8rem max). A repeated
+  section heading outranking the hero headline is a hierarchy error a
+  designer would catch on sight.
+- **The hero's own lead paragraph had no explicit size** and sat at the
+  browser default (1rem), while the story prose two sections later ran up to
+  1.6rem. The less important text was reading larger than the more important
+  text.
+
+Twelve tokens now live in `:root`, and every `font-size` in the stylesheet
+resolves to one of them:
+
+```
+--text-2xs   0.68rem                              source lines, fine print
+--text-xs    0.72rem                              every eyebrow / kicker / label
+--text-sm    0.9rem                                form notes, breadcrumbs
+--text-base  1rem                                  default reading size
+--text-md    clamp(0.98rem, 0.9rem + 0.4vw, 1.1rem)   buttons, list emphasis
+--text-lg    clamp(1.1rem, 1rem + 0.7vw, 1.45rem)     component headings
+--text-xl    clamp(1.3rem, 1.1rem + 1.2vw, 1.9rem)    form field labels
+--text-lead  clamp(1.05rem, 0.98rem + 0.5vw, 1.25rem) hero lead, sub-heads
+--display-sm clamp(1.6rem, 1.2rem + 2.4vw, 2.3rem)    pull quotes, sub-titles
+--display-md clamp(1.8rem, 1.2rem + 3.4vw, 2.8rem)    h2 — every section heading
+--display-lg clamp(2.2rem, 1.1rem + 6vw, 4.6rem)      h1 — the one biggest thing
+--display-stat clamp(2.6rem, 1.4rem + 5.2vw, 4rem)    figure numbers, Request Access
+```
+
+Request Access now sits on `--display-stat`, the same tier as the figure
+numbers — big, but never bigger than the hero. The hero lead is now
+`--text-lead`. `.pull` and `.sub-title` were two separately-chosen clamps that
+happened to be nearly identical by coincidence; both now reference
+`--display-sm` explicitly, so they can never drift apart again. Every
+eyebrow/label across the page — `.kicker`, `.presence-badge`,
+`.hero-meta`, `.stage-label`, `.figure-label`, `.patent-note` — is now
+`--text-xs` at a consistent `0.16em` tracking.
+
+**Change one token and it moves everywhere that tier is used.** That is the
+actual fix, not the specific numbers — the numbers are a reasonable starting
+point, not a final answer.
+
+## The alignment bug
+
+`.story` (the four paragraphs under "The problem") carried
+`margin-left: auto`, which right-aligned that block against every other
+left-aligned element on the page — the section heading above it, the figures
+below it. It produced a visible zig-zag left edge scrolling through
+`#problem`. This was a leftover from an earlier layout where that text sat
+beside the canvas's emitter graphic; it no longer applies to the current
+one-column layout and has been removed. `.story` now shares the same left
+edge as everything else on the page, at `max-width: 58ch`.
+
+## Hero art
+
+Your uploaded image is now the background art for the hero, as a masked
+accent on the right rather than stretched full-bleed. **The source file is
+360×1330 (originally under 100KB re-exported as an optimised JPEG at
+720×2660, 95KB).** That is far too low-resolution to stretch across an entire
+desktop viewport — doing so would need a ~4× upscale and look visibly soft.
+Instead it sits in a fixed-width column (`clamp(260px, 32vw, 520px)`) on the
+right of the hero, double-masked so it fades to nothing on its left edge and
+top/bottom — no visible rectangle, consistent with the no-boxes pass. Hidden
+below 900px, where there isn't room for it beside the headline without
+crowding the text.
+
+**This is explicitly the placeholder you asked for.** Swap
+`assets/hero-field.jpg` for a proper high-resolution export and nothing else
+needs to change — the CSS scales to whatever you provide. If you want it
+full-bleed across the whole hero eventually, that needs a source image at
+least 1600px wide or the softness will be visible even behind the mask.
+
+### Verified
+
+All four pages still parse; every file link and fragment anchor still
+resolves. Zero runtime errors. Reveal, entrance, act-sequence and stage-
+progression suites all still pass unchanged — this pass touched sizes,
+alignment and one new image, not structure or behaviour.
+
+### One process note, in the interest of not hiding a mistake
+
+Three of these edits were lost on the first attempt: a Python patch script
+raised an assertion error partway through and exited before its `write_text`
+call, so two "successful"-looking edits earlier in that same script were
+silently never saved to disk. A later audit — listing every remaining
+hardcoded `font-size` in the file — caught all three, and they're now
+correctly applied and verified in the final grep. Flagging this because the
+same class of mistake could hide a future edit; the audit step is now worth
+keeping as a habit, not a one-off.
+
+---
+
+# Pass 8 — real logos in the marquee
+
+The five "Working with" entries were styled text (`Sprintworks`,
+`OneLogin`, etc.). They are now your actual uploaded logos, all converted to
+white silhouettes so a red disc, a navy wordmark, and a plain wordmark read as
+one consistent monochrome voice instead of a row of clashing brand colours —
+same treatment as the UKRI mark from pass 6.
+
+## Conversion, and the mistake in the middle of it
+
+Each source was RGB with a flat background (black, navy, or white) and no
+real transparency. The approach: sample the background colour from the four
+corners, then set alpha by each pixel's colour distance from it — far from
+the background becomes opaque white, close to it becomes transparent.
+
+That's simple, and it is genuinely the correct approach here, but it took
+two wrong turns to get back to it, worth recording because the failure mode
+is instructive:
+
+1. **First attempt** used exactly this method and looked right for
+   Sprintworks and Barclays, but produced a solid white disc for PA and
+   OneLogin's icon marks with their letters/numeral rendered as legible dark
+   cutouts. I misread that as an inversion bug.
+2. **"Fixing" it** by switching to a border-flood-fill (only remove
+   background pixels actually connected to the image edge, so enclosed
+   same-coloured regions survive as opaque) fixed nothing that was broken and
+   broke what wasn't: it filled in the letter counters of "sprintworks" and
+   "BARCLAYS" — the holes in every p, a, o, e — because those counters are
+   background-coloured pixels enclosed by ink, geometrically identical to
+   PA's enclosed letters. The two cases are visually indistinguishable by
+   pixel connectivity alone; only meaning distinguishes them, and pixels
+   don't carry meaning.
+3. **Reverted to the first method for all four.** A dark cutout numeral
+   inside a white disc is a legible, standard silhouette treatment — it was
+   never actually broken. I was looking for a bug that wasn't there for two
+   of the four logos and introduced a real one trying to fix it.
+
+Each output was visually inspected before being accepted this time, not just
+generated and assumed correct.
+
+## What's in the marquee now
+
+Sprintworks, Barclays | Eagle Labs, PA Consulting, OneLogin, and UKRI Innovate
+UK — five images, same treatment, one shared height so each keeps its own
+aspect ratio (wordmarks render wide, the two icon marks render closer to
+square, which is correct and not a sizing inconsistency).
+
+`.logo-item` no longer carries any text styling — font-size, colour, and
+letter-spacing rules were dead code once every entry became an image. Removed.
+Opacity dropped slightly at rest (0.62, was 0.72/0.85 split across two now-
+merged rules) since five real logos read as more visually present than five
+words did at the same opacity.
+
+### Verified
+
+All four pages still parse, every link and anchor still resolves, zero
+runtime errors, both marquee sets (visible + duplicate for the seamless loop)
+still present.
+
+### One thing worth a look
+
+`assets/logo-onelogin.png` is the wordmark and the icon **stacked vertically
+in one image**, because that's how it was supplied. In a single-row marquee
+at a shared 2rem height, that means OneLogin's wordmark renders smaller than
+the other four wordmarks at the same visual height, since it's sharing that
+height with the icon above it. If it reads as too small once you see it
+rendered, the fix is a five-minute crop — split it into a wordmark-only PNG
+for the marquee — not a redesign.
+
+---
+
+# Pass 9 — final hero image, and the problem/solution copy trim
+
+## Hero image swap
+
+The placeholder from pass 7 (360×1330, visibly soft under any real
+enlargement) is replaced with your new upload (1584×2816). Re-exported at
+1040×1848 — full source resolution isn't needed since the image never
+renders wider than its column, and doubling the column's max width covers
+retina displays without shipping the full 1584px original.
+
+Because the resolution problem that justified keeping the image small and
+heavily masked is gone, the column widened
+(`clamp(300px, 40vw, 640px)`, was `clamp(260px, 32vw, 520px)`) and got
+brighter (opacity 0.78, was 0.6). The fade masks stay — a hard-edged
+rectangle would still look wrong regardless of source quality — but the
+transition is now more gradual (edges pushed from 30%/85% to 38%/92%) since a
+sharper image can afford a longer, more visible presence before it dissolves.
+It's still a right-hand accent column, not a full-bleed background: at
+1040px wide it would still need roughly a 1.4× upscale to cover a large
+desktop viewport, and more importantly a full-bleed treatment would sit
+directly behind the headline and compete with it for contrast.
+
+## Problem section — compressed to scannable
+
+Per your supplied brief:
+
+- **H2**: "Attackers are not breaking in, they are resuming a session..."
+  → **"Attackers don't break in. They hijack trusted sessions."**
+- **Story**: four long narrative paragraphs (the photograph metaphor, the key
+  in the door, the friction argument) → four one-line statements ending on
+  "WaveKey exists to close that session gap." The reading-illumination effect
+  is untouched — it operates on whatever text is inside `[data-read]`, so it
+  needed no code change, only shorter content. Word count for that block:
+  135 → 49.
+- **Figures 1**: labels and notes tightened per your brief — "Easy to
+  acquire" → "Stolen session tokens", "No hacking required" → "No malware
+  needed", notes shortened to single sentences. Numbers (0, 8.6bn, 82%) and
+  sources unchanged.
+- **The gap**: sub-heading tightened, and all three metric labels replaced
+  ("The market" → "Identity spend at login", "The shift" → "Shift to
+  zero-trust", "The gap" → "Products covering both") with the shorter notes
+  you supplied. Numbers and sources unchanged.
+
+## Solution section — trimmed per brief
+
+- **H2** sharpened to name the mechanism: "...with continuous, presence-based
+  MFA."
+- **Three steps** shortened to your exact phrasing — "signal", "authenticates
+  you", "Sign-in" replacing "Login".
+- **Three pillar descriptions** replaced with your single-line versions.
+- **Patent note**: "2 patents · more filing" → "2 patents granted or pending
+  · more filing underway" — meaningfully different claim (see the flag from
+  pass 6 about this line: if these are still applications rather than
+  granted patents, "granted or pending" is accurate where "2 patents" alone
+  was not).
+
+### Verified
+
+All four pages still parse, every link and anchor still resolves, zero
+runtime errors. Reveal count and marquee/stage/figure counts confirmed
+unchanged in structure (still 3 stages, 6 figures, 2 marquee sets); the
+`[data-read]` paragraph count is unchanged at 4, word count dropped from 135
+to 49 as expected from the trim.
+
+---
+
+# Pass 10 — sixth marquee logo (Parker Neal)
+
+Added your Parker Neal mark to both marquee sets, positioned after OneLogin.
+Same conversion method as the other five: colour-distance alpha from the
+sampled corner background, recoloured to white. The source already sat on a
+near-black background with high-contrast ink (a purple/magenta monogram and a
+white wordmark), so this was a straightforward case — no repeat of the
+enclosed-glyph issue from pass 8, since nothing in this mark is the same
+colour as its own background. Visually inspected before accepting: the "P"
+and "R" counters and the monogram's negative space all read correctly.
+
+The marquee is now six logos: Sprintworks, Barclays | Eagle Labs, PA
+Consulting, OneLogin, Parker Neal, UKRI Innovate UK.
+
+### Verified
+
+Both marquee sets confirmed at 6 entries each (12 `.logo-item` spans total).
+All four pages still parse, every link and anchor still resolves, zero
+runtime errors.
+
+---
+
+# Pass 11 — hero integration and the centred gap heading
+
+## The image looked pasted on because it was
+
+Two separate causes, and the mask was not one of them.
+
+**Structural.** `.hero-art` was `position: absolute; inset: 0 0 0 auto` — a
+panel floating over the section, bleeding to the viewport's right edge and
+running up under the sticky header, with no relationship to the content
+column beside it. It is now a real second column of a hero grid
+(`1.15fr / 0.85fr`), aligned to the same content width as everything else on
+the page. That alone fixes most of the disjointedness.
+
+**Material.** A rectangular JPEG cannot dissolve into a page, however far its
+edges are faded — the interior is still an opaque rectangle of near-black
+sitting on near-black. Measured: the page background is luminance ~6.8 and the
+image's median luminance is 7.8, so roughly half of that picture was
+duplicating the background it sat on while still reading as a distinct panel.
+
+The asset now carries **an alpha channel baked from its own luminance**
+(`assets/hero-field.webp`, 680×1208, 304KB): dark pixels become genuinely
+transparent, bright arcs stay opaque. ~20% of the image is now fully
+transparent. A `<picture>` element serves it with the JPEG (95KB) as fallback
+for browsers without WebP-alpha (pre-Safari 14).
+
+### Two failures on the way there, both caught by looking
+
+1. First alpha build was **blotchy** in the dark regions. Cause: the
+   un-premultiply step (`rgb = original / alpha`) amplifies sensor noise
+   without bound as alpha approaches zero, and lossy alpha compression then
+   quantised that noise into visible patches. Fixed by capping the gain at
+   2.5× — those regions are nearly invisible anyway, so recovering their exact
+   colour was not worth the artefacts.
+2. First size pass produced a **2.9MB PNG / 1.2MB WebP**. The dotted texture is
+   high-entropy and compresses badly. Settled at 680px wide, 304KB, after
+   confirming visually that 740/680/640 were indistinguishable at display size.
+
+304KB is still the heaviest asset on the page. If that matters more than the
+effect, the JPEG path is one line away.
+
+## The gap heading
+
+`.section-head-sub` is now centred, with `.sub-title` capped at 30ch and
+`margin-inline: auto`. The lone "Products covering both / 0" figure beneath it
+is removed per your edit, and the `.figures-single` rule that existed only to
+serve it has been deleted rather than left as dead CSS.
+
+### Verified
+
+All four pages parse; every link, anchor and asset path resolves including the
+new `srcset`. Zero runtime errors. Reveal count 28 (was 29 — the removed
+figure), acts and stage progression still firing in order.
+
+---
+
 ## Known issues NOT addressed
 
 - **The router pushes no history.** No `pushState`, no `popstate` listener. After
@@ -504,6 +923,34 @@ single prefetched fetch and no hard navigation.
   "processed in line with our privacy policy" with no link, because there is no
   page to link to. For a UK company collecting names, emails, and phone numbers,
   that page is a legal requirement, not a nicety. Write it, then link it.
+- **The hero image is now your final higher-resolution upload**, no longer a
+  placeholder — the note above about a 720px-wide asset being too soft no
+  longer applies.
+- **Every statistic on the page is unverified by me.** The 0 / 8.6bn / 82% and
+  $23.4bn / 20.9% / 0 figures were transcribed from your slides exactly as
+  given, with your attributions. All of them post-date my knowledge and none
+  was fetched from a source in this session. The Gartner and SpyCloud numbers
+  in particular will be checked by any technical investor. Confirm each against
+  the primary document before this is public.
+- **"0 products protecting both login and session" is an assertion, not a
+  citation.** Your slide carried no source for it, so it is attributed to
+  "WaveKey analysis" rather than borrowing the Gartner credit sitting beside
+  it. A reviewer who finds one counter-example will treat the whole figures
+  block as unreliable, so either narrow the claim or be ready to defend it.
+- **"2 patents · more filing" needs to be exactly true.** If these are
+  applications rather than granted patents, "patents" is the wrong word and it
+  is the kind of thing diligence checks first.
+- **"Working with" is doing heavy lifting for five named organisations.**
+  Sprintworks, OneLogin, PA Consulting, Barclays Eagle Labs and Innovate UK
+  each imply a different relationship — accelerator, grant, pilot, customer,
+  integration target. Label it for whatever is actually true and get written
+  permission for each mark. The wrong label here is a legal problem, not a
+  design one.
+- **Four of the five logos are wordmarks, not logos.** Only UKRI had an asset
+  to work from. Replace the others with real SVGs once you have permission.
+- **The UKRI mark has been recoloured to monochrome white.** UKRI publishes
+  official reversed versions and their brand guidelines generally prohibit
+  altering the logo. Use their supplied white version instead of mine.
 - **Deleting `contact.html` breaks any existing link to that URL.** If the
   address has been shared anywhere, add a stub that redirects to
   `index.html#contact`.

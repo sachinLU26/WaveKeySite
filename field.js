@@ -224,12 +224,12 @@
       return;
     }
     // One anchor per act, in the order the page now tells the story:
-    //   hero      -> presence verified
-    //   products  -> coverage extended
-    //   story     -> token exfiltrated   (the copy is about the stolen token)
-    //   difference-> presence lost       (the copy is about losing presence)
-    //   contact   -> session terminated
-    const sel = ['.hero', '#products', '#story', '#difference', '#contact'];
+    //   hero     -> presence verified
+    //   how      -> coverage extended   (login, session, sensitive actions)
+    //   problem  -> token exfiltrated   (the copy is about the stolen token)
+    //   solution -> presence lost       (the device leaves and the signal stops)
+    //   backed   -> session terminated (final act runs through to contact)
+    const sel = ['.hero', '#how', '#problem', '#solution', '#backed'];
     const tops = sel.map((q) => {
       const el = document.querySelector(q);
       if (!el) return null;

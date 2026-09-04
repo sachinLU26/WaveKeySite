@@ -234,9 +234,12 @@ function setupReveals(scope = document) {
     self,
     [...scope.querySelectorAll('.section:not(.hero)')],
     [...scope.querySelectorAll('.panel')],
-    [...scope.querySelectorAll('.product-grid .card')],
     [...scope.querySelectorAll('.feature-list li')],
-    [...scope.querySelectorAll('.flow-panel li')],
+    [...scope.querySelectorAll('.stages .stage')],
+    [...scope.querySelectorAll('.figures .figure')],
+    [...scope.querySelectorAll('.pillars .pillar')],
+    [...scope.querySelectorAll('.compare .compare-row')],
+    [...scope.querySelectorAll('.steps li')],
   ];
 
   groups.forEach((group) => {
@@ -258,7 +261,7 @@ function setupReveals(scope = document) {
    and the headline's own per-line stagger nests inside that sequence.
    ------------------------------------------------------------------------- */
 
-const ENTER_ORDER = ['.kicker', '.presence-badge', '.breadcrumb', '.icon-badge', 'h1', '.lead', '.hero-actions', '.feature-list', '.product-cta', '.micro-note'];
+const ENTER_ORDER = ['.kicker', '.presence-badge', '.breadcrumb', '.icon-badge', 'h1', '.lead', '.hero-actions', '.feature-list', '.product-cta', '.hero-meta', '.micro-note'];
 
 function prepareEntrance(scope) {
   const host = scope.querySelector('.hero-inner') || scope.querySelector('.product-hero');
@@ -322,10 +325,11 @@ function setupScrollEffects(scope) {
     });
   }
 
-  // Flow panel steps light up in sequence as the section passes the focal
-  // line, so the three-step story reads as a progression rather than a list.
-  const flow = scope.querySelector('.flow-panel');
-  const steps = flow ? [...flow.querySelectorAll('li')] : [];
+  // Sequenced highlight: children of [data-progress] light one at a time as
+  // the container crosses the focal line, so a set of stages reads as a
+  // progression rather than as three parallel columns.
+  const flow = scope.querySelector('[data-progress]');
+  const steps = flow ? [...flow.children] : [];
   if (steps.length) {
     scrollSubscribers.add(() => {
       const rect = flow.getBoundingClientRect();
