@@ -137,14 +137,7 @@ Motion first — that is what changed most.
     Then actually submit it and watch what happens. It posts to `mailto:` and
     will most likely do nothing useful. Fix that before sending this to anyone.
 
-20. **The marquee.** Logos should scroll continuously with no visible seam
-    when the loop wraps. Hover it: the scroll should pause. Check the UKRI
-    logo reads cleanly white on the dark background and is not a grey slab.
-
-21. **Stage progression.** Scroll through "How it works". Stages 1, 2 and 3
-    should light in order with a green rule down the left edge, one at a time.
-
-22. **Console + Network.** No errors, no 404s.
+20. **Console + Network.** No errors, no 404s.
 
 ## Deploying
 
