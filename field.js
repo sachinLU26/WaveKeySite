@@ -147,22 +147,8 @@
   canvas.className = 'presence-field';
   canvas.setAttribute('aria-hidden', 'true');
 
-  const readout = document.createElement('div');
-  readout.className = 'field-readout';
-  readout.setAttribute('aria-hidden', 'true');
-  readout.innerHTML =
-    '<span class="field-readout-dot"></span>' +
-    '<span class="field-readout-text">' +
-    '<span class="field-readout-label"></span>' +
-    '<span class="field-readout-detail"></span>' +
-    '</span>';
-
-  const labelEl = readout.querySelector('.field-readout-label');
-  const detailEl = readout.querySelector('.field-readout-detail');
-
   function mount() {
     document.body.insertBefore(canvas, document.body.firstChild);
-    document.body.appendChild(readout);
   }
 
   const ctx = canvas.getContext('2d', { alpha: true });
@@ -224,12 +210,12 @@
       return;
     }
     // One anchor per act, in the order the page now tells the story:
-    //   hero     -> presence verified
-    //   how      -> coverage extended   (login, session, sensitive actions)
-    //   problem  -> token exfiltrated   (the copy is about the stolen token)
-    //   solution -> presence lost       (the device leaves and the signal stops)
-    //   backed   -> session terminated (final act runs through to contact)
-    const sel = ['.hero', '#how', '#problem', '#solution', '#backed'];
+    //   hero        -> presence verified
+    //   solution    -> coverage extended   (how the mechanism covers login/session/actions)
+    //   how         -> token exfiltrated   (the three checkpoints and what they stop)
+    //   why-matters -> presence lost       (the threat framing)
+    //   use-cases   -> session terminated  (final act runs through to contact)
+    const sel = ['.hero', '#solution', '#how', '#problem', '#contact'];
     const tops = sel.map((q) => {
       const el = document.querySelector(q);
       if (!el) return null;
@@ -447,23 +433,6 @@
     tokenPrev = amount;
   }
 
-  /* --- Readout ----------------------------------------------------------- */
-
-  let readoutKey = null;
-
-  function updateReadout(act) {
-    if (!storyEnabled) {
-      readout.classList.remove('is-on');
-      return;
-    }
-    readout.classList.add('is-on');
-    if (act.key === readoutKey) return;
-    readoutKey = act.key;
-    labelEl.textContent = act.label;
-    detailEl.textContent = act.detail;
-    readout.dataset.tone = act.tone;
-  }
-
   /* --- Render ------------------------------------------------------------ */
 
   function render(t) {
@@ -636,7 +605,6 @@
     const emitter = emitterAt(t, live.sourceDrift);
     updateRings(dt, emitter, live.emitRate);
     updateToken(dt, live.token, endpointsAt(live.endpoints));
-    updateReadout(target.act);
 
     render(t);
     rafId = requestAnimationFrame(frame);
@@ -667,14 +635,12 @@
     live.hue = HUES.presence.slice();
     rings.length = 0;
     render(0);
-    readout.classList.remove('is-on');
   }
 
   /* --- Wiring ------------------------------------------------------------- */
 
   function setView(view) {
     storyEnabled = view === 'home';
-    readoutKey = null;
     rings.length = 0;
     token.ejected = false;
     tokenPrev = 0;

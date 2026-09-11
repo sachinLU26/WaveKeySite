@@ -309,6 +309,19 @@ function setupScrollEffects(scope) {
     });
   }
 
+  // The why-it-matters orb runs a permanently looping CSS animation. Pause it whenever
+  // it is off-screen so it is not compositing every frame for a section that
+  // is not in view. Uses the same single scroll driver as everything else
+  // rather than adding another listener.
+  const orb = scope.querySelector('.problem-art');
+  if (orb) {
+    scrollSubscribers.add(() => {
+      const r = orb.getBoundingClientRect();
+      const visible = r.bottom > 0 && r.top < window.innerHeight;
+      orb.classList.toggle('is-paused', !visible);
+    });
+  }
+
   if (prefersReducedMotion) {
     onScroll();
     return;

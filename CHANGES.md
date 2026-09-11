@@ -906,6 +906,155 @@ figure), acts and stage progression still firing in order.
 
 ---
 
+# Pass 12 — story restored, reading illumination fixed
+
+## Content
+
+`#why-matters` was cut back to a bare headline + three figures last pass, on
+the reading that "headline statement + top three metrics" meant a
+simplification. That reading was wrong for this section: the six-paragraph
+story and the `problem.webp` art are restored, using the exact text supplied
+(the paragraphs shown in the reference screenshot, ending on "a single
+compromised session can cause outsized damage" — a different closing line
+than what was in the file before, used as given since it was pointed to
+directly as the thing to restore).
+
+The kicker stays "Why it matters" per the prior reorder. **The heading
+reverted to "Nothing was hacked. Someone just resumed your session."** rather
+than the merged line from last pass, since that was the heading shown in what
+was asked to be restored. If "Why it matters" was meant to keep last pass's
+headline with the story added beneath it instead, that's a one-line swap.
+
+## The reading-illumination fix
+
+Measured, not guessed. Simulating the CSS formula directly on a 21-word
+paragraph at the old gradient constant (0.32): only 2 words were ever in a
+mid-fade state at any instant — 8 or 9 were already pinned at full opacity.
+That is why it read as clauses flashing on rather than a wave moving through
+the text: the transition edge was two words wide, dragging a permanently-lit
+trail behind it.
+
+Widened the constant to 0.12. Same simulation: 6–7 words now sit at partial
+opacity simultaneously, a visible gradient spanning close to a third of a
+line rather than a hard two-word edge.
+
+Checked for the regression this kind of change usually causes: does the last
+word of a paragraph still reach full opacity before the paragraph scrolls out
+of the reading band? Simulated end-to-end (scroll position → reading-band
+progress → per-word opacity) at 6, 14, 21, and 30-word paragraph lengths —
+every one reaches exactly 1.0 by the time it exits the band, old and new
+constant alike. The existing `-0.12` to `1.15` overshoot margin in the
+band-progress calculation was already generous enough to absorb the wider
+per-word spread.
+
+Text still never depends on JavaScript to be legible — the `--head` fallback
+of `99` and the reduced-motion override are untouched.
+
+### Verified
+
+All four pages parse, every link/anchor resolves, zero runtime errors. 6
+story paragraphs / 96 words confirmed present. Field act sequence and the
+"How it works" stage progression both still fire correctly — this pass
+touched paragraph content and one CSS constant, not section order or ids.
+
+---
+
+# Pass 13 — stale selector fix, images enabled on mobile/tablet
+
+## Bug: `.problem-art`'s layout CSS had gone dead
+
+Three selectors in the "problem art" grid block still read `#problem`, from
+before the section's id was renamed to `#why-matters`. Since nothing on the
+page has `id="problem"` any more, the two-column desktop grid, the image
+column's `min-height: 30rem`, and the full-width rule for the figures below it
+were all silently inert — none of that CSS was matching anything. Renamed all
+three to `#why-matters`. This was the actual cause of the height question a
+few messages back; changing `min-height` wouldn't have done anything visible
+until this was fixed.
+
+## Images enabled below 900px
+
+Both `.hero-art` and `.problem-art` were `display: none` under 900px width —
+the reasoning at the time was that a side column has no room to exist at that
+size. Per request, both now render as a full-width band stacked above their
+section's text instead of a side column:
+
+- Fixed height (`15rem` hero, `14rem` problem) rather than the desktop
+  column's `stretch`-to-match-text sizing, since there's no second column to
+  stretch to match.
+- A vertical mask fading the bottom edge into the page, consistent with the
+  no-hard-edges treatment used everywhere else.
+- `object-position` shifted to `center 30%` so the crop favours the upper
+  part of each image rather than the desktop crop point, which was tuned for
+  a taller, narrower column.
+- No markup changes needed — both `.hero-art` and `.problem-art` are already
+  the first child of their section, so they land above the copy purely from
+  source order.
+
+### Verified
+
+`styles.css` parses (brace-balanced). The `prefers-reduced-motion` opacity
+overrides for both images were checked and are untouched — they apply
+regardless of viewport width, at every breakpoint.
+
+---
+
+# Pass 14 — reworked image placement, three broken selectors fixed
+
+## Image layout, corrected as requested
+
+**Hero image**: now below the hero text at every screen width. The desktop
+side-by-side grid is deleted entirely — `.hero` no longer switches to
+`display: grid` above 901px. `.hero-art` moved after `.hero-inner` in the
+markup, so plain document flow puts it below the headline everywhere, no
+media query needed for the ordering itself (only for sizing, via a single
+`clamp(14rem, 30vw, 26rem)` height that scales smoothly with viewport width
+rather than jumping between two hard-coded breakpoint values).
+
+**Problem image**: below the text on mobile, beside it on desktop — the
+original intent. Achieved by moving `.problem-art` after `.problem-top` in
+the markup (so plain document flow on mobile puts it below), while the
+desktop grid still explicitly places it at `grid-column: 2` regardless of
+where it sits in the source. Explicit grid placement is independent of
+document order, so the same markup order serves both layouts correctly
+without any duplicated rules or JS.
+
+## Three broken selectors, from two id renames stacked on each other
+
+The section id has been `problem` → `why-matters` → `problem` again across
+recent passes, and two other files hadn't caught up with the most recent
+reversion:
+
+- **`styles.css`**: three selectors (`#why-matters`, its grid activator, and
+  the full-width override for the figures/sub-heading) still targeted the old
+  id. This is the actual reason the desktop side-by-side layout looked
+  broken — the grid CSS was matching nothing.
+- **`field.js`**: the five-act background story's anchor list still read
+  `['.hero', '#solution', '#how', '#why-matters', '#use-cases']`. Both
+  `#why-matters` and `#use-cases` (commented out this pass) matched nothing,
+  which silently sets `anchors = null` and freezes the whole canvas animation
+  on act one — "Presence verified" — for the entire page. Not visually
+  obvious, easy to miss, and would have shipped broken. Corrected to
+  `['.hero', '#solution', '#how', '#problem', '#contact']`, matching the
+  sections that actually exist right now.
+
+### Verified, specifically for this pass
+
+- Checked the actual markup order, not just assumed it: `hero-inner` before
+  `hero-art`, `problem-top` before `problem-art` — both confirmed
+  programmatically, not eyeballed.
+- Searched the whole stylesheet for every remaining `display: grid` and
+  `grid-column` declaration and manually confirmed each one belongs to an
+  unrelated component (feature list, CTA panel, field readout, the problem
+  grid itself) — none reference `.hero` any more.
+- Full link/anchor/asset audit across all four HTML pages: clean.
+- Field act sequence re-simulated end to end with the corrected anchors: all
+  five acts fire in order again.
+- Zero runtime errors in the smoke suite; section list, reveal count, and
+  figure/stage counts all match the current markup exactly.
+
+---
+
 ## Known issues NOT addressed
 
 - **The router pushes no history.** No `pushState`, no `popstate` listener. After

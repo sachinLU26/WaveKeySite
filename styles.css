@@ -8,8 +8,8 @@
 
   /* ---- text -------------------------------------------------------- */
   --text: #f2f3f6;
-  --muted: rgba(242, 243, 246, 0.58);   /* 6.2:1 on --bg */
-  --faint: rgba(242, 243, 246, 0.52);   /* 5.1:1 on --bg — small caps text */
+  --muted: rgba(242, 243, 246, 0.8);    /* brighter body copy, still a step under --text */
+  --faint: rgba(242, 243, 246, 0.7);    /* small caps / labels — visible, not full white */
 
   /* ---- lines ------------------------------------------------------- */
   --line: rgba(255, 255, 255, 0.09);
@@ -22,26 +22,21 @@
   --max: 1120px;
 
   /* ---- type scale ----------------------------------------------------
-     Every font-size on the site now resolves to one of these. Before this
-     pass, eleven sections had each picked their own clamp() independently —
-     nine different heading sizes with no relationship to each other, and the
-     hero's own lead paragraph (1rem, the browser default) was smaller than
-     the body copy three sections later (up to 1.6rem). Change a number here
-     and it moves everywhere that tier is used.
+     Every font-size on the site now resolves to one of these. Change a
+     number here and it moves everywhere that tier is used.
   -------------------------------------------------------------------- */
-  --text-2xs: 0.68rem;                             /* source lines, fine print */
-  --text-xs: 0.72rem;                               /* every eyebrow / kicker / label */
-  --text-sm: 0.9rem;                                /* form notes, breadcrumbs */
-  --text-base: 1rem;                                /* default reading size */
-  --text-md: clamp(0.98rem, 0.9rem + 0.4vw, 1.1rem);   /* buttons, list emphasis */
-  --text-lg: clamp(1.1rem, 1rem + 0.7vw, 1.45rem);     /* component headings (h3-tier) */
-  --text-xl: clamp(1.3rem, 1.1rem + 1.2vw, 1.9rem);    /* form field labels */
-  --text-lead: clamp(1.05rem, 0.98rem + 0.5vw, 1.25rem); /* hero lead, sub-heads */
-  --display-sm: clamp(1.6rem, 1.2rem + 2.4vw, 2.3rem); /* pull quotes, sub-titles */
-  --display-md: clamp(1.8rem, 1.2rem + 3.4vw, 2.8rem); /* h2 — every section heading */
-  --display-lg: clamp(2.2rem, 1.1rem + 6vw, 4.6rem);   /* h1 — the single biggest thing on the page */
-  --display-stat: clamp(2.6rem, 1.4rem + 5.2vw, 4rem); /* the big numbers: figures, Request Access */
-
+  --text-2xs: 0.68rem;
+  --text-xs: 0.72rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-md: clamp(0.98rem, 0.9rem + 0.4vw, 1.1rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.7vw, 1.45rem);
+  --text-xl: clamp(1.3rem, 1.1rem + 1.2vw, 1.9rem);
+  --text-lead: clamp(1.05rem, 0.98rem + 0.5vw, 1.25rem);
+  --display-sm: clamp(1.6rem, 1.2rem + 2.4vw, 2.3rem);
+  --display-md: clamp(1.8rem, 1.2rem + 3.4vw, 2.8rem);
+  --display-lg: clamp(2.2rem, 1.1rem + 6vw, 4.6rem);
+  --display-stat: clamp(2.6rem, 1.4rem + 5.2vw, 4rem);
 
   /* Apple-style easing: fast start, long gentle settle */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -59,6 +54,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -91,11 +87,8 @@ p {
 
 /* ---------------------------------------------------------------------------
    Pointer-tracked ambient glow.
-
-   PRESERVED VERBATIM (mechanism, easing, duration). The registered custom
-   properties are what make --pointer-x/--pointer-y animatable, which is why
-   the glow trails the cursor instead of snapping to it. Only the gradient's
-   colour/alpha/stop have been retuned for the darker palette.
+   The registered custom properties are what make --pointer-x/--pointer-y
+   animatable, which is why the glow trails the cursor instead of snapping.
    --------------------------------------------------------------------------- */
 @property --flow-skew {
   syntax: "<angle>";
@@ -334,16 +327,6 @@ nav a:hover,
 
 /* ===========================================================================
    HERO ART
-   ---------------------------------------------------------------------------
-   The image is a real column of the hero's grid, not an absolutely-positioned
-   panel floating over it. That was the actual cause of it reading as pasted
-   on: it bled to the viewport edge, passed under the header, and had no
-   relationship to the content column beside it.
-
-   The asset itself now carries an alpha channel baked from its own
-   luminance, so its dark two thirds are genuinely transparent rather than a
-   near-black rectangle sitting on a near-black page. No amount of edge
-   masking can fix a rectangle; removing the rectangle can.
    =========================================================================== */
 
 .hero {
@@ -379,18 +362,15 @@ nav a:hover,
   .hero-art {
     grid-column: 2;
     grid-row: 1;
-    align-self: stretch;
-    min-height: 32rem;
-    /* Softens wherever object-fit crops through a bright arc, so the crop
-       never resolves into a straight edge. */
+    /* align-self: stretch; */
+    /* min-height: 32rem; */
+    height: clamp(15rem, 26vw, 21rem);
     mask-image: radial-gradient(120% 88% at 55% 45%, #000 52%, transparent 90%);
     -webkit-mask-image: radial-gradient(120% 88% at 55% 45%, #000 52%, transparent 90%);
   }
 }
 
 @media (max-width: 900px) {
-  /* Not enough width beside the headline for it to be anything but a
-     distraction, and it would stack above the copy in source order. */
   .hero-art {
     display: none;
   }
@@ -552,15 +532,8 @@ h3 {
   margin-bottom: 3.2rem;
 }
 
-/* ---------------------------------------------------------------------------
-   Product grid — hairline-divided panel rather than three floating tiles.
-   The grid's own background provides the 1px dividers, and it is translucent
-   so the ambient glow still reads through the cards.
-   --------------------------------------------------------------------------- */
 .icon-badge {
   position: relative;
-  width: 2.6rem;
-  height: 2.6rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -587,10 +560,6 @@ h3 {
   color: var(--text);
 }
 
-/* .card.reveal (two classes) is written deliberately more specific than the
-   generic .reveal rule below, so this full property list always wins instead
-   of the generic one silently dropping background-color from the transition
-   (equal-specificity rules don't merge — one wins outright). */
 .card p,
 .flow-panel p,
 .product-page p,
@@ -774,9 +743,6 @@ h3 {
   transform: translateY(0);
 }
 
-/* Section containers fade fast and never translate. If the wrapper drifted at
-   the same speed as its contents, the per-line heading reveal inside it would
-   be invisible — you'd just see one block move. */
 .section.reveal {
   transform: skewY(var(--flow-skew, 0deg)) scaleY(var(--flow-stretch, 1));
   transition: opacity 0.45s var(--ease-out);
@@ -792,7 +758,7 @@ h3 {
 }
 
 /* ---------------------------------------------------------------------------
-   Click "presence" ripple — retained, but toned down to a hint.
+   Click "presence" ripple
    --------------------------------------------------------------------------- */
 .wave-pulse {
   position: fixed;
@@ -837,9 +803,6 @@ h3 {
     transform: scale(5);
   }
 }
-
-@media (max-width: 1024px) {
-  }
 
 @media (max-width: 900px) {
   .flow-panel {
@@ -921,8 +884,7 @@ h3 {
   h1 {
     max-width: 18ch;
   }
-
-  }
+}
 
 @media (max-width: 420px) {
   .site-header,
@@ -949,12 +911,6 @@ h3 {
    MOTION LAYER
    =========================================================================== */
 
-/* --- Line-masked text ----------------------------------------------------
-   Each rendered line sits in its own clipping box and is pushed up from
-   below. The padding-bottom / negative-margin pair gives descenders (g, y, p)
-   room to exist inside an overflow:hidden box; without it they get sheared.
-   --------------------------------------------------------------------------- */
-
 .line {
   display: block;
   overflow: hidden;
@@ -975,9 +931,6 @@ h3 {
   transform: translateY(0);
 }
 
-/* .lead is body copy, so it travels a shorter distance and settles sooner
-   than a display heading — otherwise the paragraph reads as slower than the
-   headline it follows. */
 .lead .line-inner {
   transition-duration: 0.72s;
 }
@@ -988,12 +941,6 @@ h3 {
     transition: none;
   }
 }
-
-/* --- Entrance choreography ----------------------------------------------
-   Hero elements arrive in sequence rather than as one block. A split heading
-   opts out of the block transform entirely and passes its slot in the
-   sequence down to its own lines.
-   --------------------------------------------------------------------------- */
 
 .enter {
   opacity: 0;
@@ -1026,18 +973,12 @@ h3 {
   }
 }
 
-/* Pre-paint guard: without JS the content must still be visible, so the
-   hidden states only apply once the script has claimed the document. */
+/* Pre-paint guard: without JS the content must still be visible. */
 html:not(.js-ready) .enter,
 html:not(.js-ready) .reveal {
   opacity: 1;
   transform: none;
 }
-
-/* --- Hero drift ----------------------------------------------------------
-   Scroll-linked, transform and opacity only. Ties the first scroll gesture to
-   the page instead of sliding content past a static block.
-   --------------------------------------------------------------------------- */
 
 .hero-inner {
   transform: translate3d(0, var(--drift, 0px), 0);
@@ -1074,12 +1015,6 @@ html:not(.js-ready) .reveal {
 .brand-mark {
   transition: width var(--dur-sm) var(--ease-out), height var(--dur-sm) var(--ease-out);
 }
-
-/* --- Flow panel: scroll-linked step progression --------------------------
-   The three steps light in sequence as the section crosses the focal line, so
-   the sequence reads as a progression rather than a static list. The left
-   column pins while that happens.
-   --------------------------------------------------------------------------- */
 
 @media (min-width: 901px) {
   .flow-panel > div:first-of-type {
@@ -1138,10 +1073,7 @@ html:not(.js-ready) .reveal {
   }
 }
 
-/* --- Hover refinement ----------------------------------------------------
-   Distinct curves for arrival and departure. A hover that leaves on the same
-   curve it entered on is the single most common tell of default styling.
-   --------------------------------------------------------------------------- */
+/* --- Hover refinement ----------------------------------------------------- */
 
 .card {
   transition: background-color 0.5s var(--ease-out);
@@ -1170,10 +1102,6 @@ html:not(.js-ready) .reveal {
 
 /* ===========================================================================
    PRESENCE FIELD
-   ---------------------------------------------------------------------------
-   Canvas sits first in the body so it paints beneath everything that follows
-   in document order. No z-index games required — the header already carries
-   its own stacking context at z-index 30.
    =========================================================================== */
 
 .presence-field {
@@ -1189,11 +1117,6 @@ html:not(.js-ready) .reveal {
 html.field-ready .presence-field {
   opacity: 1;
 }
-
-/* --- Readout -------------------------------------------------------------
-   The field is only worth having if a viewer can read what it is claiming.
-   This is the caption that turns an abstract pattern into a demo.
-   --------------------------------------------------------------------------- */
 
 .field-readout {
   position: fixed;
@@ -1258,8 +1181,6 @@ html.field-ready .presence-field {
   box-shadow: 0 0 0 3px rgba(242, 243, 246, 0.06);
 }
 
-/* Below the mobile breakpoint the readout would collide with the CTA and the
-   footer, and the field itself is far less legible at that size. */
 @media (max-width: 780px) {
   .field-readout {
     display: none;
@@ -1290,13 +1211,7 @@ html.field-ready .presence-field {
 
 
 /* ===========================================================================
-   FLOW
-   ---------------------------------------------------------------------------
-   Scroll velocity is fed back into the page as a shear. Sections lag and
-   recover at slightly different rates, so a fast scroll ripples through the
-   document instead of translating it rigidly. Native scrolling is untouched —
-   nothing here intercepts the wheel, so find-in-page, keyboard paging, and
-   trackpad momentum all behave exactly as the OS intends.
+   FLOW — scroll velocity shear
    =========================================================================== */
 
 .section {
@@ -1312,13 +1227,8 @@ html.field-ready .presence-field {
   }
 }
 
-/* Inner blocks counter-shear at 55%, so the composition moves noticeably more
-   than the type does. Cancelling it fully would leave nothing to see; leaving
-   it uncancelled would shear the copy as hard as the layout. The residual on
-   text is under 0.4deg even at maximum scroll velocity. */
 .hero-inner,
 .section-head,
-.stage,
 .figure,
 .pillar,
 .feature-list li,
@@ -1334,7 +1244,6 @@ html.field-ready .presence-field {
 @media (prefers-reduced-motion: reduce) {
   .hero-inner,
   .section-head,
-  .stage,
   .figure,
   .pillar,
   .feature-list li,
@@ -1343,8 +1252,6 @@ html.field-ready .presence-field {
   }
 }
 
-/* Reveals float further and settle slower now that nothing has an edge to
-   snap against. */
 .reveal {
   transform: translateY(34px);
   transition: opacity 1.05s var(--ease-out), transform 1.05s var(--ease-out);
@@ -1352,7 +1259,6 @@ html.field-ready .presence-field {
 }
 
 .feature-list li,
-.stage,
 .figure,
 .pillar,
 .compare-row,
@@ -1361,7 +1267,6 @@ html.field-ready .presence-field {
 }
 
 .feature-list li.visible,
-.stage.visible,
 .figure.visible,
 .pillar.visible,
 .compare-row.visible,
@@ -1371,7 +1276,6 @@ html.field-ready .presence-field {
 
 @media (prefers-reduced-motion: reduce) {
   .feature-list li,
-  .stage,
   .figure,
   .pillar,
   .compare-row,
@@ -1383,25 +1287,11 @@ html.field-ready .presence-field {
 
 /* ===========================================================================
    STORY + READING ILLUMINATION
-   ---------------------------------------------------------------------------
-   Each word carries its index as --i. The paragraph carries a --head that
-   advances with scroll. One calc() then resolves every word's opacity, so the
-   browser does the per-word work and JavaScript only writes one property per
-   paragraph per frame.
-
-   The --head fallback of 99 means that with JavaScript disabled, or before the
-   first scroll event, every word is fully lit. Text must never depend on a
-   script to be readable.
    =========================================================================== */
 
 .story {
   display: grid;
   gap: 2.2rem;
-  /* No margin-left: auto. That rule right-aligned this block against every
-     other left-aligned element on the page — the section heading above it,
-     the figures below it — producing a zig-zag left edge as you scrolled
-     through #problem. It was a leftover from an earlier layout where the
-     canvas emitter sat to the left of this text; it no longer applies. */
   max-width: 58ch;
   font-size: var(--text-lead);
   line-height: 1.6;
@@ -1433,11 +1323,6 @@ html.field-ready .presence-field {
 
 /* ===========================================================================
    REQUEST ACCESS
-   ---------------------------------------------------------------------------
-   Fields are soft fills rather than outlines. This is a deliberate exception
-   to the no-boundaries pass: an input with no edge at all gives a user no
-   target to aim at, and a form is the one place on the page where affordance
-   beats restraint. There are still no borders anywhere in it.
    =========================================================================== */
 
 .request-title {
@@ -1539,10 +1424,6 @@ html.field-ready .presence-field {
 
 /* ===========================================================================
    TRUSTED-BY MARQUEE
-   ---------------------------------------------------------------------------
-   Two identical sets side by side; the track translates exactly -50% and
-   loops, so the seam is invisible. Masked at both edges so logos dissolve
-   rather than being clipped by an edge.
    =========================================================================== */
 
 .trusted {
@@ -1555,7 +1436,7 @@ html.field-ready .presence-field {
 }
 
 .marquee {
-  overflow: hidden;
+  overflow: clip;
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
@@ -1585,10 +1466,6 @@ html.field-ready .presence-field {
   animation-play-state: paused;
 }
 
-/* All five marks are now real logos rather than styled text — three
-   converted from the supplied brand assets to white silhouettes so a red
-   disc, a navy wordmark and a plain text mark all read as one consistent,
-   monochrome "trusted by" voice rather than a row of clashing brand colours. */
 .logo-item {
   display: inline-flex;
   align-items: center;
@@ -1596,10 +1473,6 @@ html.field-ready .presence-field {
 }
 
 .logo-item img {
-  /* A shared height, not a shared width: each mark keeps its own aspect
-     ratio, which is why Sprintworks and Barclays (wide wordmarks) render
-     much wider than PA and OneLogin (near-square icon marks) at the same
-     height — that's correct, not a sizing bug. */
   height: 2rem;
   width: auto;
   display: block;
@@ -1622,8 +1495,6 @@ html.field-ready .presence-field {
     animation: none;
   }
 
-  /* The duplicate set exists only to make the loop seamless; with the loop
-     off it is just repeated content for a screen reader to trip over. */
   .marquee-set[aria-hidden="true"] {
     display: none;
   }
@@ -1636,29 +1507,29 @@ html.field-ready .presence-field {
 .stages {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: clamp(2.6rem, 5vw, 5rem);
+  gap: clamp(1.4rem, 2.6vw, 2rem);
 }
 
 .stage {
   position: relative;
-  padding-left: 1.4rem;
+  padding: clamp(1.7rem, 2.4vw, 2.2rem) clamp(1.5rem, 2vw, 1.9rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.05);
+  transition: border-color 0.5s var(--ease-out), background-color 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out), transform 0.5s var(--ease-out);
 }
 
-.stage::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.2rem;
-  bottom: 0.2rem;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--positive) 18%, var(--positive) 82%, transparent);
-  transform: scaleY(0);
-  transform-origin: top center;
-  transition: transform 0.8s var(--ease-out);
+.stage:hover {
+  border-color: var(--positive);
+  background: var(--surface-strong);
+  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.12);
+  transform: translateY(-2px);
 }
 
-.stage.is-active::before {
-  transform: scaleY(1);
+.stage:hover .icon-badge {
+  color: var(--text);
 }
 
 .stage-head {
@@ -1669,22 +1540,12 @@ html.field-ready .presence-field {
   font-size: var(--text-lg);
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: var(--muted);
-  transition: color 0.6s var(--ease-out);
-}
-
-.stage.is-active .stage-head {
   color: var(--text);
 }
 
 .stage-index {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--faint);
-  transition: color 0.6s var(--ease-out);
-}
-
-.stage.is-active .stage-index {
   color: var(--positive);
 }
 
@@ -1716,7 +1577,6 @@ html.field-ready .presence-field {
   padding-left: 1rem;
   color: var(--muted);
   font-size: var(--text-md);
-  transition: color 0.6s var(--ease-out);
 }
 
 .stops li::before {
@@ -1731,37 +1591,29 @@ html.field-ready .presence-field {
   opacity: 0.55;
 }
 
-.stage.is-active .stops li {
-  color: var(--text);
-}
-
 /* ===========================================================================
    FIGURES — the statistics
-   ---------------------------------------------------------------------------
-   Numbers carry themselves. No boxes, no fills; a hairline above each column
-   is the only separation, and it fades out at both ends.
    =========================================================================== */
 
 .figures {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: clamp(2.4rem, 4.5vw, 4.5rem);
+  gap: clamp(1.4rem, 2.6vw, 2rem);
   margin-top: clamp(3rem, 6vw, 5rem);
 }
 
 .figure {
   position: relative;
-  padding-top: 1.6rem;
+  padding: clamp(1.6rem, 2.4vw, 2rem) clamp(1.4rem, 2vw, 1.8rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  transition: border-color 0.5s var(--ease-out), background-color 0.5s var(--ease-out);
 }
 
-.figure::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--line), transparent);
+.figure:hover {
+  border-color: var(--positive);
+  background: var(--surface-strong);
 }
 
 .figure-label {
@@ -1825,6 +1677,56 @@ html.field-ready .presence-field {
   max-width: 22ch;
 }
 
+.coverage-gaps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 46rem;
+  margin: clamp(2.6rem, 5vw, 3.6rem) auto 0;
+}
+
+.coverage-gap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  letter-spacing: -0.01em;
+}
+
+.coverage-gap svg {
+  width: 1.7rem;
+  height: 1.7rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--faint);
+}
+
+.coverage-bracket {
+  max-width: 46rem;
+  margin: 0 auto;
+  color: var(--text);
+}
+
+.coverage-bracket svg {
+  display: block;
+  width: 100%;
+  height: 2.6rem;
+}
+
+.coverage-bracket p {
+  margin: 0.6rem 0 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
 /* ===========================================================================
    SOLUTION — steps and pillars
    =========================================================================== */
@@ -1835,7 +1737,7 @@ html.field-ready .presence-field {
   padding: 0;
   display: grid;
   gap: 1.4rem;
-  max-width: 46ch;
+  max-width: none;
 }
 
 .steps li {
@@ -1845,6 +1747,7 @@ html.field-ready .presence-field {
   font-size: var(--text-lg);
   letter-spacing: -0.015em;
   color: var(--text);
+  white-space: nowrap;
 }
 
 .step-num {
@@ -1852,6 +1755,12 @@ html.field-ready .presence-field {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   color: var(--faint);
+}
+
+@media (max-width: 640px) {
+  .steps li {
+    white-space: normal;
+  }
 }
 
 .patent-note {
@@ -1912,11 +1821,7 @@ html.field-ready .presence-field {
 }
 
 /* ===========================================================================
-   COMPARE — the competitive answer
-   ---------------------------------------------------------------------------
-   A definition list, not a table: at this width a five-column comparison
-   grid would be unreadable on anything narrower than a laptop, and the
-   argument is one line per alternative rather than a matrix of ticks.
+   COMPARE
    =========================================================================== */
 
 .compare {
@@ -1959,8 +1864,6 @@ html.field-ready .presence-field {
   max-width: 46ch;
 }
 
-/* The last row is the product, so it carries the accent rather than a box —
-   consistent with the no-boundaries pass. */
 .compare-row.is-us dt {
   color: var(--positive);
 }
@@ -1984,10 +1887,9 @@ html.field-ready .presence-field {
 /* ===========================================================================
    PROBLEM ART
    ---------------------------------------------------------------------------
-   Same pattern as .hero-art: a real grid column beside the top of the
-   section, not an absolutely-positioned panel. Only the section-head and the
-   story sit in the grid (`.problem-top`); the figures and "the gap" heading
-   below it are full-width, untouched, so this cannot compress or crowd them.
+   A real grid column beside the top of the section, not an absolutely
+   positioned panel. Only the section-head sits in the grid (`.problem-top`);
+   the figures and "the gap" heading below are full-width.
    =========================================================================== */
 
 #problem {
@@ -1999,11 +1901,17 @@ html.field-ready .presence-field {
   overflow: hidden;
 }
 
+/* `contain`, not `cover`. The orb is a self-contained object with its own
+   transparent margin, and it rotates (see the motion block at the end of this
+   file). Under `cover` the image is scaled up to fill the column, so the orb
+   is already cropped left and right — and rotating a cropped image sweeps
+   those cut edges through the frame as visible straight lines. `contain`
+   fits the whole object, so the rotation stays clean. */
 .problem-art img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 38%;
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 
@@ -2025,8 +1933,6 @@ html.field-ready .presence-field {
     grid-row: 1;
     align-self: stretch;
     min-height: 30rem;
-    mask-image: radial-gradient(115% 85% at 45% 50%, #000 50%, transparent 88%);
-    -webkit-mask-image: radial-gradient(115% 85% at 45% 50%, #000 50%, transparent 88%);
   }
 
   /* The grid only governs the top two elements; figures and "the gap"
@@ -2038,15 +1944,71 @@ html.field-ready .presence-field {
 }
 
 @media (max-width: 900px) {
-  /* Not enough width beside the story text for the image to read as
-     anything but a distraction — same reasoning as the hero at this size. */
   .problem-art {
     display: none;
   }
 }
 
+
+/* ===========================================================================
+   WHY-IT-MATTERS ORB — motion
+   ---------------------------------------------------------------------------
+   Two animations on two different elements, deliberately: the container
+   breathes (scale + opacity) while the image inside turns. Putting both on
+   one element would mean two rules competing for the same `transform`
+   property, where the last one declared silently wins and the other simply
+   never runs.
+
+   The turn is very slow — a full revolution takes 96s — so it reads as the
+   object being alive rather than as a spinning graphic. The orb is close to
+   radially symmetric, which is what lets a flat 2D rotation pass for the
+   form actually turning.
+   =========================================================================== */
+
+.problem-art img {
+  animation: orb-turn 96s linear infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.problem-art {
+  animation: orb-breathe 11s ease-in-out infinite alternate;
+  transform-origin: 50% 50%;
+}
+
+@keyframes orb-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orb-breathe {
+  from {
+    transform: scale(1);
+    opacity: 0.82;
+  }
+  to {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+/* Pausing while off-screen keeps a permanently-running animation from
+   burning cycles on a section nobody is looking at. script.js toggles this
+   class from the shared scroll driver. */
+.problem-art.is-paused,
+.problem-art.is-paused img {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .problem-art {
+  .problem-art,
+  .problem-art img {
+    animation: none;
+    transform: none;
     opacity: 0.85;
   }
 }
