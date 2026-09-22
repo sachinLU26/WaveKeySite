@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #030712;
+    }
+
+    /* Ambient breath on subtle background lighting */
+    @keyframes ambientBreath {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.5; }
+    }
+    .ambient-glow {
+      animation: ambientBreath 7s ease-in-out infinite;
+    }
+
+    /* Water droplet acoustic ripple physics */
+    @keyframes waterDropletRipple {
+      0% {
+        r: 35px;
+        opacity: 0.95;
+        stroke-width: 3.2px;
+      }
+      20% {
+        opacity: 0.8;
+        stroke-width: 2.6px;
+      }
+      50% {
+        opacity: 0.45;
+        stroke-width: 1.8px;
+      }
+      80% {
+        opacity: 0.18;
+        stroke-width: 1.1px;
+      }
+      100% {
+        r: 580px;
+        opacity: 0;
+        stroke-width: 0.3px;
+      }
+    }
+
+    /* Staggered ripples originating from phone center (cx=800, cy=500) */
+    .ripple-1 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 0s; transform-origin: 800px 500px; }
+    .ripple-2 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 0.9s; transform-origin: 800px 500px; }
+    .ripple-3 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 1.8s; transform-origin: 800px 500px; }
+    .ripple-4 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 2.7s; transform-origin: 800px 500px; }
+    .ripple-5 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 3.6s; transform-origin: 800px 500px; }
+    .ripple-6 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 4.5s; transform-origin: 800px 500px; }
+
+    /* Subtle slow drift on texture background */
+    @keyframes bgSlightPan {
+      0%, 100% { transform: scale(1.02) translate(0px, 0px); }
+      50% { transform: scale(1.04) translate(-10px, -6px); }
+    }
+    .bg-animated-texture {
+      animation: bgSlightPan 18s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen flex items-center justify-center bg-[#030712] overflow-hidden select-none">
+
+  <!-- Background Layer: User texture image https://lh3.googleusercontent.com/aida-public/AB6AXuBCIbpYgfbiNx1tKYJrMcityB7brZbpYpHCIsgXd60r11ej5qAK2Ae6rqoDDeBzjNtAJ3aa_J2Mtmh4Z7-6cvBMQiVPoBqb3iUKcFR_ukdXP-k-ycqSDGt1FDfS5ep4tnx87wsolEFUVQDXKR0kAijn9G7ZGX1GM3-2Xl_Iuk4AqinsYYnVod-AqnYXn6gb4JOH4Fetos7wQg8FONIIdOySZPjyJY-JTeWlUgK0F-8FGKhBIm08UQycGL4-Rab3QR7ZpQ -->
+  <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+    <img 
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrtGUlCeZcgahyqAeZC9GC-XpY4r3g1_yz_juSP2lQrBB5RkRDW0DwnszrlPbQ71kzmnDLc6VX42qQ4lNBUxlsA9joN3Gm_Kbjuu9WNV6uvyMk103Orro7wFVDg5fqsSSIgggbztq_MPrQCT7YlwmChkFElZ8o1lf2x70zR2waLMaorn3i9Y7rwlkFhi1WxevCOkznq9YNh-j8lWuKQAyrJMVVMe4vPep6QOtmswjTdtNRI3XDKQQOZANQ5pjQvP7-Kw" 
+      alt="WaveKey Acoustic Texture Background" 
+      class="w-full h-full object-cover object-center bg-animated-texture filter brightness-90 contrast-105"
+    />
+    <!-- Deep vignette & gradient overlays to blend seamlessly -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#02050b]/80 via-transparent to-[#02050b]/60"></div>
+    <div class="absolute inset-0 bg-radial from-transparent via-[#02050b]/40 to-[#02050b]/90"></div>
+  </div>
+
+  <!-- SVG Animation & Foreground Phone Container -->
+  <div class="relative z-10 w-full h-full flex items-center justify-center">
+    <svg 
+      class="w-full h-full" 
+      viewBox="0 0 1600 1000" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <defs>
+        <!-- Luminous Glow Filter for Acoustic Wave Rings -->
+        <filter id="crispAcousticGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3.5" result="blur"></feGaussianBlur>
+          <feMerge>
+            <feMergeNode in="blur"></feMergeNode>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+          </feMerge>
+        </filter>
+
+        <!-- Phone Chassis Drop Shadow -->
+        <filter id="phoneRealisticShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="28" stdDeviation="36" flood-color="#000000" flood-opacity="0.95"></feDropShadow>
+          <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.8"></feDropShadow>
+        </filter>
+
+        <!-- Subtle ambient radial light around phone emitter -->
+        <radialGradient id="centerEmitterAura" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.18"></stop>
+          <stop offset="60%" stop-color="#0284c7" stop-opacity="0.06"></stop>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+
+      <!-- Center Acoustic Aura behind phone -->
+      <circle cx="800" cy="500" r="420" fill="url(#centerEmitterAura)" class="ambient-glow"></circle>
+
+      <!-- Water Droplet Acoustic Ripples Behind Phone (Originating at cx=800, cy=500) -->
+      <g id="acousticWaterRipples">
+        <!-- Dynamic Expanding Rings -->
+        <circle class="ripple-1" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#crispAcousticGlow)"></circle>
+        <circle class="ripple-2" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#crispAcousticGlow)"></circle>
+        <circle class="ripple-3" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#crispAcousticGlow)"></circle>
+        <circle class="ripple-4" cx="800" cy="500" r="35" fill="none" stroke="#67e8f9" filter="url(#crispAcousticGlow)"></circle>
+        <circle class="ripple-5" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#crispAcousticGlow)"></circle>
+        <circle class="ripple-6" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#crispAcousticGlow)"></circle>
+
+        <!-- Static Faint Concentric Acoustic Wave Guides -->
+        <circle cx="800" cy="500" r="140" fill="none" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.2"></circle>
+        <circle cx="800" cy="500" r="230" fill="none" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="1.2"></circle>
+        <circle cx="800" cy="500" r="340" fill="none" stroke="#0284c7" stroke-opacity="0.12" stroke-width="1.0"></circle>
+        <circle cx="800" cy="500" r="460" fill="none" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="0.9"></circle>
+        <circle cx="800" cy="500" r="580" fill="none" stroke="#38bdf8" stroke-opacity="0.04" stroke-width="0.8"></circle>
+      </g>
+
+      <!-- Smartphone Mockup (Centered: Width 310, Height 640; bounds x=645..955, y=180..820. Center is cx=800, cy=500) -->
+      <!-- STRICTLY STATIC: NO MOTION, NO TEXT, NO BADGES -->
+      <g id="phoneMockup" transform="translate(645, 180)" filter="url(#phoneRealisticShadow)">
+        <!-- Outer Titanium / Silver Chassis Rim -->
+        <rect x="0" y="0" width="310" height="640" rx="52" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"></rect>
+
+        <!-- Inner Dark Chassis Bezel -->
+        <rect x="4" y="4" width="302" height="632" rx="48" fill="#0A0F1D" stroke="#1E293B" stroke-width="1.5"></rect>
+
+        <!-- Deep Void OLED Screen Glass Surface -->
+        <rect x="10" y="10" width="290" height="620" rx="44" fill="#070C16"></rect>
+
+        <!-- Physical Speaker Ear Pill Notch at Top (No clock, no icons) -->
+        <rect x="115" y="22" width="80" height="6" rx="3" fill="#1E293B"></rect>
+
+        <!-- Center Ultrasonic Emitter & Static Infinity Symbol (Center relative to phone is x=155, y=320 -> Global 800, 500) -->
+        <g transform="translate(155, 320)">
+          <!-- Static Concentric Acoustic Calibration Rings -->
+          <circle cx="0" cy="0" r="76" fill="none" stroke="#22D3EE" stroke-opacity="0.14" stroke-width="1.2"></circle>
+          <circle cx="0" cy="0" r="64" fill="none" stroke="#38BDF8" stroke-opacity="0.25" stroke-width="1.2"></circle>
+          <circle cx="0" cy="0" r="54" fill="none" stroke="#22D3EE" stroke-opacity="0.4" stroke-width="1.4"></circle>
+
+          <!-- Core Target Disc -->
+          <circle cx="0" cy="0" r="44" fill="#080F1F" stroke="#22D3EE" stroke-opacity="0.65" stroke-width="1.6"></circle>
+          <circle cx="0" cy="0" r="40" fill="#0A1428"></circle>
+
+          <!-- Static Infinity Acoustic Symbol (Faithful vector shape, NO animation, NO text) -->
+          <path 
+            d="M -17,0 C -17,-10 -6.5,-10 0,0 C 6.5,10 17,10 17,0 C 17,-10 6.5,-10 0,0 C -6.5,10 -17,10 -17,0 Z" 
+            fill="none" 
+            stroke="#FFFFFF" 
+            stroke-width="3.5" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"
+          ></path>
+        </g>
+
+        <!-- Bottom Home Indicator Bar (Minimalist white bar) -->
+        <rect x="105" y="612" width="100" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.4"></rect>
+      </g>
+    </svg>
+  </div>
+
+</body>
+</html>
