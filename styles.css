@@ -324,125 +324,153 @@ nav a:hover,
 }
 
 /* ===========================================================================
-   HERO ART
+   HERO
    =========================================================================== */
 
 .hero {
   position: relative;
 }
 
-.hero-art {
-  position: relative;
-  pointer-events: none;
-  overflow: hidden;
+/* ===========================================================================
+   WAVEKEY DEMO — ported verbatim from assets/wavekey-demo-reference.html
+   ---------------------------------------------------------------------------
+   Every rule below is copied unchanged from that file's <style> block, with
+   exactly one adjustment: the source styled its own <body> (it was a
+   standalone page); here that's retargeted to .wavekey-demo-embed, the
+   wrapper div the ported markup is mounted in, so it can't override this
+   site's actual <body>. Nothing about the animation itself — colors, timing,
+   keyframes, class names — has been touched. See that file for the original.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Scoped Preflight replacement.
+   Tailwind's base reset (Preflight) is disabled globally in index.html — left
+   on, its bare-element selectors (h1, h2, h3, button, svg, ...) tie with this
+   site's own equally-specific h1/h2/h3 rules, and whichever lands later in
+   the cascade wins, which is exactly what was flattening every heading on
+   the page to plain text. The rules below are that same reset, scoped to
+   .wavekey-demo-embed only, via :where() rather than a plain descendant
+   selector — :where() contributes zero specificity, so each rule keeps the
+   exact same (0,0,1) weight Tailwind's real Preflight uses. That matters:
+   Tailwind's own utility classes (e.g. .bg-gradient-to-r, specificity 0,1,0)
+   are designed to beat a bare `button { background-image: none }`, and they
+   only keep doing that here if this reset doesn't outrank them — a plain
+   `.wavekey-demo-embed button` selector is (0,1,1), which would have quietly
+   overridden every button's gradient, every border, every heading override
+   the demo relies on.
+   --------------------------------------------------------------------------- */
+:where(.wavekey-demo-embed),
+:where(.wavekey-demo-embed) *,
+:where(.wavekey-demo-embed) *::before,
+:where(.wavekey-demo-embed) *::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
 }
 
-/* Texture and animation stack in DOM order — the picture paints first (behind),
-   the svg second (in front) — both absolutely filling the same masked box so
-   the container's radial-mask vignette applies to them as one blended layer. */
-.hero-art-bg,
-.hero-art svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+:where(.wavekey-demo-embed) h1,
+:where(.wavekey-demo-embed) h2,
+:where(.wavekey-demo-embed) h3,
+:where(.wavekey-demo-embed) h4,
+:where(.wavekey-demo-embed) h5,
+:where(.wavekey-demo-embed) h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+:where(.wavekey-demo-embed) p,
+:where(.wavekey-demo-embed) figure {
+  margin: 0;
+}
+
+:where(.wavekey-demo-embed) button {
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  background-image: none;
+  text-transform: none;
+  appearance: button;
+}
+
+:where(.wavekey-demo-embed) svg {
   display: block;
+  vertical-align: middle;
 }
 
-.hero-art-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 58% center;
-  display: block;
-  filter: brightness(0.82) contrast(1.05);
+/* The source markup carries Tailwind's own max-w-7xl/px-4 for its
+   standalone-page layout — overridden here to the site's actual content
+   column (width: min(var(--max), calc(100% - 3rem)), no side padding) so its
+   left/right edges land exactly where every other section's do, instead of
+   sitting wider and off-center relative to the rest of the page. !important
+   is needed because these properties (unlike font-family/background-color
+   above) have competing Tailwind utility classes on the same element
+   (w-full, max-w-7xl, px-4) at equal specificity, and Tailwind's CDN build
+   injects its stylesheet after this one, so it wins ties without it. */
+.wavekey-demo-embed {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #06090f;
+  color: #e2e8f0;
+  overflow-x: hidden;
+  max-width: none !important;
+  width: min(var(--max), calc(100% - 3rem)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-/* Ambient breath on the aura behind the phone */
-@keyframes heroAmbientBreath {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.5; }
+.wavekey-demo-embed .font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.hero-anim-glow {
-  animation: heroAmbientBreath 7s ease-in-out infinite;
+/* Keyframes & transitions for dynamic states */
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.85; filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)); }
+  50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 16px rgba(0, 242, 254, 0.8)); }
 }
 
-/* Water-droplet acoustic ripple, staggered across six rings via --hero-ripple-delay */
-@keyframes heroWaterRipple {
-  0% {
-    r: 35px;
-    opacity: 0.95;
-    stroke-width: 3.2px;
-  }
-  20% {
-    opacity: 0.8;
-    stroke-width: 2.6px;
-  }
-  50% {
-    opacity: 0.45;
-    stroke-width: 1.8px;
-  }
-  80% {
-    opacity: 0.18;
-    stroke-width: 1.1px;
-  }
-  100% {
-    r: 580px;
-    opacity: 0;
-    stroke-width: 0.3px;
-  }
+@keyframes ringRadiate {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
 
-.hero-anim-ripple {
-  animation: heroWaterRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite;
-  animation-delay: var(--hero-ripple-delay, 0s);
-  transform-origin: 800px 500px;
+@keyframes progressSpin {
+  from { stroke-dashoffset: 280; }
+  to { stroke-dashoffset: 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-anim-glow,
-  .hero-anim-ripple {
-    animation: none;
-  }
+.wavekey-demo-embed .animate-continuous-pulse {
+  animation: pulseGlow 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@media (min-width: 901px) {
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    column-gap: clamp(2rem, 5vw, 5rem);
-    align-items: center;
-  }
-
-  .hero-inner {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .hero-art {
-    grid-column: 2;
-    grid-row: 1;
-    /* align-self: stretch; */
-    /* min-height: 32rem; */
-    height: clamp(15rem, 26vw, 21rem);
-    mask-image: radial-gradient(65% 62% at 50% 46%, #000 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(65% 62% at 50% 46%, #000 30%, transparent 100%);
-  }
+.wavekey-demo-embed .ring-wave-1 {
+  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite;
+}
+.wavekey-demo-embed .ring-wave-2 {
+  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite 0.8s;
+}
+.wavekey-demo-embed .ring-wave-3 {
+  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite 1.6s;
 }
 
-@media (max-width: 900px) {
-  .hero-art {
-    display: none;
-  }
+/* Custom scrollbar & glass */
+.wavekey-demo-embed .glass-panel {
+  background: rgba(15, 20, 32, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-art {
-    opacity: 0.8;
-  }
+.wavekey-demo-embed .glass-card {
+  background: rgba(22, 29, 46, 0.85);
+  border: 1px solid rgba(0, 242, 254, 0.15);
 }
-
 
 .kicker {
   font-size: var(--text-xs);
@@ -934,6 +962,10 @@ h3 {
     width: min(var(--max), calc(100% - 1.5rem));
   }
 
+  .wavekey-demo-embed {
+    width: min(var(--max), calc(100% - 1.5rem)) !important;
+  }
+
   .section {
     padding: 4.5rem 0;
   }
@@ -952,6 +984,10 @@ h3 {
   .section,
   .site-footer {
     width: min(var(--max), calc(100% - 1.1rem));
+  }
+
+  .wavekey-demo-embed {
+    width: min(var(--max), calc(100% - 1.1rem)) !important;
   }
 
   .site-header {
@@ -1769,13 +1805,17 @@ html.field-ready .presence-field {
 .solution-reveal {
   display: flex;
   justify-content: center;
-  margin-top: clamp(0.6rem, 2vw, 1.2rem);
+  margin-top: clamp(1.4rem, 3vw, 2.2rem);
 }
 
+/* Wide and full-width rather than a small centered square — this reveal is
+   the section's payoff (the "introduce the product" moment the Until now
+   arrow points at), so it should read with the same visual weight as the
+   rest of the page, not like an afterthought thumbnail. */
 .solution-reveal-frame {
   position: relative;
-  width: min(100%, 21rem);
-  aspect-ratio: 610 / 761;
+  width: 100%;
+  aspect-ratio: 2 / 1;
 }
 
 /* Ambient glow behind the phone — the same presence-green used for the
@@ -1790,21 +1830,90 @@ html.field-ready .presence-field {
   z-index: -1;
 }
 
-.solution-reveal-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-  /* Dissolves the image's hard rectangular edge into the page background —
-     the same vignette technique as .hero-art and .problem-art use. */
+/* The animated phone + acoustic-field texture, isolated in its own layer so
+   its mask/overflow never touches the ambient ::before glow above. */
+.solution-anim {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Dissolves the content's hard rectangular edge into the page background —
+     the same vignette technique .problem-art uses. */
   mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
   -webkit-mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
 }
 
+/* Texture and animation stack in DOM order — the picture paints first
+   (behind), the svg second (in front) — both filling the masked layer. */
+.solution-anim-bg,
+.solution-anim svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.solution-anim-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(0.82) contrast(1.05);
+}
+
+/* Ambient breath on the aura behind the phone */
+@keyframes solutionAmbientBreath {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+.solution-anim-glow {
+  animation: solutionAmbientBreath 7s ease-in-out infinite;
+}
+
+/* Water-droplet acoustic ripple, staggered across six rings via --ripple-delay */
+@keyframes solutionWaterRipple {
+  0% {
+    r: 35px;
+    opacity: 0.95;
+    stroke-width: 3.2px;
+  }
+  20% {
+    opacity: 0.8;
+    stroke-width: 2.6px;
+  }
+  50% {
+    opacity: 0.45;
+    stroke-width: 1.8px;
+  }
+  80% {
+    opacity: 0.18;
+    stroke-width: 1.1px;
+  }
+  100% {
+    r: 580px;
+    opacity: 0;
+    stroke-width: 0.3px;
+  }
+}
+
+.solution-anim-ripple {
+  animation: solutionWaterRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite;
+  animation-delay: var(--ripple-delay, 0s);
+  transform-origin: 800px 500px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solution-anim-glow,
+  .solution-anim-ripple {
+    animation: none;
+  }
+}
+
 @media (max-width: 640px) {
   .solution-reveal-frame {
-    width: min(100%, 15.5rem);
+    aspect-ratio: 4 / 3;
   }
 }
 

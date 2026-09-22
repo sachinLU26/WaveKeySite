@@ -18,6 +18,20 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <!-- Wavekey demo (assets/wavekey-demo-reference.html) is ported verbatim and
+         depends on Tailwind utility classes and these two fonts. Preflight (Tailwind's
+         base CSS reset) is disabled here because it's global by design — left on, it
+         overrides this site's own h1/h2/h3 rules everywhere, not just inside the demo.
+         The equivalent reset, scoped to just the demo, lives in styles.css under
+         "WAVEKEY DEMO — scoped Preflight replacement". -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = { corePlugins: { preflight: false } };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -51,78 +65,6 @@
 
     <main id="top">
       <section class="hero section">
-        <div class="hero-art" aria-hidden="true">
-          <picture class="hero-art-bg">
-            <source srcset="assets/hero-field.webp" type="image/webp" />
-            <img src="assets/hero-field.jpg" alt="" width="680" height="1208" loading="eager" decoding="async" />
-          </picture>
-          <svg class="hero-anim" viewBox="0 0 1600 1000" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="heroAcousticGlow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="3.5" result="blur"></feGaussianBlur>
-                <feMerge>
-                  <feMergeNode in="blur"></feMergeNode>
-                  <feMergeNode in="SourceGraphic"></feMergeNode>
-                </feMerge>
-              </filter>
-              <filter id="heroPhoneShadow" x="-30%" y="-30%" width="160%" height="160%">
-                <feDropShadow dx="0" dy="28" stdDeviation="36" flood-color="#000000" flood-opacity="0.95"></feDropShadow>
-                <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.8"></feDropShadow>
-              </filter>
-              <radialGradient id="heroEmitterAura" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.18"></stop>
-                <stop offset="60%" stop-color="#0284c7" stop-opacity="0.06"></stop>
-                <stop offset="100%" stop-color="#000000" stop-opacity="0"></stop>
-              </radialGradient>
-            </defs>
-
-            <!-- Ambient acoustic aura behind the phone -->
-            <circle cx="800" cy="500" r="420" fill="url(#heroEmitterAura)" class="hero-anim-glow"></circle>
-
-            <!-- Expanding acoustic ripples, staggered -->
-            <g>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 0s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#heroAcousticGlow)"></circle>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 0.9s" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#heroAcousticGlow)"></circle>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 1.8s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#heroAcousticGlow)"></circle>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 2.7s" cx="800" cy="500" r="35" fill="none" stroke="#67e8f9" filter="url(#heroAcousticGlow)"></circle>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 3.6s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#heroAcousticGlow)"></circle>
-              <circle class="hero-anim-ripple" style="--hero-ripple-delay: 4.5s" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#heroAcousticGlow)"></circle>
-
-              <!-- Static concentric guides -->
-              <circle cx="800" cy="500" r="140" fill="none" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.2"></circle>
-              <circle cx="800" cy="500" r="230" fill="none" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="1.2"></circle>
-              <circle cx="800" cy="500" r="340" fill="none" stroke="#0284c7" stroke-opacity="0.12" stroke-width="1.0"></circle>
-              <circle cx="800" cy="500" r="460" fill="none" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="0.9"></circle>
-              <circle cx="800" cy="500" r="580" fill="none" stroke="#38bdf8" stroke-opacity="0.04" stroke-width="0.8"></circle>
-            </g>
-
-            <!-- Static phone mockup, centered at 800,500 -->
-            <g transform="translate(645, 180)" filter="url(#heroPhoneShadow)">
-              <rect x="0" y="0" width="310" height="640" rx="52" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"></rect>
-              <rect x="4" y="4" width="302" height="632" rx="48" fill="#0A0F1D" stroke="#1E293B" stroke-width="1.5"></rect>
-              <rect x="10" y="10" width="290" height="620" rx="44" fill="#070C16"></rect>
-              <rect x="115" y="22" width="80" height="6" rx="3" fill="#1E293B"></rect>
-
-              <g transform="translate(155, 320)">
-                <circle cx="0" cy="0" r="76" fill="none" stroke="#22D3EE" stroke-opacity="0.14" stroke-width="1.2"></circle>
-                <circle cx="0" cy="0" r="64" fill="none" stroke="#38BDF8" stroke-opacity="0.25" stroke-width="1.2"></circle>
-                <circle cx="0" cy="0" r="54" fill="none" stroke="#22D3EE" stroke-opacity="0.4" stroke-width="1.4"></circle>
-                <circle cx="0" cy="0" r="44" fill="#080F1F" stroke="#22D3EE" stroke-opacity="0.65" stroke-width="1.6"></circle>
-                <circle cx="0" cy="0" r="40" fill="#0A1428"></circle>
-                <path
-                  d="M -17,0 C -17,-10 -6.5,-10 0,0 C 6.5,10 17,10 17,0 C 17,-10 6.5,-10 0,0 C -6.5,10 -17,10 -17,0 Z"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
-              </g>
-
-              <rect x="105" y="612" width="100" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.4"></rect>
-            </g>
-          </svg>
-        </div>
         <div class="hero-inner">
           <div class="presence-badge">
             <span class="presence-dot" aria-hidden="true"></span>
@@ -173,6 +115,366 @@
         </ol>
 
         <!-- <p class="patent-note">2 patents granted or pending · more filing underway</p> -->
+      </section>
+
+      <section id="wavekey-demo" aria-hidden="true">
+        <div class="wavekey-demo-embed flex-1 w-full max-w-7xl mx-auto px-4 py-8 flex flex-col justify-center items-center relative overflow-hidden">
+        <!-- Ambient atmospheric glow behind devices -->
+        <div class="absolute inset-0 pointer-events-none flex items-center justify-center -z-10">
+        <div class="w-[650px] h-[450px] bg-cyan-500/5 rounded-full blur-[140px] transform translate-x-32"></div>
+        <div class="w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[120px] transform -translate-x-64 transition-all duration-700" id="ambientPhoneGlow"></div>
+        </div>
+        <!-- Dual Hardware Mockups Container -->
+        <div class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 relative z-10">
+        <!-- ============================================== -->
+        <!-- DEVICE 2: TRUSTED PHONE                        -->
+        <!-- ============================================== -->
+        <div class="w-full max-w-[310px] flex flex-col items-center relative">
+        <!-- Trusted device label -->
+        <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 mb-2 px-2">
+        <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span class="text-slate-200">Trusted Device</span>
+        </div>
+        <span class="text-[11px] text-slate-500" id="phoneStatusPill">Locked</span>
+        </div>
+        <!-- ACOUSTIC WAVE PROPAGATION LAYER (Radiating outward during Step 3 & 5) -->
+        <div class="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 transition-opacity duration-500 z-0" id="phoneAcousticRings">
+        <div class="w-56 h-56 rounded-full border border-cyan-400/50 ring-wave-1"></div>
+        <div class="w-56 h-56 rounded-full border border-cyan-400/40 ring-wave-2 absolute inset-0"></div>
+        <div class="w-56 h-56 rounded-full border border-blue-400/30 ring-wave-3 absolute inset-0"></div>
+        </div>
+        <!-- Phone Chassis -->
+        <div class="w-[280px] h-[580px] rounded-[48px] bg-[#1a2130] p-3 shadow-2xl border-4 border-slate-700/70 relative z-10 shadow-cyan-950/40 flex flex-col">
+        <!-- Outer Titanium Bezel Accent -->
+        <div class="w-full h-full rounded-[38px] bg-[#070a10] border border-white/10 overflow-hidden relative flex flex-col justify-between p-4">
+        <!-- Dynamic Island -->
+        <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-40 flex items-center justify-between px-2.5">
+        <div class="w-2 h-2 rounded-full bg-slate-900 border border-slate-700"></div>
+        <div class="flex items-center gap-1">
+        <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 opacity-0 transition-opacity" id="islandPing"></div>
+        <div class="w-2 h-2 rounded-full bg-[#1c2738]"></div>
+        </div>
+        </div>
+        <!-- Phone Top Status Bar -->
+        <div class="w-full flex items-center justify-between text-[11px] font-mono font-medium text-slate-300 pt-1 z-30 select-none">
+        <span>09:41</span>
+        <div class="flex items-center gap-1.5">
+        <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path></svg>
+        <div class="w-4 h-2 rounded-sm border border-slate-400 p-0.5 flex items-center">
+        <div class="w-full h-full bg-slate-200 rounded-[1px]"></div>
+        </div>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- PHONE STATE 1 & 2: LOCKSCREEN                  -->
+        <!-- ============================================== -->
+        <div class="flex-1 flex flex-col justify-between pt-6 transition-all duration-500 z-20" id="phoneLockScreen">
+        <!-- Lockscreen Clock -->
+        <div class="text-center pt-2">
+        <span class="text-xs text-slate-400 font-medium">Tuesday, October 24</span>
+        <h2 class="text-5xl font-light tracking-tight text-white mt-0.5">09:41</h2>
+        </div>
+        <!-- NATIVE PUSH NOTIFICATION BANNER (Minimalist Step 2) -->
+        <div class="w-full opacity-0 -translate-y-6 transition-all duration-500 my-auto" id="phonePushBanner">
+        <div class="glass-card p-3 rounded-2xl border border-cyan-400/40 shadow-2xl text-left backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-1.5">
+        <div class="w-4 h-4 rounded bg-cyan-500 flex items-center justify-center text-[10px] text-black font-bold">∞</div>
+        <span class="text-[11px] font-bold text-white tracking-wide">Wavekey</span>
+        </div>
+        <span class="text-[9px] text-slate-400">now</span>
+        </div>
+        <h5 class="text-xs font-semibold text-slate-100 leading-tight">Verify Sign-in</h5>
+        <div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-white/10">
+        <button class="py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-[11px] font-medium transition-colors">Deny</button>
+        <button class="py-1 rounded-lg bg-cyan-500 text-slate-950 text-[11px] font-bold transition-all shadow-md shadow-cyan-500/30" id="phonePushApproveBtn">Approve</button>
+        </div>
+        </div>
+        </div>
+        <!-- Ambient Locked App Icon (Step 1) -->
+        <div class="flex flex-col items-center justify-center py-4 transition-opacity duration-300" id="phoneLockAppBadge">
+        <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-700/80 flex items-center justify-center text-cyan-400 shadow-lg relative">
+        <div class="w-2 h-2 rounded-full bg-emerald-400 absolute top-1 right-1"></div>
+        <span class="text-xl">∞</span>
+        </div>
+        <span class="text-[10px] text-slate-400 font-mono mt-1.5">Wavekey</span>
+        </div>
+        <!-- Lockscreen Bottom Action Flashlight/Camera -->
+        <div class="flex items-center justify-between px-3 pb-2 text-slate-400">
+        <div class="w-8 h-8 rounded-full bg-slate-900/80 border border-white/5 flex items-center justify-center text-xs">🔦</div>
+        <div class="w-8 h-8 rounded-full bg-slate-900/80 border border-white/5 flex items-center justify-center text-xs">📷</div>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- PHONE STATE 3: FULL SCREEN VERIFYING (Acoustic)-->
+        <!-- ============================================== -->
+        <div class="hidden flex-1 flex flex-col justify-between py-4 text-center z-20 transition-all duration-500" id="phoneAppVerifying">
+        <div class="flex items-center justify-between text-xs px-1">
+        <span class="font-bold text-white tracking-wide flex items-center gap-1.5">
+        <span class="text-cyan-400 text-sm">∞</span> Wavekey
+                        </span>
+        <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-950/90 text-cyan-300 border border-cyan-800">ACOUSTIC</span>
+        </div>
+        <!-- Radial Acoustic Pulsing Core Indicator -->
+        <div class="my-auto relative flex items-center justify-center">
+        <!-- SVG Progress Arc -->
+        <svg class="w-36 h-36 transform -rotate-90" viewbox="0 0 100 100">
+        <circle cx="50" cy="50" fill="none" r="42" stroke="rgba(255,255,255,0.08)" stroke-width="4"></circle>
+        <circle class="transition-all duration-500" cx="50" cy="50" fill="none" id="phoneProgressCircle" r="42" stroke="#00f2fe" stroke-dasharray="264" stroke-dashoffset="60" stroke-linecap="round" stroke-width="4"></circle>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-2xl font-bold animate-pulse">
+                            ∞
+                          </div>
+        <span class="text-[9px] font-mono text-cyan-300 mt-1 uppercase tracking-wider">ACTIVE</span>
+        </div>
+        </div>
+        <div class="space-y-1">
+        <h4 class="text-sm font-bold text-white">Verifying Presence</h4>
+        <p class="text-[10px] text-slate-400 font-mono">Proximity handshake in progress</p>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/80 border border-white/5 text-[9px] font-mono text-slate-400">
+        <span>Direct Proximity Handshake</span>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- PHONE STATE 4: CONFIRMATION SUCCESS            -->
+        <!-- ============================================== -->
+        <div class="hidden flex-1 flex flex-col justify-between py-4 text-center z-20 transition-all duration-500" id="phoneAppConfirmed">
+        <div class="flex items-center justify-between text-xs px-1">
+        <span class="font-bold text-white tracking-wide flex items-center gap-1.5">
+        <span class="text-cyan-400 text-sm">∞</span> Wavekey
+                        </span>
+        <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">VERIFIED</span>
+        </div>
+        <div class="my-auto space-y-3">
+        <div class="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mx-auto text-emerald-300 shadow-xl shadow-emerald-500/20">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+        </svg>
+        </div>
+        <div>
+        <h3 class="text-lg font-bold text-white">Verified</h3>
+        <p class="text-[11px] text-emerald-400 font-medium">Authentication confirmed</p>
+        </div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/90 border border-emerald-500/20 text-[10px] font-mono text-emerald-300 flex items-center justify-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Session unlocked</span>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- PHONE STATE 5: STEADY STATE CONTINUOUS GUARD   -->
+        <!-- ============================================== -->
+        <div class="hidden flex-1 flex flex-col justify-between py-4 text-center z-20 transition-all duration-500" id="phoneAppContinuous">
+        <div class="flex items-center justify-between text-xs px-1">
+        <span class="font-bold text-white tracking-wide flex items-center gap-1.5">
+        <span class="text-cyan-400 text-sm">∞</span> Wavekey
+                        </span>
+        <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">ACTIVE</span>
+        </div>
+        <div class="my-auto space-y-3">
+        <div class="w-16 h-16 rounded-full bg-slate-900 border border-cyan-500/40 flex items-center justify-center mx-auto text-cyan-300 shadow-lg relative">
+        <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 absolute -top-0.5 -right-0.5 animate-ping"></div>
+        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+        </svg>
+        </div>
+        <div>
+        <h4 class="text-sm font-bold text-white">Continuously Guarding</h4>
+        <p class="text-[10px] text-slate-400">Zero-prompt proximity verification active</p>
+        </div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-900/80 border border-white/5 text-[9px] font-mono text-slate-400 flex items-center justify-between">
+        <span class="flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                          Proximity Assured
+                        </span>
+        <span class="text-emerald-400">Active</span>
+        </div>
+        </div>
+        <!-- Home indicator bar -->
+        <div class="w-24 h-1 bg-slate-600 rounded-full mx-auto mt-2 z-30"></div>
+        </div>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- DEVICE 1: TARGET WORKSTATION (MacBook Pro)     -->
+        <!-- ============================================== -->
+        <div class="w-full max-w-[680px] flex flex-col items-center">
+        <!-- Target device label -->
+        <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 mb-2 px-3">
+        <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+        <span class="text-slate-200">Workstation</span>
+        </div>
+        <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300" id="laptopStatusPill">Ready</span>
+        </div>
+        <!-- MacBook Pro Chassis -->
+        <div class="w-full rounded-2xl bg-[#141923] p-2.5 pb-3.5 shadow-2xl border border-slate-700/60 shadow-cyan-950/20 relative">
+        <!-- Notch & Camera -->
+        <div class="absolute top-3.5 left-1/2 -translate-x-1/2 w-28 h-3.5 bg-black rounded-b-md flex items-center justify-center gap-2 z-30">
+        <div class="w-1.5 h-1.5 rounded-full bg-slate-800"></div>
+        <div class="w-1 h-1 rounded-full bg-emerald-500/70" id="webcamIndicator"></div>
+        </div>
+        <!-- Display Screen Area (16:10 Ratio) -->
+        <div class="w-full aspect-[16/10] bg-[#090d15] rounded-xl overflow-hidden border border-slate-800/80 relative flex flex-col justify-between">
+        <!-- Window Topbar -->
+        <div class="h-8 bg-[#0d121c] border-b border-white/5 px-3 flex items-center justify-between select-none z-20">
+        <div class="flex items-center gap-1.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+        </div>
+        <!-- URL bar -->
+        <div class="px-4 py-0.5 rounded bg-slate-900/80 border border-white/5 text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+        <svg class="w-3 h-3 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+        <span id="laptopUrlDisplay">auth.acme-corp.internal</span>
+        </div>
+        <!-- Continuous Verified Indicator in Top Right -->
+        <div class="opacity-0 transition-opacity duration-500 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono" id="laptopTopRightBadge">
+        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+        <span>Continuously verified</span>
+        </div>
+        </div>
+        <!-- DYNAMIC SCREEN CONTENT CONTAINER (Fades between states) -->
+        <div class="flex-1 relative p-6 flex items-center justify-center overflow-hidden">
+        <!-- ============================================== -->
+        <!-- STATE A: LOGIN FORM (Used in Steps 1, 2, 3)     -->
+        <!-- ============================================== -->
+        <div class="w-full max-w-sm glass-panel p-6 rounded-2xl border border-slate-700/50 shadow-2xl transition-all duration-500" id="laptopLoginForm">
+        <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center font-bold text-white text-sm shadow">
+                              A
+                            </div>
+        <div>
+        <h4 class="text-sm font-bold text-white leading-tight">Acme Corp</h4>
+        <p class="text-[10px] text-slate-400">Sign in</p>
+        </div>
+        </div>
+        </div>
+        <div class="space-y-3">
+        <div>
+        <label class="block text-[11px] font-mono text-slate-400 mb-1">Work Email</label>
+        <div class="w-full px-3 py-2 rounded-lg bg-slate-900/90 border border-slate-700 text-xs text-slate-200 font-mono flex items-center justify-between">
+        <span>alex.vance@acme-corp.com</span>
+        </div>
+        </div>
+        <!-- Dynamic Action Button / Status Box -->
+        <div class="pt-1" id="loginActionContainer">
+        <!-- Standard Sign In Button (Step 1) -->
+        <button class="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/20" id="loginStandardBtn">
+        <span>Sign in with Wavekey</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+        </svg>
+        </button>
+        <!-- Polling / Waiting for Phone (Step 2) -->
+        <div class="hidden w-full p-3 rounded-lg bg-slate-900/90 border border-cyan-500/40 text-left" id="loginPollingBox">
+        <div class="flex items-center gap-2 text-xs font-semibold text-cyan-300">
+        <svg class="w-4 h-4 animate-spin text-cyan-400" fill="none" viewbox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+        </svg>
+        <span>Waiting for confirmation...</span>
+        </div>
+        </div>
+        <!-- Step 3: Acoustic Proximity Handshake in Progress -->
+        <div class="hidden w-full p-3 rounded-lg bg-cyan-950/40 border border-cyan-500/50 text-left space-y-2" id="loginAcousticBox">
+        <div class="flex items-center justify-between text-xs">
+        <span class="text-cyan-300 font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                                  Acoustic Proximity Handshake
+                                </span>
+        <span class="text-cyan-400 font-mono font-bold" id="acousticPercentage">84%</span>
+        </div>
+        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 w-[84%] transition-all duration-300" id="acousticProgressBar"></div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+        <div class="flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+        <span>Wavekey Proximity</span>
+        </div>
+        <span class="text-slate-500" id="loginFooterChannel">Ready</span>
+        </div>
+        </div>
+        <!-- ============================================== -->
+        <!-- STATE B: AUTHENTICATED DASHBOARD (Steps 4 & 5) -->
+        <!-- ============================================== -->
+        <div class="hidden w-full h-full flex flex-col justify-between transition-all duration-500" id="laptopDashboard">
+        <!-- App header inside dashboard -->
+        <div class="flex items-center justify-between border-b border-white/5 pb-3">
+        <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-xs font-bold">
+                              AS
+                            </div>
+        <div>
+        <h4 class="text-xs font-bold text-white">Acme Security Cloud</h4>
+        <p class="text-[10px] text-slate-400">Alex Vance</p>
+        </div>
+        </div>
+        <!-- Step 5 Active Continuous Badge -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-cyan-500/40 shadow-lg" id="continuousPulseBadge">
+        <div class="w-3.5 h-3.5 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 animate-continuous-pulse">
+        <div class="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>
+        </div>
+        <div class="text-left">
+        <div class="text-[10px] font-bold text-cyan-300 leading-none">Continuously verified</div>
+        <div class="text-[8px] font-mono text-slate-400" id="lastVerifiedCounter">active</div>
+        </div>
+        </div>
+        </div>
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-3 gap-3 my-auto py-2">
+        <div class="glass-card p-3 rounded-xl border border-white/5 text-left">
+        <span class="text-[10px] font-mono text-slate-400 block mb-1">Protected Sessions</span>
+        <span class="text-base font-bold text-white">1,248</span>
+        </div>
+        <div class="glass-card p-3 rounded-xl border border-white/5 text-left">
+        <span class="text-[10px] font-mono text-slate-400 block mb-1">Continuous Presence</span>
+        <span class="text-base font-bold text-cyan-300">Online</span>
+        </div>
+        <div class="glass-card p-3 rounded-xl border border-white/5 text-left">
+        <span class="text-[10px] font-mono text-slate-400 block mb-1">Threat Risk</span>
+        <span class="text-base font-bold text-emerald-400">0.00</span>
+        </div>
+        </div>
+        <!-- Green Notification Toast (Step 4 & 5) -->
+        <div class="w-full p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 flex items-center justify-between transition-all duration-500" id="verifiedSuccessToast">
+        <div class="flex items-center gap-2.5">
+        <div class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+        </svg>
+        </div>
+        <div class="text-left">
+        <div class="text-xs font-semibold text-emerald-200">Verified via Wavekey</div>
+        <div class="text-[10px] text-emerald-400/80 font-mono">Proximity confirmed.</div>
+        </div>
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 border border-emerald-700/40">SECURE</span>
+        </div>
+        </div>
+        </div>
+        <!-- Laptop Base & Keyboard hinge lip -->
+        <div class="h-3 bg-[#0d121c] border-t border-slate-800 flex items-center justify-center">
+        <div class="w-20 h-1 bg-slate-700/80 rounded-full"></div>
+        </div>
+        </div>
+        </div>
+        <!-- MacBook Bottom Stand/Base -->
+        <div class="w-[720px] h-3 bg-gradient-to-b from-[#181f2c] to-[#0c1017] rounded-b-xl border-t border-slate-700/30 shadow-lg -mt-1"></div>
+        </div>
+        </div>
+        </div>
       </section>
       <section id="how" class="section">
         <div class="section-head">
@@ -303,15 +605,79 @@
         </div>
 
         <div class="solution-reveal">
-          <div class="solution-reveal-frame">
-            <img
-              src="assets/solution-phone.png"
-              alt="Wavekey active on a phone, with the ultrasonic presence signal shown as rings around the app icon"
-              width="610"
-              height="761"
-              loading="lazy"
-              decoding="async"
-            />
+          <div class="solution-reveal-frame" role="img" aria-label="Wavekey active on a phone, with the ultrasonic presence signal shown as rings around the app icon">
+            <div class="solution-anim">
+              <picture class="solution-anim-bg">
+                <source srcset="assets/hero-field.webp" type="image/webp" />
+                <img src="assets/hero-field.jpg" alt="" width="680" height="1208" loading="lazy" decoding="async" />
+              </picture>
+              <svg viewBox="0 0 1600 1000" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <filter id="solutionAcousticGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="3.5" result="blur"></feGaussianBlur>
+                    <feMerge>
+                      <feMergeNode in="blur"></feMergeNode>
+                      <feMergeNode in="SourceGraphic"></feMergeNode>
+                    </feMerge>
+                  </filter>
+                  <filter id="solutionPhoneShadow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="28" stdDeviation="36" flood-color="#000000" flood-opacity="0.95"></feDropShadow>
+                    <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.8"></feDropShadow>
+                  </filter>
+                  <radialGradient id="solutionEmitterAura" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.18"></stop>
+                    <stop offset="60%" stop-color="#0284c7" stop-opacity="0.06"></stop>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"></stop>
+                  </radialGradient>
+                </defs>
+
+                <!-- Ambient acoustic aura behind the phone -->
+                <circle cx="800" cy="500" r="420" fill="url(#solutionEmitterAura)" class="solution-anim-glow"></circle>
+
+                <!-- Expanding acoustic ripples, staggered -->
+                <g>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 0s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#solutionAcousticGlow)"></circle>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 0.9s" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#solutionAcousticGlow)"></circle>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 1.8s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#solutionAcousticGlow)"></circle>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 2.7s" cx="800" cy="500" r="35" fill="none" stroke="#67e8f9" filter="url(#solutionAcousticGlow)"></circle>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 3.6s" cx="800" cy="500" r="35" fill="none" stroke="#22d3ee" filter="url(#solutionAcousticGlow)"></circle>
+                  <circle class="solution-anim-ripple" style="--ripple-delay: 4.5s" cx="800" cy="500" r="35" fill="none" stroke="#38bdf8" filter="url(#solutionAcousticGlow)"></circle>
+
+                  <!-- Static concentric guides -->
+                  <circle cx="800" cy="500" r="140" fill="none" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.2"></circle>
+                  <circle cx="800" cy="500" r="230" fill="none" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="1.2"></circle>
+                  <circle cx="800" cy="500" r="340" fill="none" stroke="#0284c7" stroke-opacity="0.12" stroke-width="1.0"></circle>
+                  <circle cx="800" cy="500" r="460" fill="none" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="0.9"></circle>
+                  <circle cx="800" cy="500" r="580" fill="none" stroke="#38bdf8" stroke-opacity="0.04" stroke-width="0.8"></circle>
+                </g>
+
+                <!-- Static phone mockup, centered at 800,500 -->
+                <g transform="translate(645, 180)" filter="url(#solutionPhoneShadow)">
+                  <rect x="0" y="0" width="310" height="640" rx="52" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"></rect>
+                  <rect x="4" y="4" width="302" height="632" rx="48" fill="#0A0F1D" stroke="#1E293B" stroke-width="1.5"></rect>
+                  <rect x="10" y="10" width="290" height="620" rx="44" fill="#070C16"></rect>
+                  <rect x="115" y="22" width="80" height="6" rx="3" fill="#1E293B"></rect>
+
+                  <g transform="translate(155, 320)">
+                    <circle cx="0" cy="0" r="76" fill="none" stroke="#22D3EE" stroke-opacity="0.14" stroke-width="1.2"></circle>
+                    <circle cx="0" cy="0" r="64" fill="none" stroke="#38BDF8" stroke-opacity="0.25" stroke-width="1.2"></circle>
+                    <circle cx="0" cy="0" r="54" fill="none" stroke="#22D3EE" stroke-opacity="0.4" stroke-width="1.4"></circle>
+                    <circle cx="0" cy="0" r="44" fill="#080F1F" stroke="#22D3EE" stroke-opacity="0.65" stroke-width="1.6"></circle>
+                    <circle cx="0" cy="0" r="40" fill="#0A1428"></circle>
+                    <path
+                      d="M -17,0 C -17,-10 -6.5,-10 0,0 C 6.5,10 17,10 17,0 C 17,-10 6.5,-10 0,0 C -6.5,10 -17,10 -17,0 Z"
+                      fill="none"
+                      stroke="#FFFFFF"
+                      stroke-width="3.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </g>
+
+                  <rect x="105" y="612" width="100" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.4"></rect>
+                </g>
+              </svg>
+            </div>
           </div>
         </div>
       </section>
@@ -458,6 +824,7 @@
     </footer>
 
     <script src="field.js"></script>
+    <script src="wavekey-demo.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
