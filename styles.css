@@ -90,18 +90,6 @@ p {
    The registered custom properties are what make --pointer-x/--pointer-y
    animatable, which is why the glow trails the cursor instead of snapping.
    --------------------------------------------------------------------------- */
-@property --flow-skew {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@property --flow-stretch {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 1;
-}
-
 @property --pointer-x {
   syntax: "<percentage>";
   inherits: true;
@@ -735,7 +723,6 @@ h3 {
   transform: translateY(22px);
   transition: opacity var(--dur-lg) var(--ease-out), transform var(--dur-lg) var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
-  will-change: opacity, transform;
 }
 
 .reveal.visible {
@@ -743,8 +730,9 @@ h3 {
   transform: translateY(0);
 }
 
+/* Sections fade in place — they must not inherit .reveal's vertical lift. */
 .section.reveal {
-  transform: skewY(var(--flow-skew, 0deg)) scaleY(var(--flow-stretch, 1));
+  transform: none;
   transition: opacity 0.45s var(--ease-out);
   transition-delay: 0s;
 }
@@ -923,7 +911,6 @@ h3 {
   transform: translateY(110%);
   transition: transform 0.95s var(--ease-out);
   transition-delay: var(--line-delay, 0ms);
-  will-change: transform;
 }
 
 .split-in .line-inner,
@@ -947,7 +934,6 @@ h3 {
   transform: translateY(16px);
   transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
   transition-delay: var(--enter-delay, 0ms);
-  will-change: opacity, transform;
 }
 
 .entered .enter {
@@ -1211,46 +1197,16 @@ html.field-ready .presence-field {
 
 
 /* ===========================================================================
-   FLOW — scroll velocity shear
+   FLOW
+   ---------------------------------------------------------------------------
+   The scroll-velocity shear that used to live here rewrote a skewY/scaleY on
+   every .section on every frame that the page was moving. Each section is a
+   full-width, viewport-tall layer, so a changing scale forced all of them to
+   re-rasterize every frame — which trackpad scrolling, with its long momentum
+   tail, sustains for seconds at a time. The field canvas still answers to
+   scroll velocity through its own streaking and advection, which is where the
+   effect actually read; the page itself now stays still.
    =========================================================================== */
-
-.section {
-  transform: skewY(var(--flow-skew, 0deg)) scaleY(var(--flow-stretch, 1));
-  transform-origin: center top;
-  backface-visibility: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section,
-  .section.reveal {
-    transform: none;
-  }
-}
-
-.hero-inner,
-.section-head,
-.figure,
-.pillar,
-.feature-list li,
-.product-hero {
-  transform: skewY(calc(var(--flow-skew, 0deg) * -0.55));
-  transform-origin: center top;
-}
-
-.hero-inner {
-  transform: translate3d(0, var(--drift, 0px), 0) skewY(calc(var(--flow-skew, 0deg) * -0.55));
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-inner,
-  .section-head,
-  .figure,
-  .pillar,
-  .feature-list li,
-  .product-hero {
-    transform: none;
-  }
-}
 
 .reveal {
   transform: translateY(34px);
@@ -1263,7 +1219,7 @@ html.field-ready .presence-field {
 .pillar,
 .compare-row,
 .steps li {
-  transform: translateY(34px) skewY(calc(var(--flow-skew, 0deg) * -0.55));
+  transform: translateY(34px);
 }
 
 .feature-list li.visible,
@@ -1271,7 +1227,7 @@ html.field-ready .presence-field {
 .pillar.visible,
 .compare-row.visible,
 .steps li.visible {
-  transform: translateY(0) skewY(calc(var(--flow-skew, 0deg) * -0.55));
+  transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1678,9 +1634,9 @@ html.field-ready .presence-field {
 }
 
 .coverage-gaps {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
   gap: 1.5rem;
   max-width: 46rem;
   margin: clamp(2.6rem, 5vw, 3.6rem) auto 0;
@@ -1690,10 +1646,13 @@ html.field-ready .presence-field {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.7rem;
   color: var(--muted);
   font-size: var(--text-sm);
   letter-spacing: -0.01em;
+  text-align: center;
+  height: 100%;
 }
 
 .coverage-gap svg {
@@ -1705,6 +1664,7 @@ html.field-ready .presence-field {
   stroke-linecap: round;
   stroke-linejoin: round;
   color: var(--faint);
+  flex-shrink: 0;
 }
 
 .coverage-bracket {
@@ -1716,7 +1676,7 @@ html.field-ready .presence-field {
 .coverage-bracket svg {
   display: block;
   width: 100%;
-  height: 2.6rem;
+  height: 4.2rem;
 }
 
 .coverage-bracket p {
@@ -1725,6 +1685,54 @@ html.field-ready .presence-field {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--faint);
+}
+
+/* ---------------------------------------------------------------------------
+   Solution reveal — the payoff the "Until now" arrow points at. A small top
+   margin (the bracket's own container already carries its section-head
+   margin-bottom) keeps this reading as one continuous sequence — gaps,
+   bracket, arrow, image — rather than two separate blocks.
+   --------------------------------------------------------------------------- */
+.solution-reveal {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(0.6rem, 2vw, 1.2rem);
+}
+
+.solution-reveal-frame {
+  position: relative;
+  width: min(100%, 21rem);
+  aspect-ratio: 610 / 761;
+}
+
+/* Ambient glow behind the phone — the same presence-green used for the
+   field-readout dot and panel highlights, so the reveal reads as the product
+   switching on rather than a plain photo drop. */
+.solution-reveal-frame::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  background: radial-gradient(closest-side, rgba(126, 242, 192, 0.16), transparent 72%);
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.solution-reveal-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  /* Dissolves the image's hard rectangular edge into the page background —
+     the same vignette technique as .hero-art and .problem-art use. */
+  mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
+}
+
+@media (max-width: 640px) {
+  .solution-reveal-frame {
+    width: min(100%, 15.5rem);
+  }
 }
 
 /* ===========================================================================
@@ -1938,7 +1946,8 @@ html.field-ready .presence-field {
   /* The grid only governs the top two elements; figures and "the gap"
      resume full width immediately below. */
   #problem > .figures,
-  #problem > .section-head-sub {
+  #problem > .section-head-sub,
+  #problem > .solution-reveal {
     grid-column: 1 / -1;
   }
 }

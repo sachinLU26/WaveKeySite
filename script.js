@@ -240,6 +240,7 @@ function setupReveals(scope = document) {
     [...scope.querySelectorAll('.pillars .pillar')],
     [...scope.querySelectorAll('.compare .compare-row')],
     [...scope.querySelectorAll('.steps li')],
+    [...scope.querySelectorAll('.solution-reveal')],
   ];
 
   groups.forEach((group) => {
@@ -667,7 +668,6 @@ async function swapToUrl(url) {
   // views are too short to set it up, so it idles there instead.
   if (window.WaveKeyField) {
     window.WaveKeyField.setView(currentView === 'home' ? 'home' : 'other');
-    window.WaveKeyField.refreshTargets();
   }
 }
 

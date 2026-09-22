@@ -47,9 +47,6 @@
     streak: 0.012,      // px of streak per px/s of scroll velocity
     streakMax: 34,      // ceiling on streak length
     shear: 0.012,       // lateral smear per px/s
-    skewMax: 0.85,      // deg — page shear ceiling
-    skewPerVel: 0.00035,
-    stretchMax: 0.022,
   };
 
   /* --- Acts -------------------------------------------------------------
@@ -194,6 +191,13 @@
 
   let gridCount = 0;
 
+  // Precomputed once per frame in render(), reused for every dot — see the
+  // comment there for why this replaces per-dot string concatenation.
+  const ALPHA_BUCKETS = 48;
+  const ALPHA_MAX = CONFIG.maxAlpha + 0.05; // headroom above the theoretical ceiling
+  const warmFillCache = new Array(ALPHA_BUCKETS);
+  const coolFillCache = new Array(ALPHA_BUCKETS);
+
   /* --- Scroll → act ------------------------------------------------------
      Act boundaries are anchored to real section offsets where they exist, so
      the story lands on the matching copy regardless of how long any section
@@ -244,9 +248,10 @@
   }
 
   /* --- Flow: scroll velocity ---------------------------------------------
-     One shared velocity signal drives everything fluid: the field's advection
-     and streaking, and the page's shear. Native scrolling is never
-     intercepted — this only reads it.
+     One shared velocity signal drives the field's advection and streaking.
+     Native scrolling is never intercepted — this only reads it, and it writes
+     nothing back to the document: the page must not be re-laid-out or
+     re-rasterized just because it is moving.
      --------------------------------------------------------------------- */
 
   const flow = {
@@ -254,15 +259,7 @@
     vel: 0,        // instantaneous px/s
     smooth: 0,     // damped px/s — what everything actually reads
     advected: 0,   // accumulated drag on the wavefronts
-    skew: 0,
-    stretch: 1,
   };
-
-  let flowTargets = [];
-
-  function collectFlowTargets() {
-    flowTargets = [...document.querySelectorAll('.section')];
-  }
 
   function updateFlow(dt) {
     const y = window.scrollY;
@@ -278,38 +275,6 @@
     // Wavefronts are dragged along by the scroll and keep drifting after it
     // stops, the way a liquid carries momentum.
     flow.advected += flow.smooth * dt * CONFIG.advect;
-
-    const targetSkew = clamp(flow.smooth * CONFIG.skewPerVel, -CONFIG.skewMax, CONFIG.skewMax);
-    const targetStretch = 1 + clamp(Math.abs(flow.smooth) * 0.000012, 0, CONFIG.stretchMax);
-
-    // Recovery is slower than onset: the page settles rather than snapping
-    // back, which is the difference between elastic and liquid.
-    const settle = 1 - Math.pow(0.004, dt);
-    flow.skew = lerp(flow.skew, targetSkew, settle);
-    flow.stretch = lerp(flow.stretch, targetStretch, settle);
-
-    if (Math.abs(flow.skew) < 0.002 && flow.stretch < 1.0002) {
-      flow.skew = 0;
-      flow.stretch = 1;
-    }
-
-    // Each section lags slightly more than the one before it, so a fast
-    // scroll ripples down the document instead of shearing it as one plate.
-    for (let i = 0; i < flowTargets.length; i++) {
-      const lag = 1 - i * 0.06;
-      const k = lag < 0.55 ? 0.55 : lag;
-      flowTargets[i].style.setProperty('--flow-skew', (flow.skew * k).toFixed(4) + 'deg');
-      flowTargets[i].style.setProperty('--flow-stretch', (1 + (flow.stretch - 1) * k).toFixed(5));
-    }
-  }
-
-  function clearFlow() {
-    flow.skew = 0;
-    flow.stretch = 1;
-    flowTargets.forEach((el) => {
-      el.style.removeProperty('--flow-skew');
-      el.style.removeProperty('--flow-stretch');
-    });
   }
 
   /* --- Live parameters --------------------------------------------------- */
@@ -442,6 +407,25 @@
     const eps = endpointsAt(live.endpoints);
     const [hr, hg, hb] = live.hue;
 
+    // Per-dot rgba strings were previously built with string concatenation
+    // inside the hot loop below — thousands of throwaway allocations every
+    // single frame, forever, which is a steady stream of garbage the main
+    // thread has to collect and the reason long sessions felt like scrolling
+    // was "sticking". Alpha only ever takes ALPHA_BUCKETS distinct values per
+    // frame (mag is clamped to ~[0,1]), and warm is one of two states, so the
+    // whole palette for this frame can be precomputed once and reused.
+    for (let wi = 0; wi < 2; wi++) {
+      const warm = wi === 0 ? 1 : 0.25;
+      const r = Math.round(lerp(230, hr, warm * 0.85));
+      const g = Math.round(lerp(234, hg, warm * 0.85));
+      const b = Math.round(lerp(242, hb, warm * 0.85));
+      const table = wi === 0 ? warmFillCache : coolFillCache;
+      for (let ai = 0; ai < ALPHA_BUCKETS; ai++) {
+        const alpha = ai / (ALPHA_BUCKETS - 1) * ALPHA_MAX;
+        table[ai] = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha.toFixed(3) + ')';
+      }
+    }
+
     const k = (Math.PI * 2) / CONFIG.waveLength;
     const omega = CONFIG.waveSpeed;
     const coh = live.coherence;
@@ -501,13 +485,9 @@
       const len = size + streak * mag;
       // Crests take the presence tint; troughs stay neutral, which keeps the
       // pattern legible instead of a flat colour wash.
-      const warm = v > 0 ? 1 : 0.25;
-      ctx.fillStyle =
-        'rgba(' +
-        Math.round(lerp(230, hr, warm * 0.85)) + ',' +
-        Math.round(lerp(234, hg, warm * 0.85)) + ',' +
-        Math.round(lerp(242, hb, warm * 0.85)) + ',' +
-        alpha.toFixed(3) + ')';
+      const table = v > 0 ? warmFillCache : coolFillCache;
+      const bucket = alpha >= ALPHA_MAX ? ALPHA_BUCKETS - 1 : (alpha / ALPHA_MAX * (ALPHA_BUCKETS - 1)) | 0;
+      ctx.fillStyle = table[bucket];
       ctx.fillRect(
         sx - size * 0.5,
         streakDir > 0 ? sy - size * 0.5 : sy - len + size * 0.5,
@@ -624,7 +604,6 @@
   }
 
   function renderStill() {
-    clearFlow();
     // Reduced motion: one calm, coherent frame. No loop, no state changes.
     const a = ACTS[0];
     live.endpoints = a.endpoints;
@@ -653,7 +632,6 @@
     live.sourceDrift = 0;
     live.hue = HUES.presence.slice();
     requestAnimationFrame(() => {
-      collectFlowTargets();
       measureAnchors();
       if (motionQuery.matches) renderStill();
     });
@@ -661,7 +639,6 @@
 
   function onResize() {
     buildLattice();
-    collectFlowTargets();
     measureAnchors();
     if (motionQuery.matches) renderStill();
   }
@@ -697,7 +674,6 @@
   function init() {
     mount();
     buildLattice();
-    collectFlowTargets();
     flow.y = window.scrollY;
     setView(
       /\/(contact|byo-app|sdk|chrome-plugin)\.html$/.test(window.location.pathname) ? 'other' : 'home'
@@ -718,7 +694,6 @@
   window.WaveKeyField = {
     setView,
     remeasure: measureAnchors,
-    refreshTargets: collectFlowTargets,
     velocity: () => flow.smooth,
   };
 })();
