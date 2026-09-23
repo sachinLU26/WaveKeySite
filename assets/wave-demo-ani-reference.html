@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wavekey - Live Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #06090e;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 0.9; filter: drop-shadow(0 0 6px rgba(0, 255, 136, 0.4)); }
+      50% { transform: scale(1.06); opacity: 1; filter: drop-shadow(0 0 16px rgba(0, 255, 136, 0.7)); }
+    }
+
+    @keyframes waveBarBounce {
+      0%, 100% { transform: scaleY(0.35); }
+      50% { transform: scaleY(1); }
+    }
+
+    @keyframes waveBarGentle {
+      0%, 100% { transform: scaleY(0.45); opacity: 0.75; }
+      50% { transform: scaleY(0.85); opacity: 1; }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .wave-bar {
+      transform-origin: center;
+      animation: waveBarBounce 1.1s ease-in-out infinite;
+    }
+    .wave-bar-gentle {
+      transform-origin: center;
+      animation: waveBarGentle 1.6s ease-in-out infinite;
+    }
+    .wave-dot {
+      animation: dotPulse 1.1s ease-in-out infinite;
+    }
+
+    .glass-card {
+      background: rgba(18, 24, 38, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel {
+      background: rgba(13, 18, 28, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Step indicator smooth transition */
+    .step-pill-enter {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .step-pill-exit {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 1, 1), transform 0.25s cubic-bezier(0.4, 0, 1, 1);
+    }
+</style>
+</head>
+<body class="min-h-screen w-full flex items-center justify-center p-3 selection:bg-emerald-500/20 selection:text-emerald-300">
+<!-- COMPACT EMBEDDABLE WIDGET CONTAINER (Max ~780px width, ~480px height for half-width layouts) -->
+<div class="w-full max-w-[780px] bg-[#090d15]/95 border border-white/5 rounded-2xl p-4 sm:p-5 shadow-2xl relative overflow-hidden flex flex-col justify-between" style="min-height: 460px; max-height: 495px;">
+<!-- Atmospheric radiance -->
+<div class="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
+<div class="w-64 h-64 bg-emerald-500/10 rounded-full blur-[90px] transition-all duration-700 -translate-x-28"></div>
+<div class="w-72 h-72 bg-cyan-500/10 rounded-full blur-[100px] translate-x-32"></div>
+</div>
+<!-- MAIN DUAL DEVICE STAGE (Phone on Left, Compact Waveform, Workstation on Right) -->
+<div class="w-full flex-1 flex flex-row items-center justify-center gap-3 sm:gap-6 relative z-10 py-1">
+<!-- ============================================== -->
+<!-- DEVICE 1: TRUSTED PHONE (LEFT)                  -->
+<!-- ============================================== -->
+<div class="w-[180px] shrink-0 flex flex-col items-center">
+<!-- Minimal Device Header -->
+<div class="w-full flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1 px-1.5">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-slate-300 font-medium">Wavekey Phone</span>
+</div>
+<span class="text-[9px] text-slate-500" id="phoneStatusPill">Locked</span>
+</div>
+<!-- Compact Phone Chassis (~180px x 350px) -->
+<div class="w-[178px] h-[348px] rounded-[34px] bg-[#161d2a] p-2 shadow-2xl border-[2.5px] border-slate-700/60 relative shadow-cyan-950/30 flex flex-col">
+<div class="w-full h-full rounded-[26px] bg-[#070b12] border border-white/10 overflow-hidden relative flex flex-col justify-between p-2.5">
+<!-- Dynamic Island -->
+<div class="absolute top-1.5 left-1/2 -translate-x-1/2 w-14 h-3.5 bg-black rounded-full z-40 flex items-center justify-between px-1.5">
+<div class="w-1 h-1 rounded-full bg-slate-800"></div>
+<div class="w-1 h-1 rounded-full bg-emerald-400 opacity-0 transition-opacity" id="islandPing"></div>
+</div>
+<!-- Status Bar -->
+<div class="w-full flex items-center justify-between text-[9px] font-mono text-slate-400 pt-0.5 z-30 select-none">
+<span>09:41</span>
+<div class="flex items-center gap-1">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path></svg>
+<div class="w-3 h-1.5 rounded-[1px] border border-slate-400 p-0.5 flex items-center"><div class="w-full h-full bg-slate-300"></div></div>
+</div>
+</div>
+<!-- PHONE STATE 1 & 2: LOCKSCREEN CONTAINER -->
+<div class="flex-1 flex flex-col justify-between pt-5 transition-all duration-300 z-20" id="phoneLockScreen">
+<div class="text-center pt-1">
+<span class="text-[9px] text-slate-400 font-medium">Tuesday, Oct 24</span>
+<h3 class="text-2xl font-light tracking-tight text-white mt-0.5">09:41</h3>
+</div>
+<!-- PHONE STATE 2: PUSH BANNER (Minimalist Native Prompt) -->
+<div class="w-full opacity-0 -translate-y-3 transition-all duration-300 my-auto" id="phonePushBanner">
+<div class="glass-card p-2 rounded-lg border border-emerald-400/40 shadow-xl text-left">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1">
+<div class="w-3 h-3 rounded bg-gradient-to-r from-emerald-400 to-cyan-400 flex items-center justify-center text-[7px] text-black font-black">W</div>
+<span class="text-[9px] font-bold text-white tracking-wide">Wavekey</span>
+</div>
+<span class="text-[7px] text-slate-400">now</span>
+</div>
+<p class="text-[10px] font-semibold text-slate-100 leading-tight">Verify sign-in</p>
+<div class="grid grid-cols-2 gap-1 mt-2 pt-1.5 border-t border-white/10">
+<button class="py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-medium text-center">Deny</button>
+<button class="py-0.5 rounded bg-emerald-400 text-slate-950 font-bold text-[9px] text-center shadow-sm transition-transform active:scale-95" id="phonePushApproveBtn">Approve</button>
+</div>
+</div>
+</div>
+<!-- Lockscreen Bottom Action Flashlight/Camera -->
+<div class="flex items-center justify-between px-1.5 pb-0.5 text-slate-400 text-[10px]">
+<div class="w-5 h-5 rounded-full bg-slate-900/90 border border-white/5 flex items-center justify-center">🔦</div>
+<div class="w-5 h-5 rounded-full bg-slate-900/90 border border-white/5 flex items-center justify-center">📷</div>
+</div>
+</div>
+<!-- PHONE STATE 3: TRANSMITTING (Acoustic blue circular beacon matching reference layout) -->
+<div class="hidden flex-1 flex flex-col justify-between py-1 text-center z-20 transition-all duration-300" id="phoneAppVerifying">
+<div class="flex items-center justify-between text-[9px] px-0.5 text-slate-400 font-mono">
+<span class="text-white font-bold tracking-tight">Wavekey</span>
+<span class="text-[7px] px-1 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">ULTRASONIC</span>
+</div>
+<!-- Central glowing speaker beacon -->
+<div class="my-auto relative flex flex-col items-center justify-center">
+<div class="w-20 h-20 rounded-full border border-cyan-400/25 absolute inset-0 m-auto animate-ping opacity-30"></div>
+<div class="w-18 h-18 rounded-full bg-gradient-to-b from-blue-700/30 to-cyan-600/20 border border-cyan-400/40 flex items-center justify-center relative shadow-lg shadow-cyan-500/30 p-2">
+<div class="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-inner">
+<svg class="w-5 h-5 text-white fill-current" viewbox="0 0 24 24">
+<path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9h-2.5l-4 4H3v-8h2l4 4h2.5V4.77L6.71 8H3v8h3.71L11.5 19.23V12.23z"></path>
+</svg>
+</div>
+</div>
+<span class="text-[10px] font-mono text-cyan-300 font-medium mt-2">Emitting...</span>
+</div>
+<div class="h-1"></div>
+</div>
+<!-- PHONE STATE 4: AUTHENTICATED CONFIRMED -->
+<div class="hidden flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppConfirmed">
+<div class="flex items-center justify-between text-[9px] px-0.5 font-mono text-slate-400">
+<span class="text-white font-bold">Wavekey</span>
+<span class="text-[7px] px-1 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/50">OK</span>
+</div>
+<div class="my-auto space-y-1.5">
+<div class="w-11 h-11 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center mx-auto text-emerald-300 shadow-md shadow-emerald-500/20">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<h4 class="text-[11px] font-bold text-white">Verified</h4>
+</div>
+<div class="p-1 rounded bg-emerald-950/60 border border-emerald-500/30 text-[8px] font-mono text-emerald-300">
+              Confirmed
+            </div>
+</div>
+<!-- PHONE STATE 5: CONTINUOUSLY AUTHENTICATING (Passive Security Guarding) -->
+<div class="hidden flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppContinuous">
+<div class="flex items-center justify-between text-[9px] px-0.5 font-mono text-slate-400">
+<span class="text-white font-bold">Wavekey</span>
+<span class="text-[7px] px-1 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/50">ACTIVE</span>
+</div>
+<div class="my-auto space-y-1.5">
+<div class="w-11 h-11 rounded-full bg-slate-900 border border-emerald-400/50 flex items-center justify-center mx-auto text-emerald-400 shadow-md relative">
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-0 right-0 animate-ping"></div>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<h4 class="text-[10px] font-semibold text-white">Continuously Guarding</h4>
+</div>
+<div class="p-1 rounded bg-slate-900/80 border border-white/5 text-[8px] font-mono text-emerald-300 flex items-center justify-center gap-1">
+<span class="w-1 h-1 rounded-full bg-emerald-400"></span>
+<span>Proximity Assured</span>
+</div>
+</div>
+<!-- Home Bar -->
+<div class="w-14 h-1 bg-slate-600 rounded-full mx-auto mt-1 z-30"></div>
+</div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- CONNECTOR: ACOUSTIC SOUNDWAVE (Visible Step 3 & Step 5) -->
+<!-- ============================================== -->
+<div class="shrink-0 flex items-center justify-center h-16 w-16 sm:w-20 transition-all duration-500 opacity-0 scale-90" id="acousticWaveConnector">
+<div class="flex items-center justify-center gap-1 sm:gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_6px_#00ff88] wave-dot" style="animation-delay: 0s;"></div>
+<div class="w-1.5 h-6 rounded-full bg-[#00ff88] shadow-[0_0_8px_#00ff88] wave-bar" id="waveBar1" style="animation-delay: 0.15s;"></div>
+<div class="w-1.5 h-10 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88] wave-bar" id="waveBar2" style="animation-delay: 0.3s;"></div>
+<div class="w-2 h-14 rounded-full bg-[#00ff88] shadow-[0_0_14px_#00ff88] wave-bar" id="waveBar3" style="animation-delay: 0.45s;"></div>
+<div class="w-1.5 h-10 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88] wave-bar" id="waveBar4" style="animation-delay: 0.6s;"></div>
+<div class="w-1.5 h-6 rounded-full bg-[#00ff88] shadow-[0_0_8px_#00ff88] wave-bar" id="waveBar5" style="animation-delay: 0.75s;"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_6px_#00ff88] wave-dot" style="animation-delay: 0.9s;"></div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- DEVICE 2: WORKSTATION / LAPTOP (RIGHT)         -->
+<!-- ============================================== -->
+<div class="w-full max-w-[400px] flex flex-col items-center">
+<!-- Minimal Device Header -->
+<div class="w-full flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1 px-2">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+<span class="text-slate-300 font-medium">Workstation</span>
+</div>
+<span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300" id="laptopStatusPill">Ready</span>
+</div>
+<!-- Laptop Chassis (~400px x 275px) -->
+<div class="w-full rounded-xl bg-[#141923] p-1.5 pb-2 shadow-2xl border border-slate-700/60 shadow-cyan-950/20 relative">
+<!-- Notch/Webcam -->
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-2 bg-black rounded-b flex items-center justify-center gap-1 z-30">
+<div class="w-1 h-1 rounded-full bg-slate-800"></div>
+<div class="w-0.5 h-0.5 rounded-full bg-emerald-500/80"></div>
+</div>
+<!-- Display Screen Area (16:10 Ratio, compact) -->
+<div class="w-full aspect-[16/10] bg-[#090d15] rounded-lg overflow-hidden border border-slate-800 relative flex flex-col justify-between" style="min-height: 220px;">
+<!-- Window Topbar -->
+<div class="h-5 bg-[#0c111a] border-b border-white/5 px-2 flex items-center justify-between select-none z-20">
+<div class="flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-[#ff5f56]"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-[#27c93f]"></div>
+</div>
+<div class="px-2 py-0.2 rounded bg-slate-900/90 border border-white/5 text-[8.5px] font-mono text-slate-400 flex items-center gap-1">
+<svg class="w-2 h-2 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span id="laptopUrlDisplay">auth.acme-corp.internal</span>
+</div>
+<div class="opacity-0 transition-opacity duration-300 flex items-center gap-1 text-[8.5px] font-mono text-emerald-400" id="laptopTopRightBadge">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span id="laptopTopBadgeText">Continuously authenticating</span>
+</div>
+</div>
+<!-- Laptop Content Canvas -->
+<div class="flex-1 relative p-3 flex items-center justify-center overflow-hidden">
+<!-- STATE A: LOGIN & CONFIRMATION STATES (Steps 1, 2, 3) -->
+<div class="w-full max-w-[270px] glass-panel p-3 rounded-lg border border-slate-700/50 shadow-xl transition-all duration-300" id="laptopLoginForm">
+<div class="flex items-center gap-1.5 mb-2.5">
+<div class="w-5 h-5 rounded bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center font-bold text-white text-[10px] shadow">
+                  A
+                </div>
+<div>
+<h4 class="text-[11px] font-bold text-white leading-tight">Acme Corp</h4>
+<p class="text-[8px] text-slate-400">Sign in</p>
+</div>
+</div>
+<div class="space-y-2">
+<div>
+<label class="block text-[8px] font-mono text-slate-400 mb-0.5">Work Email</label>
+<div class="w-full px-2 py-1 rounded bg-slate-900 border border-slate-700/80 text-[10px] text-slate-200 font-mono">
+                    alex.vance@acme-corp.com
+                  </div>
+</div>
+<!-- Step 1 Button -->
+<div id="loginStep1Action">
+<button class="w-full py-1.5 rounded-md bg-gradient-to-r from-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-slate-950 font-bold text-[10px] flex items-center justify-center gap-1 shadow-md shadow-cyan-500/20 transition-all">
+<span>Sign in with Wavekey</span>
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+<!-- Step 2 Waiting -->
+<div class="hidden w-full p-2 rounded-md bg-slate-900 border border-cyan-500/30 text-left" id="loginStep2Action">
+<div class="flex items-center gap-1.5 text-[9.5px] font-semibold text-cyan-300">
+<svg class="w-3 h-3 animate-spin text-cyan-400" fill="none" viewbox="0 0 24 24">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+<span>Waiting for confirmation...</span>
+</div>
+</div>
+<!-- Step 3 Listening / Acoustic Handshake -->
+<div class="hidden w-full p-2 rounded-md bg-blue-950/30 border border-emerald-500/40 text-center space-y-1" id="loginStep3Action">
+<div class="flex items-center justify-center gap-1.5">
+<div class="w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 shadow-sm animate-pulse">
+<svg class="w-2.5 h-2.5 fill-current" viewbox="0 0 24 24">
+<path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path>
+</svg>
+</div>
+<span class="text-[9.5px] font-bold text-emerald-300">Wavekey Proximity: Detecting...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- STATE B: AUTHENTICATED DASHBOARD (Steps 4 & 5) -->
+<div class="hidden w-full h-full flex flex-col justify-between py-0.5 transition-all duration-300" id="laptopDashboard">
+<div class="flex items-center justify-between border-b border-white/5 pb-1.5">
+<div class="flex items-center gap-1.5">
+<div class="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-[9px] font-bold">
+                    AS
+                  </div>
+<div>
+<h4 class="text-[10px] font-bold text-white leading-none">Acme Cloud</h4>
+<p class="text-[7.5px] text-slate-400 mt-0.5">Alex Vance</p>
+</div>
+</div>
+<!-- Continuous indicator badge -->
+<div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-900 border border-emerald-500/30 text-emerald-400 text-[8px] font-mono">
+<span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
+<span id="laptopDashStatusPill">Continuous Presence Active</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-1.5 my-auto">
+<div class="glass-card p-1.5 rounded text-left">
+<span class="text-[7.5px] font-mono text-slate-400 block">Sessions</span>
+<span class="text-[11px] font-bold text-white">Active</span>
+</div>
+<div class="glass-card p-1.5 rounded text-left">
+<span class="text-[7.5px] font-mono text-slate-400 block">Proximity</span>
+<span class="text-[11px] font-bold text-emerald-300">Continuous</span>
+</div>
+<div class="glass-card p-1.5 rounded text-left">
+<span class="text-[7.5px] font-mono text-slate-400 block">Risk</span>
+<span class="text-[11px] font-bold text-emerald-400">Zero</span>
+</div>
+</div>
+<!-- Green Notification Toast -->
+<div class="w-full p-1.5 rounded bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-emerald-400 text-slate-950 flex items-center justify-center font-bold">
+<svg class="w-2 h-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+</div>
+<span class="text-[9.5px] font-semibold text-emerald-200" id="laptopToastText">Verified via Wavekey</span>
+</div>
+<span class="text-[7.5px] font-mono px-1 py-0.2 rounded bg-emerald-900/60 text-emerald-300">SECURE</span>
+</div>
+</div>
+</div>
+<!-- Laptop Base Lip -->
+<div class="h-1.5 bg-[#0c111a] border-t border-slate-800 flex items-center justify-center">
+<div class="w-12 h-0.5 bg-slate-700 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- MacBook Bottom Lip -->
+<div class="w-[410px] h-1.5 bg-gradient-to-b from-[#181f2c] to-[#0c1017] rounded-b-lg border-t border-slate-700/30 -mt-0.5"></div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- STEP INDICATOR: SINGLE ACTIVE STEP PILL ONLY   -->
+<!-- ============================================== -->
+<div class="w-full pt-3 pb-1 border-t border-white/5 flex items-center justify-center relative z-20">
+<div class="step-pill-enter" id="stepPillWrapper">
+<span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-sm font-medium text-emerald-400 shadow-sm backdrop-blur-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="tracking-wide" id="currentStepText">1. Login</span>
+</span>
+</div>
+</div>
+</div>
+<!-- JAVASCRIPT CONTROLLER SCRIPT (Automated loop through steps 1 -> 5 -> 1) -->
+<script>
+    let currentStep = 1;
+    const stepDuration = 4800; // Calm observable dwell (~4.8s per step)
+
+    const stepLabels = {
+      1: "1. Login",
+      2: "2. Tap",
+      3: "3. Transmitting",
+      4: "4. Authenticated",
+      5: "5. Continuously authenticating"
+    };
+
+    const stepsData = {
+      1: {
+        laptopUrl: "auth.acme-corp.internal",
+        laptopStatus: "Ready",
+        phoneStatus: "Locked"
+      },
+      2: {
+        laptopUrl: "auth.acme-corp.internal",
+        laptopStatus: "Awaiting Confirmation",
+        phoneStatus: "Prompt Received"
+      },
+      3: {
+        laptopUrl: "presence.wavekey.internal",
+        laptopStatus: "Acoustic Handshake",
+        phoneStatus: "Transmitting"
+      },
+      4: {
+        laptopUrl: "app.acme-corp.internal/dashboard",
+        laptopStatus: "Authenticated",
+        phoneStatus: "Verified"
+      },
+      5: {
+        laptopUrl: "app.acme-corp.internal/session",
+        laptopStatus: "Continuously Authenticating",
+        phoneStatus: "Guarding"
+      }
+    };
+
+    function updateStepIndicator(step) {
+      const wrapper = document.getElementById('stepPillWrapper');
+      const textElem = document.getElementById('currentStepText');
+      if (!wrapper || !textElem) return;
+
+      // Smooth exit transition
+      wrapper.classList.remove('step-pill-enter');
+      wrapper.classList.add('step-pill-exit');
+
+      setTimeout(() => {
+        textElem.innerText = stepLabels[step];
+        wrapper.classList.remove('step-pill-exit');
+        wrapper.classList.add('step-pill-enter');
+      }, 160);
+    }
+
+    function updateUIForStep(step) {
+      currentStep = step;
+      const data = stepsData[step];
+
+      // Update active step pill
+      updateStepIndicator(step);
+
+      // Update text pills & URL
+      const urlDisp = document.getElementById('laptopUrlDisplay');
+      if (urlDisp) urlDisp.innerText = data.laptopUrl;
+
+      const laptopPill = document.getElementById('laptopStatusPill');
+      if (laptopPill) laptopPill.innerText = data.laptopStatus;
+
+      const phonePill = document.getElementById('phoneStatusPill');
+      if (phonePill) phonePill.innerText = data.phoneStatus;
+
+      // ------------------------------------
+      // ACOUSTIC SOUNDWAVE CONNECTOR
+      // Requirement: Active in Step 3 and Step 5!
+      // ------------------------------------
+      const acousticWave = document.getElementById('acousticWaveConnector');
+      const waveBars = [
+        document.getElementById('waveBar1'),
+        document.getElementById('waveBar2'),
+        document.getElementById('waveBar3'),
+        document.getElementById('waveBar4'),
+        document.getElementById('waveBar5')
+      ];
+
+      if (acousticWave) {
+        if (step === 3 || step === 5) {
+          acousticWave.classList.remove('opacity-0', 'scale-90');
+          acousticWave.classList.add('opacity-100', 'scale-100');
+
+          if (step === 5) {
+            // Calm continuous undulation for continuous presence telemetry
+            waveBars.forEach(b => {
+              if (b) {
+                b.classList.remove('wave-bar');
+                b.classList.add('wave-bar-gentle');
+              }
+            });
+          } else {
+            // Active energetic pulse for transmission handshake
+            waveBars.forEach(b => {
+              if (b) {
+                b.classList.remove('wave-bar-gentle');
+                b.classList.add('wave-bar-wave');
+                b.classList.add('wave-bar');
+              }
+            });
+          }
+        } else {
+          acousticWave.classList.add('opacity-0', 'scale-90');
+          acousticWave.classList.remove('opacity-100', 'scale-100');
+        }
+      }
+
+      // ------------------------------------
+      // PHONE HARDWARE STATE UPDATES
+      // ------------------------------------
+      const lockScreen = document.getElementById('phoneLockScreen');
+      const pushBanner = document.getElementById('phonePushBanner');
+      const appVerifying = document.getElementById('phoneAppVerifying');
+      const appConfirmed = document.getElementById('phoneAppConfirmed');
+      const appContinuous = document.getElementById('phoneAppContinuous');
+      const islandPing = document.getElementById('islandPing');
+
+      // Reset all phone views
+      if (lockScreen) lockScreen.classList.add('hidden');
+      if (appVerifying) appVerifying.classList.add('hidden');
+      if (appConfirmed) appConfirmed.classList.add('hidden');
+      if (appContinuous) appContinuous.classList.add('hidden');
+      if (islandPing) islandPing.classList.add('opacity-0');
+
+      if (step === 1) {
+        // Step 1: Login - Clean locked phone
+        if (lockScreen) lockScreen.classList.remove('hidden');
+        if (pushBanner) pushBanner.classList.add('opacity-0', '-translate-y-3');
+      } else if (step === 2) {
+        // Step 2: Tap - Native push notification arrives
+        if (lockScreen) lockScreen.classList.remove('hidden');
+        if (pushBanner) pushBanner.classList.remove('opacity-0', '-translate-y-3');
+        if (islandPing) islandPing.classList.remove('opacity-0');
+      } else if (step === 3) {
+        // Step 3: Transmitting - Central glowing acoustic speaker icon
+        if (appVerifying) appVerifying.classList.remove('hidden');
+        if (islandPing) islandPing.classList.remove('opacity-0');
+      } else if (step === 4) {
+        // Step 4: Authenticated - Confirmation checkmark
+        if (appConfirmed) appConfirmed.classList.remove('hidden');
+      } else if (step === 5) {
+        // Step 5: Continuously authenticating - Security shield & proximity
+        if (appContinuous) appContinuous.classList.remove('hidden');
+      }
+
+      // ------------------------------------
+      // LAPTOP HARDWARE STATE UPDATES
+      // ------------------------------------
+      const laptopForm = document.getElementById('laptopLoginForm');
+      const laptopDash = document.getElementById('laptopDashboard');
+      const topBadge = document.getElementById('laptopTopRightBadge');
+      const step1Action = document.getElementById('loginStep1Action');
+      const step2Action = document.getElementById('loginStep2Action');
+      const step3Action = document.getElementById('loginStep3Action');
+      const laptopToastText = document.getElementById('laptopToastText');
+      const laptopDashStatusPill = document.getElementById('laptopDashStatusPill');
+
+      if (step <= 3) {
+        if (laptopForm) laptopForm.classList.remove('hidden');
+        if (laptopDash) laptopDash.classList.add('hidden');
+        if (topBadge) topBadge.classList.add('opacity-0');
+
+        if (step === 1) {
+          if (step1Action) step1Action.classList.remove('hidden');
+          if (step2Action) step2Action.classList.add('hidden');
+          if (step3Action) step3Action.classList.add('hidden');
+        } else if (step === 2) {
+          if (step1Action) step1Action.classList.add('hidden');
+          if (step2Action) step2Action.classList.remove('hidden');
+          if (step3Action) step3Action.classList.add('hidden');
+        } else if (step === 3) {
+          if (step1Action) step1Action.classList.add('hidden');
+          if (step2Action) step2Action.classList.add('hidden');
+          if (step3Action) step3Action.classList.remove('hidden');
+        }
+      } else {
+        if (laptopForm) laptopForm.classList.add('hidden');
+        if (laptopDash) laptopDash.classList.remove('hidden');
+        if (topBadge) topBadge.classList.remove('opacity-0');
+
+        if (step === 4) {
+          if (laptopToastText) laptopToastText.innerText = "Verified via Wavekey";
+          if (laptopDashStatusPill) laptopDashStatusPill.innerText = "Session Authenticated";
+        } else if (step === 5) {
+          if (laptopToastText) laptopToastText.innerText = "Continuous Telemetry Active";
+          if (laptopDashStatusPill) laptopDashStatusPill.innerText = "Continuously Authenticating";
+        }
+      }
+    }
+
+    function advanceStep() {
+      let nextStep = currentStep + 1;
+      if (nextStep > 5) nextStep = 1;
+      updateUIForStep(nextStep);
+    }
+
+    // Initialize state 1 and start autonomous continuous loop
+    updateUIForStep(1);
+    setInterval(advanceStep, stepDuration);
+</script>
+</body></html>
