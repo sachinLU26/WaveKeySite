@@ -331,9 +331,65 @@ nav a:hover,
   position: relative;
 }
 
+/* No border, radius or shadow — a hard-edged card reads as something
+   stuck on top of the page. Instead the image's own edges dissolve into the
+   page background via mask. `ellipse closest-side` sizes the fade so it
+   reaches exactly each edge's midpoint — guaranteeing a fully soft edge on
+   all four sides (not just the corners) regardless of the box's aspect
+   ratio, which stays consistent across every breakpoint below. */
+/* Rectangular, not the radial-mask blob this used to be — still no border
+   or box-shadow, so it reads as part of the page rather than a card frame
+   stuck on top of it. */
+.hero-art {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  border-radius: 1.25rem;
+}
+
+.hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 40%;
+  display: block;
+}
+
+/* Side-by-side from the same breakpoint the rest of the site uses for its
+   two-column sections — stacked full-width below that (phone/tablet). */
+@media (min-width: 901px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    column-gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+
+  .hero-inner {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hero-art {
+    grid-column: 2;
+    grid-row: 1;
+    height: clamp(16rem, 26vw, 23rem);
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-art {
+    height: clamp(11rem, 55vw, 19rem);
+  }
+}
+
 /* ===========================================================================
-   WAVEKEY DEMO — ported verbatim from assets/wavekey-demo-reference.html
+   WAVEKEY DEMO — ported verbatim from assets/wave-demo-ani-reference.html
    ---------------------------------------------------------------------------
+   A compact phone+laptop widget meant to sit beside the .steps list (see
+   .solution-layout below), unlike the source file's standalone-page markup.
    Every rule below is copied unchanged from that file's <style> block, with
    exactly one adjustment: the source styled its own <body> (it was a
    standalone page); here that's retargeted to .wavekey-demo-embed, the
@@ -404,26 +460,15 @@ nav a:hover,
   vertical-align: middle;
 }
 
-/* The source markup carries Tailwind's own max-w-7xl/px-4 for its
-   standalone-page layout — overridden here to the site's actual content
-   column (width: min(var(--max), calc(100% - 3rem)), no side padding) so its
-   left/right edges land exactly where every other section's do, instead of
-   sitting wider and off-center relative to the rest of the page. !important
-   is needed because these properties (unlike font-family/background-color
-   above) have competing Tailwind utility classes on the same element
-   (w-full, max-w-7xl, px-4) at equal specificity, and Tailwind's CDN build
-   injects its stylesheet after this one, so it wins ties without it. */
+/* Unlike the earlier full-width demo this class used to wrap, this widget
+   sits inside its own flex column beside .steps (see .solution-layout) — it
+   keeps the source's own w-full/max-w-[780px] sizing so it naturally fills
+   whatever width that column gives it, no width/margin override needed. */
 .wavekey-demo-embed {
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #06090f;
+  background-color: #06090e;
   color: #e2e8f0;
   overflow-x: hidden;
-  max-width: none !important;
-  width: min(var(--max), calc(100% - 3rem)) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
 }
 
 .wavekey-demo-embed .font-mono {
@@ -431,45 +476,44 @@ nav a:hover,
 }
 
 /* Keyframes & transitions for dynamic states */
-@keyframes pulseGlow {
-  0%, 100% { transform: scale(1); opacity: 0.85; filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)); }
-  50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 16px rgba(0, 242, 254, 0.8)); }
+@keyframes waveBarBounce {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
 }
 
-@keyframes ringRadiate {
-  0% { transform: scale(0.85); opacity: 0.8; }
-  100% { transform: scale(2.2); opacity: 0; }
+@keyframes waveBarGentle {
+  0%, 100% { transform: scaleY(0.45); opacity: 0.75; }
+  50% { transform: scaleY(0.85); opacity: 1; }
 }
 
-@keyframes progressSpin {
-  from { stroke-dashoffset: 280; }
-  to { stroke-dashoffset: 0; }
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
-.wavekey-demo-embed .animate-continuous-pulse {
-  animation: pulseGlow 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.wavekey-demo-embed .wave-bar {
+  transform-origin: center;
+  animation: waveBarBounce 1.1s ease-in-out infinite;
+}
+.wavekey-demo-embed .wave-bar-gentle {
+  transform-origin: center;
+  animation: waveBarGentle 1.6s ease-in-out infinite;
+}
+.wavekey-demo-embed .wave-dot {
+  animation: dotPulse 1.1s ease-in-out infinite;
 }
 
-.wavekey-demo-embed .ring-wave-1 {
-  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite;
-}
-.wavekey-demo-embed .ring-wave-2 {
-  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite 0.8s;
-}
-.wavekey-demo-embed .ring-wave-3 {
-  animation: ringRadiate 2.4s cubic-bezier(0.1, 0.6, 0.3, 1) infinite 1.6s;
-}
-
-/* Custom scrollbar & glass */
-.wavekey-demo-embed .glass-panel {
-  background: rgba(15, 20, 32, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+.wavekey-demo-embed .glass-card {
+  background: rgba(18, 24, 38, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
-.wavekey-demo-embed .glass-card {
-  background: rgba(22, 29, 46, 0.85);
-  border: 1px solid rgba(0, 242, 254, 0.15);
+.wavekey-demo-embed .glass-panel {
+  background: rgba(13, 18, 28, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .kicker {
@@ -962,10 +1006,6 @@ h3 {
     width: min(var(--max), calc(100% - 1.5rem));
   }
 
-  .wavekey-demo-embed {
-    width: min(var(--max), calc(100% - 1.5rem)) !important;
-  }
-
   .section {
     padding: 4.5rem 0;
   }
@@ -984,10 +1024,6 @@ h3 {
   .section,
   .site-footer {
     width: min(var(--max), calc(100% - 1.1rem));
-  }
-
-  .wavekey-demo-embed {
-    width: min(var(--max), calc(100% - 1.1rem)) !important;
   }
 
   .site-header {
@@ -1726,6 +1762,10 @@ html.field-ready .presence-field {
 
 .section-head-sub {
   margin-top: clamp(5rem, 10vw, 9rem);
+  /* Only #problem uses this class, and it's always immediately followed by
+     .solution-reveal, which needs to sit flush against "Until Wavekey" with
+     no gap — overrides .section-head's own margin-bottom: 3.2rem. */
+  margin-bottom: 0;
   text-align: center;
 }
 
@@ -1797,147 +1837,289 @@ html.field-ready .presence-field {
 }
 
 /* ---------------------------------------------------------------------------
-   Solution reveal — the payoff the "Until now" arrow points at. A small top
-   margin (the bracket's own container already carries its section-head
-   margin-bottom) keeps this reading as one continuous sequence — gaps,
-   bracket, arrow, image — rather than two separate blocks.
+   Solution reveal — ported from assets/intro-wavekey-reference.html. Sits
+   flush against "Until Wavekey" (zero margin — see .section-head-sub's own
+   margin-bottom override) so the arrow reads straight into it. Deliberately
+   has no background, border or mask of its own: the phone and its ripples
+   sit directly on the page's own --bg, so there's no rectangular "card"
+   edge — it reads as part of the page rather than an image dropped onto it.
+   overflow stays visible so the ripples are never cropped, even though they
+   grow past the frame's own box — they're fully faded by the time they get
+   there, so nothing reads as clipped.
    --------------------------------------------------------------------------- */
 .solution-reveal {
   display: flex;
   justify-content: center;
-  margin-top: clamp(1.4rem, 3vw, 2.2rem);
+  margin-top: 0;
 }
 
-/* Wide and full-width rather than a small centered square — this reveal is
-   the section's payoff (the "introduce the product" moment the Until now
-   arrow points at), so it should read with the same visual weight as the
-   rest of the page, not like an afterthought thumbnail. */
 .solution-reveal-frame {
   position: relative;
-  width: 100%;
-  aspect-ratio: 2 / 1;
+  width: 10rem;
+  aspect-ratio: 270 / 560;
+  overflow: visible;
+  margin: 1.5rem 0 2.5rem;
 }
 
-/* Ambient glow behind the phone — the same presence-green used for the
-   field-readout dot and panel highlights, so the reveal reads as the product
-   switching on rather than a plain photo drop. */
-.solution-reveal-frame::before {
+/* Six staggered rings expanding outward from the phone's core and fading as
+   they grow — direct port of the reference's ripple-pulse keyframes. */
+.solution-ripples {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Scale tops out at 1.7 (well short of the source's 2.8) and opacity reaches
+   0 at the same 68% mark, rather than staying faintly visible all the way to
+   100% — at this component's compact size that used to let the rings bleed
+   up into the "Continuously" row above before fading, so now they dissolve
+   comfortably short of it instead. */
+@keyframes solutionRipplePulse {
+  0% { transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
+  14% { opacity: 0.62; }
+  40% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.32; }
+  68% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+}
+
+.solution-ripple {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20.5rem;
+  height: 20.5rem;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 242, 254, 0.55);
+  box-shadow: 0 0 16px rgba(0, 220, 230, 0.28), inset 0 0 12px rgba(0, 242, 254, 0.15);
+  transform: translate(-50%, -50%) scale(0.18);
+  opacity: 0;
+  animation: solutionRipplePulse 7s cubic-bezier(0.1, 0.45, 0.3, 1) infinite;
+}
+
+.solution-ripple.secondary {
+  border-color: rgba(67, 237, 205, 0.45);
+  box-shadow: 0 0 20px rgba(0, 208, 178, 0.25);
+}
+
+.solution-ripple.r1 { animation-delay: 0s; }
+.solution-ripple.r2 { animation-delay: 1.16s; }
+.solution-ripple.r3 { animation-delay: 2.33s; }
+.solution-ripple.r4 { animation-delay: 3.5s; }
+.solution-ripple.r5 { animation-delay: 4.66s; }
+.solution-ripple.r6 { animation-delay: 5.83s; }
+
+.solution-phone {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.7rem;
+  padding: 0.35rem;
+  background: #1a1c22;
+  border: 1px solid #3a3f4d;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 242, 254, 0.06);
+}
+
+.solution-phone-btn {
+  position: absolute;
+  background: #2e3340;
+}
+.solution-phone-btn-mute { left: -0.1rem; top: 2.2rem; width: 0.12rem; height: 0.95rem; border-radius: 0.1rem 0 0 0.1rem; }
+.solution-phone-btn-vol-up { left: -0.1rem; top: 3.4rem; width: 0.12rem; height: 1.7rem; border-radius: 0.1rem 0 0 0.1rem; }
+.solution-phone-btn-vol-down { left: -0.1rem; top: 5.3rem; width: 0.12rem; height: 1.7rem; border-radius: 0.1rem 0 0 0.1rem; }
+.solution-phone-btn-power { right: -0.1rem; top: 3.9rem; width: 0.12rem; height: 2.3rem; border-radius: 0 0.1rem 0.1rem 0; }
+
+.solution-phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.4rem;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid #161c28;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.7rem;
+}
+
+.solution-phone-statusbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d6e0ea;
+  font-size: 0.5rem;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.solution-phone-island {
+  width: 2.2rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #000;
+}
+
+.solution-phone-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  opacity: 0.9;
+}
+.solution-phone-status-icons svg { width: 0.5rem; height: 0.5rem; }
+.solution-phone-battery {
+  width: 0.6rem;
+  height: 0.32rem;
+  border: 1px solid currentColor;
+  border-radius: 0.1rem;
+  display: block;
+  position: relative;
+}
+.solution-phone-battery::after {
   content: "";
   position: absolute;
-  inset: -18%;
-  background: radial-gradient(closest-side, rgba(126, 242, 192, 0.16), transparent 72%);
-  filter: blur(6px);
-  z-index: -1;
+  inset: 0.06rem;
+  background: currentColor;
+  border-radius: 0.03rem;
 }
 
-/* The animated phone + acoustic-field texture, isolated in its own layer so
-   its mask/overflow never touches the ambient ::before glow above. */
-.solution-anim {
+.solution-phone-core {
+  position: relative;
+  margin: auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solution-core-ring {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
-  /* Dissolves the content's hard rectangular edge into the page background —
-     the same vignette technique .problem-art uses. */
-  mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
-  -webkit-mask-image: radial-gradient(120% 100% at 50% 42%, #000 58%, transparent 97%);
+  border-radius: 50%;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+.solution-core-ring.ring-1 { width: 4.4rem; height: 4.4rem; }
+.solution-core-ring.ring-2 { width: 3.8rem; height: 3.8rem; border-color: rgba(34, 211, 238, 0.35); }
+.solution-core-ring.ring-3 { width: 3.1rem; height: 3.1rem; border-color: rgba(103, 232, 249, 0.5); }
+.solution-core-ring.ring-4 { width: 2.5rem; height: 2.5rem; border-color: rgba(165, 243, 252, 0.7); }
+
+@keyframes solutionCoreGlow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.35)); }
+  50% { filter: drop-shadow(0 0 9px rgba(0, 242, 254, 0.75)); }
 }
 
-/* Texture and animation stack in DOM order — the picture paints first
-   (behind), the svg second (in front) — both filling the masked layer. */
-.solution-anim-bg,
-.solution-anim svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+.solution-core-badge {
+  position: relative;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #0a1120;
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+  color: #a5f3fc;
+  animation: solutionCoreGlow 3.5s ease-in-out infinite;
 }
+.solution-core-badge svg { width: 1.25rem; height: 1.25rem; }
 
-.solution-anim-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  filter: brightness(0.82) contrast(1.05);
-}
-
-/* Ambient breath on the aura behind the phone */
-@keyframes solutionAmbientBreath {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.5; }
-}
-
-.solution-anim-glow {
-  animation: solutionAmbientBreath 7s ease-in-out infinite;
-}
-
-/* Water-droplet acoustic ripple, staggered across six rings via --ripple-delay */
-@keyframes solutionWaterRipple {
-  0% {
-    r: 35px;
-    opacity: 0.95;
-    stroke-width: 3.2px;
-  }
-  20% {
-    opacity: 0.8;
-    stroke-width: 2.6px;
-  }
-  50% {
-    opacity: 0.45;
-    stroke-width: 1.8px;
-  }
-  80% {
-    opacity: 0.18;
-    stroke-width: 1.1px;
-  }
-  100% {
-    r: 580px;
-    opacity: 0;
-    stroke-width: 0.3px;
-  }
-}
-
-.solution-anim-ripple {
-  animation: solutionWaterRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite;
-  animation-delay: var(--ripple-delay, 0s);
-  transform-origin: 800px 500px;
+.solution-phone-home-bar {
+  width: 2.6rem;
+  height: 0.1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .solution-anim-glow,
-  .solution-anim-ripple {
+  .solution-ripple,
+  .solution-core-badge {
     animation: none;
   }
 }
 
-@media (max-width: 640px) {
-  .solution-reveal-frame {
-    aspect-ratio: 4 / 3;
+/* ===========================================================================
+   SOLUTION — steps, side demo widget, and pillars
+   =========================================================================== */
+
+/* Stacked on mobile; side-by-side from 901px, steps taking a little less
+   room than the demo widget since its lines are short. */
+.solution-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+@media (min-width: 901px) {
+  .solution-layout {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* The widget's phone panel doesn't shrink (shrink-0 in the source) and its
+     laptop panel needs real width for its 16:10 screen to hold shape without
+     the browser fighting its own min-height — so it gets most of the row;
+     .steps only needs enough width for these short lines. */
+  .solution-layout .steps {
+    flex: 0 1 23rem;
+    min-width: 0;
+  }
+
+  .solution-demo {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 }
 
-/* ===========================================================================
-   SOLUTION — steps and pillars
-   =========================================================================== */
+.solution-demo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* The source's phone+connector+laptop row (.wave-demo-stage) has no
+   responsive stacking of its own — it was built for a fixed ~780px-wide
+   half-column, and its phone panel doesn't shrink (shrink-0), so below the
+   width where phone + laptop can sit side by side without the laptop
+   fighting its own 16:10/min-height, it stacks instead. That makes the
+   widget taller than the root's own inline max-height: 495px (sized for the
+   horizontal layout), which would otherwise clip the laptop entirely —
+   !important is needed to beat that inline style. */
+@media (max-width: 640px) {
+  .wavekey-demo-embed {
+    max-height: none !important;
+  }
+
+  .wavekey-demo-embed .wave-demo-stage {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+}
 
 .steps {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 1.4rem;
+  gap: 2.2rem;
   max-width: none;
 }
 
 .steps li {
   display: flex;
   align-items: baseline;
-  gap: 1.1rem;
+  gap: 0.85rem;
   font-size: var(--text-lg);
+  line-height: 1.6;
   letter-spacing: -0.015em;
   color: var(--text);
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .step-num {
@@ -1945,12 +2127,6 @@ html.field-ready .presence-field {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   color: var(--faint);
-}
-
-@media (max-width: 640px) {
-  .steps li {
-    white-space: normal;
-  }
 }
 
 .patent-note {
