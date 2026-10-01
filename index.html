@@ -114,32 +114,27 @@
 
         <div class="wavekey-live-flow" id="wavekeyLiveFlow">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full">
-          <!-- LEFT COLUMN: 5 INTERACTIVE STEPS -->
+          <!-- LEFT COLUMN: 4 INTERACTIVE STEPS -->
           <ol class="lg:col-span-4 flex flex-col justify-center gap-3 w-full" id="narrativeStepsList">
           <li class="step-item active" data-step="1" role="button" tabindex="0">
           <span class="step-indicator-bar" aria-hidden="true"></span>
           <span class="step-badge" aria-hidden="true">01</span>
-          <span class="step-title">Login initiated on workstation</span>
+          <span class="step-title">Login</span>
           </li>
           <li class="step-item" data-step="2" role="button" tabindex="0">
           <span class="step-indicator-bar" aria-hidden="true"></span>
           <span class="step-badge" aria-hidden="true">02</span>
-          <span class="step-title">Tap on Wavekey app on phone</span>
+          <span class="step-title">Activate Wavekey</span>
           </li>
           <li class="step-item" data-step="3" role="button" tabindex="0">
           <span class="step-indicator-bar" aria-hidden="true"></span>
           <span class="step-badge" aria-hidden="true">03</span>
-          <span class="step-title">Transmitting wavekey</span>
+          <span class="step-title">Authenticate</span>
           </li>
           <li class="step-item" data-step="4" role="button" tabindex="0">
           <span class="step-indicator-bar" aria-hidden="true"></span>
           <span class="step-badge" aria-hidden="true">04</span>
-          <span class="step-title">Authenticated</span>
-          </li>
-          <li class="step-item" data-step="5" role="button" tabindex="0">
-          <span class="step-indicator-bar" aria-hidden="true"></span>
-          <span class="step-badge" aria-hidden="true">05</span>
-          <span class="step-title">Continuously authenticating</span>
+          <span class="step-title">Whenever needed</span>
           </li>
           </ol>
           <!-- RIGHT COLUMN: ANIMATION STAGE -->
@@ -167,22 +162,22 @@
           </div>
           </div>
           <!-- STATE 1 & 2: Lockscreen / Notification -->
-          <div class="flex-1 flex flex-col justify-between pt-5 transition-all duration-300 z-20" id="phoneLockScreen">
+          <div class="hidden flex-1 flex flex-col justify-between pt-5 transition-all duration-300 z-20" id="phoneLockScreen">
           <div class="text-center pt-2">
           <span class="text-[9.5px] text-slate-400 font-medium">Tuesday, Oct 24</span>
           <h3 class="text-2xl font-light tracking-tight text-white mt-0.5">09:41</h3>
           </div>
           <!-- Push Notification Card -->
-          <div class="w-full transition-all duration-300 my-auto opacity-0 translate-y-2" id="phonePushBanner">
+          <div class="w-full transition-all duration-300 my-auto" id="phonePushBanner">
           <div class="glass-card p-2.5 rounded-xl border border-cyan-400/40 shadow-xl text-center">
           <div class="flex items-center justify-between mb-1.5">
           <div class="flex items-center gap-1.5">
           <span class="text-[9px] font-bold text-white tracking-wide">Wavekey</span>
           </div>
           </div>
-          <p class="text-[10px] font-semibold text-slate-100 leading-snug mb-2 text-center">Sign-in request</p>
+          <p class="text-[10px] font-semibold text-slate-100 leading-snug mb-2 font-sans text-center">Activate Wavekey sign-in</p>
           <button type="button" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-bold text-[9px] flex items-center justify-center gap-1 shadow-md shadow-cyan-500/20 active:scale-95 transition-all mx-auto" onclick="handleStepClick(3)">
-          <span>Tap</span>
+          <span>Tap to Activate</span>
           </button>
           </div>
           </div>
@@ -192,7 +187,7 @@
           </div>
           </div>
           <!-- STATE 3: Emitting Ultrasonic Signal -->
-          <div class="hidden flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppVerifying">
+          <div class="flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppVerifying">
           <div class="flex items-center justify-between text-[8.5px] px-1 text-slate-400 font-mono">
           <span class="text-white font-bold tracking-tight">Wavekey</span>
           </div>
@@ -207,19 +202,7 @@
           </div>
           <div class="h-1"></div>
           </div>
-          <!-- STATE 4: Authenticated Confirmation -->
-          <div class="hidden flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppConfirmed">
-          <div class="flex items-center justify-between text-[8.5px] px-1 font-mono text-slate-400">
-          <span class="text-white font-bold">Wavekey</span>
-          </div>
-          <div class="my-auto space-y-2">
-          <div class="w-11 h-11 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center mx-auto text-emerald-300 shadow-lg shadow-emerald-500/25">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
-          </div>
-          <h4 class="text-xs font-bold text-white">Authentication Granted</h4>
-          </div>
-          </div>
-          <!-- STATE 5: Continuous Guarding Beacon -->
+          <!-- STATE 4: Continuous Guarding Beacon (Whenever Needed) -->
           <div class="hidden flex-1 flex flex-col justify-between py-2 text-center z-20 transition-all duration-300" id="phoneAppContinuous">
           <div class="flex items-center justify-between text-[8.5px] px-1 font-mono text-slate-400">
           <span class="text-white font-bold">Wavekey</span>
@@ -229,7 +212,8 @@
           <div class="w-2 h-2 rounded-full bg-emerald-400 absolute top-0 right-0 animate-ping"></div>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg>
           </div>
-          <h4 class="text-[10px] font-semibold text-white">Continuous Guarding</h4>
+          <h4 class="text-[10px] font-semibold text-white">Active Guarding</h4>
+          <span class="text-[8px] font-mono text-emerald-400/80 block">Zero-touch Auth</span>
           </div>
           </div>
           <!-- Home Bar -->
@@ -237,8 +221,9 @@
           </div>
           </div>
           </div>
-          <!-- ACOUSTIC SOUNDWAVE CONNECTOR -->
-          <div class="shrink-0 flex flex-col items-center justify-center py-2 transition-all duration-300 w-20 sm:w-24 opacity-0 scale-90" id="acousticWaveConnector">
+          <!-- ACOUSTIC SOUNDWAVE CONNECTOR & STEP 4 BADGES -->
+          <div class="shrink-0 flex flex-col items-center justify-center py-2 transition-all duration-300 min-w-[96px] sm:min-w-[110px]" id="acousticCenterColumn">
+          <div class="flex flex-col items-center justify-center transition-all duration-300 opacity-0 scale-90" id="acousticWaveConnector">
           <div class="text-[8px] font-mono text-emerald-400 uppercase tracking-widest mb-1.5 opacity-90 flex items-center gap-1">
           <span class="w-1 h-1 rounded-full bg-emerald-400 animate-ping"></span>Acoustic
                     </div>
@@ -257,8 +242,21 @@
           <span class="chevron-pulse" style="animation-delay: 0.4s;">›</span>
           </div>
           </div>
+          <!-- STEP 4 COMPACT BADGES: [ SSO ] [ Session Refresh ] [ Action-based ] -->
+          <div class="flex flex-col items-center gap-1.5 mt-3 transition-all duration-300 opacity-0 pointer-events-none scale-95" id="step4AuthBadges">
+          <div class="px-2.5 py-1 rounded bg-[#0d1624] border border-emerald-500/40 text-emerald-300 text-[8.5px] font-mono font-medium shadow-md shadow-emerald-950/40 flex items-center gap-1.5 whitespace-nowrap">
+          <span class="w-1 h-1 rounded-full bg-emerald-400"></span>SSO
+          </div>
+          <div class="px-2.5 py-1 rounded bg-[#0d1624] border border-cyan-500/40 text-cyan-300 text-[8.5px] font-mono font-medium shadow-md shadow-cyan-950/40 flex items-center gap-1.5 whitespace-nowrap">
+          <span class="w-1 h-1 rounded-full bg-cyan-400"></span>Session Refresh
+          </div>
+          <div class="px-2.5 py-1 rounded bg-[#0d1624] border border-emerald-500/40 text-emerald-300 text-[8.5px] font-mono font-medium shadow-md shadow-emerald-950/40 flex items-center gap-1.5 whitespace-nowrap">
+          <span class="w-1 h-1 rounded-full bg-emerald-400"></span>Action-based
+          </div>
+          </div>
+          </div>
           <!-- MACBOOK / WORKSTATION LAPTOP MOCKUP -->
-          <div class="flex-1 w-full max-w-[400px] flex flex-col items-center transition-all duration-300 shrink-0">
+          <div class="laptop-stage flex-1 w-full max-w-[420px] flex flex-col items-center transition-all duration-300 relative">
           <!-- MacBook Display Lid -->
           <div class="w-full rounded-[18px] bg-[#161c28] p-2 shadow-2xl border border-slate-700/80 shadow-black/80 relative">
           <!-- Camera Notch -->
@@ -267,18 +265,20 @@
           <div class="w-1 h-1 rounded-full bg-emerald-500/80 shadow-[0_0_4px_#10b981]" id="laptopCameraLed"></div>
           </div>
           <!-- Inner Display Screen -->
-          <div class="w-full aspect-[16/10] bg-[#070b12] rounded-lg overflow-hidden border border-slate-800/90 relative flex flex-col justify-between" style="min-height: 250px;">
-          <!-- Browser Title Bar -->
+          <div class="w-full aspect-[16/10] bg-[#070b12] rounded-lg overflow-hidden border border-slate-800/90 relative flex flex-col justify-between" style="min-height: 255px;">
+          <!-- Chrome / Browser Title Bar -->
           <div class="h-6 bg-[#0c111a] border-b border-white/5 px-2.5 flex items-center justify-between select-none z-20">
           <div class="flex items-center gap-1.5">
           <div class="w-2 h-2 rounded-full bg-[#ff5f56]"></div>
           <div class="w-2 h-2 rounded-full bg-[#ffbd2e]"></div>
           <div class="w-2 h-2 rounded-full bg-[#27c93f]"></div>
           </div>
+          <!-- Browser URL Box -->
           <div class="px-2 py-0.5 rounded bg-slate-900/90 border border-white/5 text-[9px] font-mono text-slate-400 flex items-center gap-1.5 min-w-0">
           <svg class="w-2.5 h-2.5 text-cyan-400 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
           <span id="laptopUrlDisplay" class="truncate">presence.wavekey.internal</span>
           </div>
+          <!-- Chrome Extension Mic indicator -->
           <div class="flex items-center gap-1.5 text-[9px] font-mono">
           <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 transition-opacity duration-300 opacity-0" id="laptopMicIndicator">
           <svg class="w-2.5 h-2.5 fill-current animate-pulse text-emerald-400" viewbox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></svg>
@@ -286,13 +286,13 @@
           </div>
           </div>
           </div>
-          <!-- STATE 1, 2, 3: Corporate SSO Portal Screen -->
+          <!-- STEP 1 & 2: Corporate SSO Login Screen -->
           <div class="flex-1 relative p-3 flex items-center justify-center overflow-hidden" id="laptopLoginForm">
           <div class="w-full max-w-[270px] glass-panel p-3.5 rounded-xl border border-slate-700/60 shadow-xl transition-all duration-300">
           <div class="flex items-center gap-2 mb-2.5">
           <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center font-bold text-white text-[11px] shadow">A</div>
           <div>
-          <h4 class="text-xs font-bold text-white leading-tight">Acme Corporation</h4>
+          <h4 class="text-xs font-bold text-white leading-tight font-sans">Acme CRM Portal</h4>
           </div>
           </div>
           <div class="space-y-2">
@@ -301,66 +301,84 @@
           <div class="w-full px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[9px] text-slate-200 font-mono">alex.vance@acme-corp.com</div>
           </div>
           <!-- Step 1 Button -->
-          <div id="loginStep1Action">
-          <button type="button" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-slate-950 font-bold text-[9px] flex items-center justify-center gap-1.5 shadow-md shadow-cyan-500/20 transition-all" onclick="handleStepClick(2)">
+          <div class="hidden" id="loginStep1Action">
+          <button type="button" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-slate-950 font-bold text-[9px] flex items-center justify-center gap-1.5 shadow-md shadow-cyan-500/20 transition-all font-sans" onclick="handleStepClick(2)">
           <span>Sign In</span>
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
           </button>
           </div>
           <!-- Step 2 Waiting -->
-          <div class="hidden w-full p-2 rounded-lg bg-slate-900/90 border border-cyan-500/30 text-left" id="loginStep2Action">
-          <div class="flex items-center gap-2 text-[9px] font-semibold text-cyan-300">
+          <div class="w-full p-2 rounded-lg bg-slate-900/90 border border-cyan-500/30 text-left hidden" id="loginStep2Action">
+          <div class="flex items-center gap-2 text-[9px] font-semibold text-cyan-300 font-sans">
           <svg class="w-3 h-3 animate-spin text-cyan-400 shrink-0" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path></svg>
-          <span>Awaiting mobile approval...</span>
-          </div>
-          </div>
-          <!-- Step 3 Listening Handshake -->
-          <div class="hidden w-full p-2 rounded-lg bg-blue-950/40 border border-emerald-500/50 text-center space-y-1" id="loginStep3Action">
-          <div class="flex items-center justify-center gap-1.5">
-          <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 shadow-sm animate-pulse">
-          <svg class="w-2.5 h-2.5 fill-current" viewbox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></svg>
-          </div>
-          <span class="text-[9px] font-bold text-emerald-300">Listening for acoustic key...</span>
+          <span>Awaiting Wavekey activation...</span>
           </div>
           </div>
           </div>
           </div>
           </div>
-          <!-- STATE 4 & 5: Corporate Dashboard -->
-          <div class="hidden w-full h-full flex flex-col justify-between p-2.5 transition-all duration-300" id="laptopDashboard">
+          <!-- STEP 03 OVERLAY: Animated Green Checkmark Pop -->
+          <div class="absolute inset-0 bg-[#070b12]/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center transition-all duration-300 hidden" id="laptopCheckOverlay">
+          <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-300 shadow-[0_0_30px_rgba(52,211,153,0.5)] pop-tick-anim">
+          <svg class="w-9 h-9 stroke-[3]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+          <span class="text-[11px] font-mono text-emerald-300 font-bold mt-2.5 tracking-wide pop-tick-anim">Authenticated</span>
+          <span class="text-[8px] font-mono text-slate-400 mt-0.5">Wavekey ultrasonic handshake verified</span>
+          </div>
+          <!-- STEP 03 (LOADED) & STEP 04: Generic CRM Customer Profile Screen -->
+          <div class="w-full h-full flex flex-col justify-between p-2.5 transition-all duration-300 hidden" id="laptopDashboard">
+          <!-- CRM Top Header -->
           <div class="flex items-center justify-between border-b border-white/10 pb-1.5 px-0.5">
           <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-blue-600 text-white flex items-center justify-center shadow-sm">
+          <div class="w-5 h-5 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-[10px] shadow-sm">
           <svg class="w-3 h-3 fill-current" viewbox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"></path></svg>
           </div>
           <div>
-          <h4 class="text-[9.5px] font-bold text-white leading-none">Salesforce Enterprise</h4>
-          <p class="text-[7px] text-slate-400 mt-0.5 font-mono">Acme Corp • Alex Vance</p>
+          <h4 class="text-[9.5px] font-bold text-white leading-none font-sans">Acme CRM • Customer Profile</h4>
+          <p class="text-[7px] text-slate-400 mt-0.5 font-mono">Enterprise Account #8942-A</p>
           </div>
           </div>
-          <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 border border-emerald-500/40 text-emerald-400 text-[7.5px] font-mono">
+          <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 text-[7.5px] font-mono">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="laptopDashStatusPill">Continuously Authenticating</span>
+          <span id="laptopDashStatusPill">Active &amp; Verified</span>
           </div>
           </div>
-          <div class="flex items-center gap-3 border-b border-white/5 py-1 text-[8px] text-slate-400 font-medium px-0.5">
-          <span class="text-cyan-400 border-b border-cyan-400 pb-0.5 font-semibold">Home</span>
-          <span>Opportunities</span>
-          <span>Accounts</span>
-          <span>Security Logs</span>
+          <!-- Customer Profile Body -->
+          <div class="flex-1 flex flex-col justify-between py-1.5 gap-1.5">
+          <!-- Profile Identity Strip -->
+          <div class="glass-card p-2 rounded-lg flex items-center justify-between">
+          <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-600 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-[10px] shadow">AV</div>
+          <div>
+          <h5 class="text-[10px] font-bold text-white leading-tight font-sans">Alex Vance</h5>
+          <p class="text-[7.5px] text-slate-400 font-mono">alex.vance@acme-corp.com • Lead Engineer</p>
           </div>
-          <div class="grid grid-cols-3 gap-1.5 my-auto">
-          <div class="glass-card p-1.5 rounded-lg text-left">
-          <span class="text-[7px] font-mono text-slate-400 block">Session Health</span>
-          <span class="text-[10px] font-bold text-white">Protected</span>
           </div>
-          <div class="glass-card p-1.5 rounded-lg text-left">
-          <span class="text-[7px] font-mono text-slate-400 block">Acoustic Link</span>
-          <span class="text-[10px] font-bold text-emerald-300" id="dashLinkField">Active Guarding</span>
+          <div class="text-right">
+          <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[7px] font-mono font-bold">Enterprise Access</span>
           </div>
-          <div class="glass-card p-1.5 rounded-lg text-left">
-          <span class="text-[7px] font-mono text-slate-400 block">Risk Score</span>
-          <span class="text-[10px] font-bold text-emerald-400">0.0 (Zero)</span>
+          </div>
+          <!-- Telemetry & Details Row -->
+          <div class="grid grid-cols-3 gap-1.5">
+          <div class="glass-card p-1.5 rounded text-left">
+          <span class="text-[6.5px] font-mono text-slate-400 block">Security Status</span>
+          <span class="text-[9px] font-bold text-emerald-300 font-sans flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Verified
+          </span>
+          </div>
+          <div class="glass-card p-1.5 rounded text-left">
+          <span class="text-[6.5px] font-mono text-slate-400 block">Auth Channel</span>
+          <span class="text-[9px] font-bold text-white font-sans" id="dashLinkField">Acoustic Handshake</span>
+          </div>
+          <div class="glass-card p-1.5 rounded text-left">
+          <span class="text-[6.5px] font-mono text-slate-400 block">Risk Telemetry</span>
+          <span class="text-[9px] font-bold text-emerald-400 font-sans">0.0 (Protected)</span>
+          </div>
+          </div>
+          <!-- Activity Log Mini Strip -->
+          <div class="glass-panel p-1.5 rounded border border-white/5 flex items-center justify-between text-[7px] font-mono text-slate-300">
+          <span class="text-slate-400">Recent: Wavekey auth confirmed</span>
+          <span class="text-emerald-400">Just now • Workstation #04</span>
           </div>
           </div>
           </div>
@@ -370,12 +388,12 @@
           </div>
           </div>
           </div>
-          <!-- MacBook Laptop Base Lip -->
-          <div class="relative w-full max-w-[410px] -mt-1 flex flex-col items-center">
-          <div class="w-full h-2.5 bg-gradient-to-b from-[#222938] via-[#1a202c] to-[#0f141d] rounded-b-xl border-t border-slate-600/60 shadow-lg relative flex items-start justify-center">
-          <div class="w-12 h-1 bg-[#0b0e14] rounded-b-md border-b border-white/10"></div>
+          <!-- LAPTOP HARDWARE BASE / DECK: Lighter Metallic Gradient (Grey to Lighter Grey) -->
+          <div class="laptop-base relative -mt-1 flex flex-col items-center">
+          <div class="w-full h-3 bg-gradient-to-b from-[#64748b] via-[#94a3b8] to-[#cbd5e1] rounded-b-xl border-t border-slate-400 shadow-xl relative flex items-start justify-center">
+          <div class="w-14 h-1.5 bg-[#475569] rounded-b-md border-b border-white/40 shadow-inner"></div>
           </div>
-          <div class="w-[95%] h-1 bg-black/60 rounded-full blur-[2px] -mt-0.5"></div>
+          <div class="w-[90%] h-1.5 bg-black/40 rounded-full blur-[2px] -mt-0.5"></div>
           </div>
           </div>
           </div>

@@ -331,20 +331,26 @@ nav a:hover,
   position: relative;
 }
 
-/* Full-bleed background image behind the hero copy, rather than a side-by-side
-   card. Two linear-gradient scrims (painted as solid rgba over the image, not
-   a mask) reach fully opaque page-bg colour exactly at each edge — left/top/
-   bottom fade to a pixel-perfect match with the page, so there is no boxed-in
-   rectangle outline even with the rounded corners. The horizontal fade starts
-   easing early (image already peeking through behind where the copy begins)
-   rather than staying solid until past the text column. */
+/* Full-bleed background image spanning the entire viewport width (not just
+   the section's own centred column) — broken out of .hero's constrained
+   width via the standard left:50%/-50vw margin trick, since .hero itself
+   stays centred like every other section. Two linear-gradient scrims
+   (painted as solid rgba over the image, not a mask) reach fully opaque
+   page-bg colour exactly at the left edge — top/bottom fade to a
+   pixel-perfect match with the page too — so there's no boxed-in rectangle
+   outline. The horizontal fade is stretched further right than the text
+   column alone would need, since that column now sits well short of the
+   full viewport width the image spans. */
 .hero-art {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  border-radius: 1.25rem;
 }
 
 .hero-art::after {
@@ -352,8 +358,8 @@ nav a:hover,
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, rgba(6, 7, 11, 1) 0%, rgba(6, 7, 11, 0.88) 10%, rgba(6, 7, 11, 0.5) 24%, rgba(6, 7, 11, 0.18) 42%, rgba(6, 7, 11, 0.08) 68%, rgba(6, 7, 11, 0.35) 100%),
-    linear-gradient(to bottom, rgba(6, 7, 11, 0.85) 0%, rgba(6, 7, 11, 0) 22%, rgba(6, 7, 11, 0) 75%, rgba(6, 7, 11, 0.9) 100%);
+    linear-gradient(to right, rgba(6, 7, 11, 1) 0%, rgba(6, 7, 11, 0.92) 8%, rgba(6, 7, 11, 0.65) 20%, rgba(6, 7, 11, 0.32) 35%, rgba(6, 7, 11, 0.13) 50%, rgba(6, 7, 11, 0.05) 75%, rgba(6, 7, 11, 0.28) 100%),
+    linear-gradient(to bottom, rgba(6, 7, 11, 0.85) 0%, rgba(6, 7, 11, 0) 18%, rgba(6, 7, 11, 0) 75%, rgba(6, 7, 11, 0.9) 100%);
 }
 
 .hero-art img {
@@ -451,6 +457,13 @@ nav a:hover,
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* The source mixes Inter into the device screens for UI copy (headings, button
+   labels, field values) against the Space Grotesk base. Scoped higher than
+   Tailwind's own .font-sans so it wins over that utility's default stack. */
+.wavekey-live-flow .font-sans {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* Keyframes & transitions for dynamic states */
 @keyframes waveBarBounce {
   0%, 100% { transform: scaleY(0.25); opacity: 0.35; }
@@ -468,6 +481,12 @@ nav a:hover,
   100% { opacity: 0.2; transform: translateX(3px); }
 }
 
+@keyframes popTick {
+  0% { transform: scale(0.4) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 .wavekey-live-flow .wave-bar {
   transform-origin: center;
   animation: waveBarBounce 0.9s ease-in-out infinite;
@@ -478,6 +497,44 @@ nav a:hover,
 }
 .wavekey-live-flow .chevron-pulse {
   animation: pulseChevron 1.2s ease-in-out infinite;
+}
+
+/* Checkmark pop in the laptop's step-3 overlay. */
+.wavekey-live-flow .pop-tick-anim {
+  animation: popTick 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* The stage is flex: 1 so it fills whatever room the phone and acoustic
+   column leave it, up to its own 420px cap — but flex items default to
+   min-width: auto, which floors their shrink at their content's intrinsic
+   width. Without this override, the laptop refused to shrink below that
+   floor and silently overflowed past the row (clipped by the page's own
+   overflow-x: hidden) on any viewport where the three-up row didn't have
+   its full ~760px of breathing room, which in practice was most desktop
+   widths once this got embedded in the site's narrower 1120px section
+   instead of the source's own 1280px canvas. */
+.wavekey-live-flow .laptop-stage {
+  min-width: 0;
+}
+
+/* The deck is deliberately a touch wider than the lid above it, which is
+   what reads as a laptop base rather than a slab. Sized relative to the
+   stage's own (possibly shrunk) rendered width rather than a fixed px tied
+   to the viewport, so it never forces the stage wider than the room it was
+   actually given. */
+.wavekey-live-flow .laptop-base {
+  width: calc(100% + 10px);
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+/* Below the md breakpoint the stage stacks vertically, so the step-4 tick
+   cascade (absolutely positioned 3rem above the laptop) lands on top of the
+   badge column instead of in clear space. Give the laptop room on its own. */
+@media (max-width: 767px) {
+  .wavekey-live-flow .laptop-stage {
+    margin-top: 3.25rem;
+  }
 }
 
 .wavekey-live-flow .glass-card {

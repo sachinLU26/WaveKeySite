@@ -15,6 +15,7 @@
   let currentStep = 1;
   const stepDuration = 3800; // 3.8s fluid transition loop
   let autoInterval = null;
+  let step3Timeout = null;
 
   const stepsData = {
     1: {
@@ -26,26 +27,20 @@
     2: {
       laptopUrl: "auth.acme-corp.internal",
       micActive: true,
-      dashPill: "Syncing",
+      dashPill: "Awaiting Mobile",
       linkText: "Connecting"
     },
     3: {
-      laptopUrl: "presence.wavekey.internal",
+      laptopUrl: "crm.acme-corp.internal/customer/8942",
       micActive: true,
-      dashPill: "Handshake Active",
-      linkText: "Pairing (0.5m)"
+      dashPill: "Active & Verified",
+      linkText: "Acoustic Handshake"
     },
     4: {
-      laptopUrl: "salesforce.com/lightning/home",
+      laptopUrl: "crm.acme-corp.internal/presence",
       micActive: true,
-      dashPill: "Session Authenticated",
-      linkText: "Locked (0.6m)"
-    },
-    5: {
-      laptopUrl: "salesforce.com/lightning/presence",
-      micActive: true,
-      dashPill: "Continuously Authenticating",
-      linkText: "Active Guarding"
+      dashPill: "Continuous Guarding",
+      linkText: "Zero-Touch Link"
     }
   };
 
@@ -69,11 +64,11 @@
     const urlDisp = document.getElementById('laptopUrlDisplay');
     if (urlDisp) urlDisp.innerText = data.laptopUrl;
 
-    // 3. Laptop mic badge in the browser chrome (active steps 2–5)
+    // 3. Laptop mic badge in the browser chrome
     const micBadge = document.getElementById('laptopMicIndicator');
     if (micBadge) micBadge.classList.toggle('opacity-0', !data.micActive);
 
-    // 4. Acoustic wave animation — visible only in step 3 and step 5
+    // 4. Acoustic wave animation — visible only in step 3 and step 4
     const acousticWave = document.getElementById('acousticWaveConnector');
     const waveBars = [
       document.getElementById('waveBar1'),
@@ -84,13 +79,13 @@
     ];
 
     if (acousticWave) {
-      if (step === 3 || step === 5) {
+      if (step === 3 || step === 4) {
         acousticWave.classList.remove('opacity-0', 'scale-90');
         acousticWave.classList.add('opacity-100', 'scale-100');
 
         waveBars.forEach((b) => {
           if (!b) return;
-          if (step === 5) {
+          if (step === 4) {
             b.classList.remove('wave-bar');
             b.classList.add('wave-bar-gentle');
           } else {
@@ -104,18 +99,32 @@
       }
     }
 
+    // Step 4 badges
+    const step4Badges = document.getElementById('step4AuthBadges');
+
+    if (step === 4) {
+      if (step4Badges) {
+        step4Badges.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        step4Badges.classList.add('opacity-100', 'scale-100');
+      }
+    } else {
+      if (step4Badges) {
+        step4Badges.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        step4Badges.classList.remove('opacity-100', 'scale-100');
+      }
+    }
+
     // 5. Phone UI switching
     const lockScreen = document.getElementById('phoneLockScreen');
-    const pushBanner = document.getElementById('phonePushBanner');
     const appVerifying = document.getElementById('phoneAppVerifying');
-    const appConfirmed = document.getElementById('phoneAppConfirmed');
     const appContinuous = document.getElementById('phoneAppContinuous');
     const islandPing = document.getElementById('islandPing');
     const phoneEmittingText = document.getElementById('phoneEmittingText');
 
+    const pushBanner = document.getElementById('phonePushBanner');
+
     if (lockScreen) lockScreen.classList.add('hidden');
     if (appVerifying) appVerifying.classList.add('hidden');
-    if (appConfirmed) appConfirmed.classList.add('hidden');
     if (appContinuous) appContinuous.classList.add('hidden');
     if (islandPing) islandPing.classList.add('opacity-0');
 
@@ -131,41 +140,51 @@
       if (phoneEmittingText) phoneEmittingText.innerText = "Emitting";
       if (islandPing) islandPing.classList.remove('opacity-0');
     } else if (step === 4) {
-      if (appConfirmed) appConfirmed.classList.remove('hidden');
-    } else if (step === 5) {
       if (appContinuous) appContinuous.classList.remove('hidden');
+      if (islandPing) islandPing.classList.remove('opacity-0');
     }
 
     // 6. Laptop workstation UI switching
     const laptopForm = document.getElementById('laptopLoginForm');
     const laptopDash = document.getElementById('laptopDashboard');
+    const laptopCheck = document.getElementById('laptopCheckOverlay');
     const step1Action = document.getElementById('loginStep1Action');
     const step2Action = document.getElementById('loginStep2Action');
-    const step3Action = document.getElementById('loginStep3Action');
     const laptopDashStatusPill = document.getElementById('laptopDashStatusPill');
     const dashLinkField = document.getElementById('dashLinkField');
 
-    if (step <= 3) {
+    if (step3Timeout) clearTimeout(step3Timeout);
+
+    if (step <= 2) {
+      if (laptopCheck) laptopCheck.classList.add('hidden');
       if (laptopForm) laptopForm.classList.remove('hidden');
       if (laptopDash) laptopDash.classList.add('hidden');
 
       if (step === 1) {
         if (step1Action) step1Action.classList.remove('hidden');
         if (step2Action) step2Action.classList.add('hidden');
-        if (step3Action) step3Action.classList.add('hidden');
       } else if (step === 2) {
         if (step1Action) step1Action.classList.add('hidden');
         if (step2Action) step2Action.classList.remove('hidden');
-        if (step3Action) step3Action.classList.add('hidden');
-      } else if (step === 3) {
-        if (step1Action) step1Action.classList.add('hidden');
-        if (step2Action) step2Action.classList.add('hidden');
-        if (step3Action) step3Action.classList.remove('hidden');
       }
-    } else {
+    } else if (step === 3) {
+      // Pop the checkmark overlay prominently, then reveal the CRM profile.
       if (laptopForm) laptopForm.classList.add('hidden');
       if (laptopDash) laptopDash.classList.remove('hidden');
-
+      if (laptopCheck) {
+        laptopCheck.classList.remove('hidden');
+        step3Timeout = setTimeout(() => {
+          if (laptopCheck && currentStep === 3) {
+            laptopCheck.classList.add('hidden');
+          }
+        }, 1200);
+      }
+      if (laptopDashStatusPill) laptopDashStatusPill.innerText = data.dashPill;
+      if (dashLinkField) dashLinkField.innerText = data.linkText;
+    } else if (step === 4) {
+      if (laptopCheck) laptopCheck.classList.add('hidden');
+      if (laptopForm) laptopForm.classList.add('hidden');
+      if (laptopDash) laptopDash.classList.remove('hidden');
       if (laptopDashStatusPill) laptopDashStatusPill.innerText = data.dashPill;
       if (dashLinkField) dashLinkField.innerText = data.linkText;
     }
@@ -173,20 +192,21 @@
 
   function advanceStep() {
     let nextStep = currentStep + 1;
-    if (nextStep > 5) nextStep = 1;
+    if (nextStep > 4) nextStep = 1;
     updateUIForStep(nextStep);
   }
 
   function handleStepClick(step) {
     // Manual scrub — restart the autonomous cycle after the interaction.
     clearInterval(autoInterval);
+    if (step3Timeout) clearTimeout(step3Timeout);
     updateUIForStep(step);
     autoInterval = setInterval(advanceStep, stepDuration);
   }
   window.handleStepClick = handleStepClick;
 
   // Clicking/tapping a step card scrubs straight to it; Enter/Space too,
-  // since the cards are role="button" divs rather than real <button>s.
+  // since the cards are role="button" list items rather than real <button>s.
   document.addEventListener('DOMContentLoaded', () => {
     const list = document.getElementById('narrativeStepsList');
     if (!list) return;
