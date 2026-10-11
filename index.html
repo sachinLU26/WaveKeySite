@@ -593,46 +593,97 @@
           </div>
         </div>
 
-        <div class="solution-reveal">
-          <div class="solution-reveal-frame" role="img" aria-label="Wavekey active on a phone, with the ultrasonic presence signal rippling outward from the app icon">
-            <div class="solution-ripples" aria-hidden="true">
-              <span class="solution-ripple r1"></span>
-              <span class="solution-ripple secondary r2"></span>
-              <span class="solution-ripple r3"></span>
-              <span class="solution-ripple secondary r4"></span>
-              <span class="solution-ripple r5"></span>
-              <span class="solution-ripple secondary r6"></span>
-            </div>
-            <div class="solution-phone" aria-hidden="true">
-              <span class="solution-phone-btn solution-phone-btn-mute"></span>
-              <span class="solution-phone-btn solution-phone-btn-vol-up"></span>
-              <span class="solution-phone-btn solution-phone-btn-vol-down"></span>
-              <span class="solution-phone-btn solution-phone-btn-power"></span>
-              <div class="solution-phone-screen">
-                <div class="solution-phone-statusbar">
-                  <span>9:41</span>
-                  <span class="solution-phone-island"></span>
-                  <span class="solution-phone-status-icons">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" opacity="0.2"></path><path d="M12 4c4.41 0 8 3.59 8 8 0 1.83-.62 3.53-1.68 4.88L12 20.85l-6.32-3.97C4.62 15.53 4 13.83 4 12c0-4.41 3.59-8 8-8z"></path></svg>
-                    <span class="solution-phone-battery"></span>
-                  </span>
-                </div>
-                <div class="solution-phone-core">
-                  <span class="solution-core-ring ring-1"></span>
-                  <span class="solution-core-ring ring-2"></span>
-                  <span class="solution-core-ring ring-3"></span>
-                  <span class="solution-core-ring ring-4"></span>
-                  <span class="solution-core-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.228-8-5.096 0-5.096 8 0 8 5.095 0 7.133-8 12.228-8z"></path></svg>
-                  </span>
-                </div>
-                <div class="solution-phone-home-bar"></div>
+        <div class="section-head surfaces-head" id="products">
+          <h2>It drops into what you already run (Software only)</h2>
+          <!-- <p class="lead">Wavekey ships as an app, an SDK, a browser plug-in or embedded software. Every surface uses the speaker and microphone already in your devices.</p> -->
+        </div>
+
+        <!-- Integration diagram: the phone emits, the wave carries it into
+             whichever surface sits in front of your existing identity stack. -->
+        <div class="surfaces-diagram">
+          <div class="surfaces-emit">
+            <svg viewBox="0 0 28 42" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="26" height="40" rx="4.5" stroke="currentColor" stroke-width="1.25"></rect>
+              <line x1="9" y1="5" x2="19" y2="5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"></line>
+              <circle cx="14" cy="36" r="1.5" fill="currentColor"></circle>
+            </svg>
+            <span>Phone emits</span>
+          </div>
+
+          <div class="surfaces-wave" aria-hidden="true">
+            <span class="surfaces-wave-line"></span>
+            <svg class="surfaces-wave-arcs" viewBox="0 0 44 48" fill="none">
+              <path d="M 10 16 A 12 12 0 0 1 10 32" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.3" stroke-linecap="round"></path>
+              <path d="M 20 10 A 18 18 0 0 1 20 38" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.5" stroke-linecap="round"></path>
+              <path d="M 30 4 A 25 25 0 0 1 30 44" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.75" stroke-linecap="round"></path>
+            </svg>
+          </div>
+
+          <div class="surfaces-stack">
+            <div class="surfaces-icons">
+              <div class="surfaces-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                <span>App</span>
               </div>
+              <div class="surfaces-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="10" y1="20" x2="14" y2="4"></line></svg>
+                <span>SDK</span>
+              </div>
+              <div class="surfaces-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>Browser plug-in</span>
+              </div>
+              <div class="surfaces-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+                <span>Embedded</span>
+              </div>
+            </div>
+            <div class="surfaces-hairline"></div>
+            <p class="surfaces-stack-label">Your existing identity stack</p>
+          </div>
+        </div>
+
+        <!-- Same four surfaces, who deploys each one — separated by
+             whitespace only, no cards or borders. -->
+        <div class="surfaces-grid">
+          <div class="surfaces-col">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <h3>Wavekey app</h3>
+            <p>Install the app and the phone becomes the key.</p>
+            <div class="surfaces-deployed">
+              <span>Deployed by</span>
+              <p>End users</p>
+            </div>
+          </div>
+          <div class="surfaces-col">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="10" y1="20" x2="14" y2="4"></line></svg>
+            <h3>SDK</h3>
+            <p>Embed emit-and-verify directly into your own mobile or desktop app.</p>
+            <div class="surfaces-deployed">
+              <span>Deployed by</span>
+              <p>Your engineers</p>
+            </div>
+          </div>
+          <div class="surfaces-col">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <h3>Browser plug-in</h3>
+            <p>Protect web apps and SSO portals without touching their code.</p>
+            <div class="surfaces-deployed">
+              <span>Deployed by</span>
+              <p>IT, via policy</p>
+            </div>
+          </div>
+          <div class="surfaces-col">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+            <h3>Embedded</h3>
+            <p>Ship Wavekey inside your own device, terminal or OT endpoint.</p>
+            <div class="surfaces-deployed">
+              <span>Deployed by</span>
+              <p>Product teams</p>
             </div>
           </div>
         </div>
       </section>
-
 
       <section id="contact" class="section request">
         <p class="kicker"><span class="kicker-dot" aria-hidden="true"></span>Request access to Wavekey</p>

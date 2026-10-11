@@ -1901,6 +1901,201 @@ html.field-ready .presence-field {
 }
 
 /* ===========================================================================
+   PRODUCTS — software-only deployment surfaces, ported from
+   assets/what-product-is-reference.html. No cards, no borders, no links out
+   to the standalone product pages — a diagram (phone emits → the signal
+   reaches whichever surface sits in front of the identity stack) plus a
+   plain four-column breakdown of who deploys each one, separated by
+   whitespace alone. Colours/type map onto this site's own tokens (the
+   source's #7ef2c0 accent is exactly var(--positive)) rather than the
+   hardcoded values the standalone mockup used. Folded into #problem as the
+   payoff for "Until Wavekey" (see .coverage-bracket) rather than living as
+   its own section — this is the introduction to what Wavekey actually is.
+   =========================================================================== */
+.surfaces-head {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  text-align: center;
+}
+
+.surfaces-head .lead {
+  max-width: 54ch;
+  margin-inline: auto;
+}
+
+.surfaces-diagram {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.surfaces-emit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.8rem;
+  color: var(--text);
+}
+
+.surfaces-emit svg {
+  width: 1.75rem;
+  height: 2.6rem;
+}
+
+.surfaces-emit span {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.surfaces-wave {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+}
+
+.surfaces-wave-line {
+  width: 100%;
+  height: 1px;
+  background: var(--positive);
+  opacity: 0.25;
+}
+
+.surfaces-wave-arcs {
+  position: absolute;
+  left: 1.5rem;
+  width: 2.75rem;
+  height: 3rem;
+  color: var(--positive);
+}
+
+.surfaces-stack {
+  flex-shrink: 0;
+  width: min(42rem, 58vw);
+}
+
+.surfaces-icons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.surfaces-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  color: var(--muted);
+}
+
+.surfaces-icon svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--positive);
+}
+
+.surfaces-icon span {
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.surfaces-hairline {
+  height: 1px;
+  background: var(--line);
+}
+
+.surfaces-stack-label {
+  margin: 1.1rem 0 0;
+  text-align: center;
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.surfaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.surfaces-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.surfaces-col svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--positive);
+  margin-bottom: 1.1rem;
+}
+
+.surfaces-col h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-xl);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.surfaces-col > p {
+  margin: 0 0 1.4rem;
+  color: var(--muted);
+  font-size: var(--text-md);
+  min-height: 2.8em;
+}
+
+.surfaces-deployed {
+  margin-top: auto;
+}
+
+.surfaces-deployed span {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.surfaces-deployed p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-md);
+}
+
+@media (max-width: 900px) {
+  .surfaces-diagram {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .surfaces-wave {
+    transform: rotate(90deg);
+    width: 2.5rem;
+    margin: 0.5rem auto;
+  }
+
+  .surfaces-stack {
+    width: 100%;
+  }
+
+  .surfaces-icons {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem;
+  }
+}
+
+/* ===========================================================================
    FIGURES — the statistics
    =========================================================================== */
 
@@ -1982,9 +2177,10 @@ html.field-ready .presence-field {
 
 .section-head-sub {
   margin-top: clamp(2.5rem, 5vw, 4.5rem);
-  /* Only #problem uses this class, and it's always immediately followed by
-     .solution-reveal, which needs to sit flush against "Until Wavekey" with
-     no gap — overrides .section-head's own margin-bottom: 3.2rem. */
+  /* Only #problem uses this class. Zeroed out (overriding .section-head's
+     own margin-bottom: 3.2rem) because the spacing down to whatever follows
+     "Until Wavekey" — currently .surfaces-head — is that element's own
+     margin-top to own, rather than splitting the gap across both sides. */
   margin-bottom: 0;
   text-align: center;
 }
@@ -2472,11 +2668,13 @@ html.field-ready .presence-field {
     min-height: 30rem;
   }
 
-  /* The grid only governs the top two elements; figures and "the gap"
-     resume full width immediately below. */
+  /* The grid only governs the top two elements; figures, "the gap", and the
+     software-surfaces intro that now follows it all resume full width. */
   #problem > .figures,
   #problem > .section-head-sub,
-  #problem > .solution-reveal {
+  #problem > .surfaces-head,
+  #problem > .surfaces-diagram,
+  #problem > .surfaces-grid {
     grid-column: 1 / -1;
   }
 }
