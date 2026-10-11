@@ -314,8 +314,12 @@ nav a:hover,
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+/* Every section shares this padding so the gap between any two of them is
+   identical — this is the size .trusted (the logo strip) used to use on its
+   own, now applied everywhere instead of singling that one section out as
+   tighter than its neighbours. */
 .section {
-  padding: clamp(6rem, 11vw, 10rem) 0;
+  padding: clamp(3rem, 6vw, 5rem) 0;
   position: relative;
 }
 
@@ -334,16 +338,21 @@ nav a:hover,
 /* Full-bleed background image spanning the entire viewport width (not just
    the section's own centred column) — broken out of .hero's constrained
    width via the standard left:50%/-50vw margin trick, since .hero itself
-   stays centred like every other section. Two linear-gradient scrims
-   (painted as solid rgba over the image, not a mask) reach fully opaque
-   page-bg colour exactly at the left edge — top/bottom fade to a
-   pixel-perfect match with the page too — so there's no boxed-in rectangle
-   outline. The horizontal fade is stretched further right than the text
-   column alone would need, since that column now sits well short of the
-   full viewport width the image spans. */
+   stays centred like every other section. It also reaches above .hero's own
+   top edge by roughly the sticky header's rendered height, so the image
+   runs behind the nav bar instead of starting below it — the header has no
+   background of its own at rest (.site-header::before only fades in once
+   scrolled), so the image shows straight through. Three overlays (painted
+   as solid rgba over the image, not a mask) do the fading: a horizontal
+   scrim reaching fully opaque page-bg colour exactly at the left edge, a
+   vertical one that darkens enough behind the header to keep its text
+   legible and then fades the bottom all the way to opaque well short of the
+   image's own edge (so the fade finishes before any crop boundary could
+   show), and a soft radial vignette so the image reads as dissolving on
+   every side rather than being a hard rectangle with edge treatments. */
 .hero-art {
   position: absolute;
-  top: 0;
+  top: -7rem;
   bottom: 0;
   left: 50%;
   width: 100vw;
@@ -351,6 +360,17 @@ nav a:hover,
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  /* The colour overlay below fades the image to a flat, solid dark —
+     but "solid dark" is still a slightly different shade than the page's
+     own background (body carries a faint ambient radial glow that this
+     box doesn't know about), so a flat colour stop alone left a visible
+     seam exactly at the box's bottom edge. Masking the box itself to
+     transparent over its last stretch instead reveals the real body
+     background directly, which is by definition identical to whatever
+     the page looks like just past this edge — seamless regardless of
+     viewport height or how strong the ambient glow is at that point. */
+  mask-image: linear-gradient(to bottom, #000 0%, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 76%, transparent 100%);
 }
 
 .hero-art::after {
@@ -358,21 +378,57 @@ nav a:hover,
   position: absolute;
   inset: 0;
   background:
+    radial-gradient(120% 85% at 60% 35%, transparent 40%, rgba(6, 7, 11, 0.45) 100%),
     linear-gradient(to right, rgba(6, 7, 11, 1) 0%, rgba(6, 7, 11, 0.92) 8%, rgba(6, 7, 11, 0.65) 20%, rgba(6, 7, 11, 0.32) 35%, rgba(6, 7, 11, 0.13) 50%, rgba(6, 7, 11, 0.05) 75%, rgba(6, 7, 11, 0.28) 100%),
-    linear-gradient(to bottom, rgba(6, 7, 11, 0.85) 0%, rgba(6, 7, 11, 0) 18%, rgba(6, 7, 11, 0) 75%, rgba(6, 7, 11, 0.9) 100%);
+    linear-gradient(to bottom, rgba(6, 7, 11, 0.92) 0%, rgba(6, 7, 11, 0.35) 9%, rgba(6, 7, 11, 0) 22%, rgba(6, 7, 11, 0) 34%, rgba(6, 7, 11, 0.65) 60%, rgba(6, 7, 11, 1) 76%);
 }
 
 .hero-art img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 60% 40%;
+  object-position: 60% 32%;
   display: block;
 }
 
 .hero-inner {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.hero-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The phone mockup from .solution-reveal (see its own block further down),
+   reused here beside the hero copy instead of only inside #problem. Sits
+   directly on the hero image with no card/background of its own, same as
+   the original — it's meant to read as part of the scene, not a tile
+   dropped on top of it. Hidden below 900px, where .hero-inner stacks and
+   there isn't room for both the text and a second focal point. */
+.hero-reveal {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.hero-reveal .solution-reveal-frame {
+  width: 12rem;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  /* Specificity needs to beat .solution-reveal's own unconditional
+     display: flex (same single-class weight, but it comes later in the
+     cascade), so this targets the compound .hero-reveal.solution-reveal
+     rather than .hero-reveal alone. */
+  .hero-reveal.solution-reveal {
+    display: none;
+  }
 }
 
 /* ===========================================================================
@@ -497,6 +553,35 @@ nav a:hover,
 }
 .wavekey-live-flow .chevron-pulse {
   animation: pulseChevron 1.2s ease-in-out infinite;
+}
+
+/* Continuous resync glyph shown only in step 4, between the phone and
+   laptop — a steady, slow turn rather than Tailwind's 1s animate-spin,
+   which reads as too busy for a background "still retrying" cue. */
+@keyframes retrySpin {
+  to { transform: rotate(360deg); }
+}
+.wavekey-live-flow .retry-spin {
+  animation: retrySpin 2.6s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+/* "Tap me" cue on the two primary CTA buttons (laptop Login in step 1,
+   phone "Tap to Activate" in step 2) — a soft glow/brightness pulse rather
+   than a scale change, since these buttons already scale on :active and
+   stacking two transform-based effects on the same element fights. */
+@keyframes ctaFlash {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(45, 212, 191, 0), 0 4px 10px rgba(0, 0, 0, 0.25);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 16px 3px rgba(45, 212, 191, 0.65), 0 4px 10px rgba(0, 0, 0, 0.25);
+    filter: brightness(1.18);
+  }
+}
+.wavekey-live-flow .cta-flash {
+  animation: ctaFlash 1.6s ease-in-out infinite;
 }
 
 /* Checkmark pop in the laptop's step-3 overlay. */
@@ -663,6 +748,14 @@ h2 {
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 1.1;
+}
+
+/* This heading's column is narrower than most (it shares #problem's row
+   with the orb image), so at the default display-md size "Bad actors are
+   rapidly adapting to phishing resistant MFA" wraps to three lines. Sized
+   down to display-sm so it settles into two instead. */
+.problem-title {
+  font-size: var(--display-sm);
 }
 
 h3 {
@@ -1127,7 +1220,7 @@ h3 {
   }
 
   .section {
-    padding: 4.5rem 0;
+    padding: 3rem 0;
   }
 
   .hero {
@@ -1647,11 +1740,6 @@ html.field-ready .presence-field {
    TRUSTED-BY MARQUEE
    =========================================================================== */
 
-.trusted {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
-}
-
 .trusted .kicker {
   margin-bottom: 2rem;
 }
@@ -1823,6 +1911,18 @@ html.field-ready .presence-field {
   margin-top: clamp(3rem, 6vw, 5rem);
 }
 
+/* The stat cards are commented out in markup right now, but the div (and
+   this margin) stays in the DOM — collapse it to nothing while it's empty
+   instead of leaving a blank clamp(3rem,6vw,5rem) gap with no content to
+   justify it. Comes back automatically if the figures are ever restored.
+   :empty alone doesn't catch this: the whitespace between the div's own
+   tag and the HTML comment wrapping the commented-out cards is itself a
+   text-node child, so the element is never truly empty. :has(*) checks for
+   actual element children instead, which comments and whitespace aren't. */
+.figures:not(:has(*)) {
+  margin-top: 0;
+}
+
 .figure {
   position: relative;
   padding: clamp(1.6rem, 2.4vw, 2rem) clamp(1.4rem, 2vw, 1.8rem);
@@ -1881,7 +1981,7 @@ html.field-ready .presence-field {
 }
 
 .section-head-sub {
-  margin-top: clamp(5rem, 10vw, 9rem);
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
   /* Only #problem uses this class, and it's always immediately followed by
      .solution-reveal, which needs to sit flush against "Until Wavekey" with
      no gap — overrides .section-head's own margin-bottom: 3.2rem. */
@@ -1902,13 +2002,32 @@ html.field-ready .presence-field {
   max-width: 22ch;
 }
 
+/* 1fr auto 1fr, not an equal-thirds grid or a plain space-between flex row:
+   either of those ties the middle label's position to the outer labels'
+   widths, which are quite different ("At login" vs "At sensitive actions").
+   With two equal 1fr side columns the auto-width middle column is always
+   exactly centred regardless of what's in the side columns, while the side
+   items themselves are pinned to the container's own left/right edges —
+   matching the bracket's symmetric curve ends and its centred arrow. */
 .coverage-gaps {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr auto 1fr;
   align-items: start;
   gap: 1.5rem;
   max-width: 46rem;
   margin: clamp(2.6rem, 5vw, 3.6rem) auto 0;
+}
+
+.coverage-gap:first-child {
+  justify-self: start;
+}
+
+.coverage-gap:nth-child(2) {
+  justify-self: center;
+}
+
+.coverage-gap:last-child {
+  justify-self: end;
 }
 
 .coverage-gap {
@@ -2339,6 +2458,11 @@ html.field-ready .presence-field {
   .problem-top {
     grid-column: 1;
     grid-row: 1;
+    /* #problem's own align-items: center applies here, centering this
+       column vertically against the orb (.problem-art below) so the two
+       read as sitting side by side rather than pinned to different edges
+       of row 1 — row 1's height is set by the orb, not by this column's
+       own (shorter) content. */
   }
 
   .problem-art {

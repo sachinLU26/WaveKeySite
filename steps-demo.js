@@ -99,18 +99,27 @@
       }
     }
 
-    // Step 4 badges
+    // Step 4 badges, and the retry/resync glyph between phone and laptop
     const step4Badges = document.getElementById('step4AuthBadges');
+    const retryIcon = document.getElementById('step4RetryIcon');
 
     if (step === 4) {
       if (step4Badges) {
         step4Badges.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
         step4Badges.classList.add('opacity-100', 'scale-100');
       }
+      if (retryIcon) {
+        retryIcon.classList.remove('opacity-0', 'scale-90');
+        retryIcon.classList.add('opacity-100', 'scale-100');
+      }
     } else {
       if (step4Badges) {
         step4Badges.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
         step4Badges.classList.remove('opacity-100', 'scale-100');
+      }
+      if (retryIcon) {
+        retryIcon.classList.add('opacity-0', 'scale-90');
+        retryIcon.classList.remove('opacity-100', 'scale-100');
       }
     }
 
@@ -196,40 +205,93 @@
     updateUIForStep(nextStep);
   }
 
-  function handleStepClick(step) {
-    // Manual scrub — restart the autonomous cycle after the interaction.
+  function pauseAutoLoop() {
     clearInterval(autoInterval);
-    if (step3Timeout) clearTimeout(step3Timeout);
-    updateUIForStep(step);
+    autoInterval = null;
+    if (step3Timeout) {
+      clearTimeout(step3Timeout);
+      step3Timeout = null;
+    }
+  }
+
+  function startAutoLoop() {
+    pauseAutoLoop();
     autoInterval = setInterval(advanceStep, stepDuration);
+  }
+
+  // Whether the widget is currently on screen — set by the
+  // IntersectionObserver below. The auto-advance loop only runs while this
+  // is true, so the demo doesn't keep cycling (and burning the step-3
+  // checkmark timeout, wave animations, etc.) somewhere off-screen the
+  // visitor never scrolled back to.
+  let isVisible = false;
+
+  function handleStepClick(step) {
+    // Manual scrub — restart the autonomous cycle after the interaction
+    // (only if still visible; a click can't happen while off-screen, but
+    // this stays consistent with the observer-driven state either way).
+    pauseAutoLoop();
+    updateUIForStep(step);
+    if (isVisible) startAutoLoop();
   }
   window.handleStepClick = handleStepClick;
 
-  // Clicking/tapping a step card scrubs straight to it; Enter/Space too,
-  // since the cards are role="button" list items rather than real <button>s.
   document.addEventListener('DOMContentLoaded', () => {
+    // Clicking/tapping a step card scrubs straight to it; Enter/Space too,
+    // since the cards are role="button" list items rather than real
+    // <button>s.
     const list = document.getElementById('narrativeStepsList');
-    if (!list) return;
+    if (list) {
+      list.addEventListener('click', (event) => {
+        const item = event.target.closest('.step-item');
+        if (!item || !list.contains(item)) return;
+        const step = parseInt(item.getAttribute('data-step'), 10);
+        if (step) handleStepClick(step);
+      });
 
-    list.addEventListener('click', (event) => {
-      const item = event.target.closest('.step-item');
-      if (!item || !list.contains(item)) return;
-      const step = parseInt(item.getAttribute('data-step'), 10);
-      if (step) handleStepClick(step);
-    });
+      list.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const item = event.target.closest('.step-item');
+        if (!item || !list.contains(item)) return;
+        event.preventDefault();
+        const step = parseInt(item.getAttribute('data-step'), 10);
+        if (step) handleStepClick(step);
+      });
+    }
 
-    list.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
-      const item = event.target.closest('.step-item');
-      if (!item || !list.contains(item)) return;
-      event.preventDefault();
-      const step = parseInt(item.getAttribute('data-step'), 10);
-      if (step) handleStepClick(step);
-    });
+    // Only run the demo while it's actually on screen: start the loop as
+    // the widget scrolls into view, and pause + reset to step 1 (Login)
+    // the moment it scrolls back out, so it's never mid-cycle — stuck on
+    // "Authenticate" or similar — for a visitor scrolling back up to it.
+    const root = document.getElementById('wavekeyLiveFlow');
+    if (root && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              isVisible = true;
+              startAutoLoop();
+            } else {
+              isVisible = false;
+              pauseAutoLoop();
+              updateUIForStep(1);
+            }
+          });
+        },
+        { threshold: 0.35 }
+      );
+      observer.observe(root);
+    } else if (root) {
+      // No IntersectionObserver support — fall back to always running
+      // rather than never animating at all.
+      isVisible = true;
+      startAutoLoop();
+    }
   });
 
-  // Initialize at step 1 and start the autonomous loop.
+  // Paint the correct step-1 content immediately so the widget doesn't
+  // flash unstyled/default markup before the observer above ever fires —
+  // the loop itself only starts once it's confirmed on screen.
   updateUIForStep(1);
-  autoInterval = setInterval(advanceStep, stepDuration);
 
 })();
