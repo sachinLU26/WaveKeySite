@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wavekey Architecture - Software Only</title>
+<!-- Tailwind CSS CDN v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: {
+              950: '#04060A',
+              900: '#06080F',
+              850: '#090D16',
+              800: '#0D131F',
+              700: '#151D2E',
+            },
+            mint: {
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+            },
+            neonCyan: '#06B6D4'
+          },
+          fontFamily: {
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Visual Effects & Grid Styles -->
+<style data-purpose="cyber-background-grid">
+    .cyber-dot-grid {
+      background-image: radial-gradient(rgba(52, 211, 153, 0.12) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .radial-glow-ambient {
+      background: radial-gradient(circle 600px at 50% 180px, rgba(16, 185, 129, 0.07), transparent 70%);
+    }
+    .pipeline-line-glow {
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
+    }
+  </style>
+<style data-purpose="component-micro-animations">
+    @keyframes pulseWave {
+      0% { opacity: 0.15; transform: scaleX(0.96) translateX(-4px); }
+      50% { opacity: 0.95; transform: scaleX(1.02) translateX(0); }
+      100% { opacity: 0.15; transform: scaleX(0.96) translateX(-4px); }
+    }
+    .wave-pulse-active {
+      animation: pulseWave 3.2s ease-in-out infinite;
+    }
+    @keyframes telemetrySignal {
+      0% { transform: translateX(-10%); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateX(110%); opacity: 0; }
+    }
+    .telemetry-flow {
+      animation: telemetrySignal 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+  </style>
+<!-- END: Custom Visual Effects & Grid Styles -->
+</head>
+<body class="bg-[#06080F] text-slate-100 antialiased selection:bg-emerald-500/30 selection:text-emerald-300 min-h-screen">
+<!-- BEGIN: SoftwareOnlySection -->
+<section class="relative w-full overflow-hidden py-24 lg:py-32 border-y border-slate-800/60" data-purpose="software-only-architecture-section">
+<!-- Ambient dot grid overlay and radial glow -->
+<div aria-hidden="true" class="absolute inset-0 cyber-dot-grid opacity-70 pointer-events-none"></div>
+<div aria-hidden="true" class="absolute inset-0 radial-glow-ambient pointer-events-none"></div>
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- BEGIN: Section Header -->
+<div class="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
+<!-- Eyebrow Badge -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 font-mono text-xs tracking-widest uppercase mb-6 shadow-[0_0_15px_rgba(16,185,129,0.12)]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          ZERO HARDWARE • 100% SOFTWARE
+        </div>
+<!-- Main Headline -->
+<h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-6">
+          No new hardware. <br class="hidden sm:inline"/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">Works with what you already run.</span>
+</h2>
+<!-- Subline -->
+<p class="text-base sm:text-lg text-slate-400 font-normal leading-relaxed">
+          Wavekey uses the phones and laptops your people already have, and sits alongside your existing identity provider. Choose how to deploy it.
+        </p>
+</div>
+<!-- END: Section Header -->
+<!-- BEGIN: Pipeline Visual Schematic -->
+<!-- Interactive Pipeline Graphic mirroring https://lh3.googleusercontent.com/aida-public/AB6AXuBeM_0m9wK4l32nr7Qi0Q0Wv-pKG7k_75DSeTxtFPJKf4H_2vAaK1jOPgvOs1d4tyYzjbcxEBwDPgf3hye4EgSJpsn1rR6H4p4u-lB23jKmFuQFD-BQeMEREJF15A84B6-Q3Tac5N_Mjlbv12kQBJJ9T-cLAPYEw9QCQxnfXHwp1_xexwPa_HnpaYjTmnLa9AVyTRm-QfbPJ4qVgl0ObYQSW4CwFa62lW0LO_FfaJkz1S1STEpWlwAy6Lxb26oxdb6lAQ -->
+<div class="relative w-full max-w-5xl mx-auto mb-20 p-6 sm:p-8 rounded-2xl bg-obsidian-900/80 border border-slate-800/80 backdrop-blur-xl shadow-2xl" data-purpose="identity-stack-pipeline">
+<div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4">
+<!-- Left Endpoint: Phone Emitter -->
+<div class="flex items-center gap-4 lg:w-1/4">
+<div class="w-12 h-12 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.2)]">
+<!-- Smartphone SVG -->
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="20" rx="2" ry="2" width="14" x="5" y="2"></rect>
+<path d="M12 18h.01"></path>
+</svg>
+</div>
+<div>
+<div class="text-xs uppercase font-mono tracking-wider text-emerald-400">Signal Source</div>
+<div class="text-sm font-semibold text-white">Phone emits</div>
+</div>
+</div>
+<!-- Middle: Signal Wave Beam -->
+<div class="relative w-full lg:w-2/5 flex items-center justify-center px-2">
+<!-- Wave Audio Arcs -->
+<div class="flex items-center text-emerald-400 mr-3">
+<svg class="w-6 h-8 text-emerald-400 wave-pulse-active" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M2 10a4 4 0 0 1 0 4"></path>
+<path d="M6 7a8 8 0 0 1 0 10"></path>
+<path d="M10 4a12 12 0 0 1 0 16"></path>
+</svg>
+</div>
+<!-- Glowing Track Line -->
+<div class="relative w-full h-[2px] bg-slate-800 overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-emerald-500/80 via-emerald-400 to-cyan-400 w-1/3 telemetry-flow pipeline-line-glow"></div>
+</div>
+<!-- Signal Tag -->
+<div class="ml-3 hidden sm:inline-block px-2 py-0.5 rounded bg-emerald-900/40 border border-emerald-500/30 text-[10px] font-mono uppercase tracking-widest text-emerald-300">
+              Acoustic
+            </div>
+</div>
+<!-- Right: Receiving Gateways -->
+<div class="w-full lg:w-1/2 flex items-center justify-between sm:justify-end gap-5 sm:gap-8 pt-3 sm:pt-0 border-t border-slate-800 lg:border-t-0">
+<!-- Gateway 1: App -->
+<div class="text-center group cursor-pointer" onclick="setActiveMode('app')">
+<div class="w-9 h-9 mx-auto mb-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 group-hover:border-emerald-400 flex items-center justify-center text-slate-300 group-hover:text-emerald-400 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="20" rx="2" ry="2" width="14" x="5" y="2"></rect>
+</svg>
+</div>
+<span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition-colors">App</span>
+</div>
+<!-- Gateway 2: SDK -->
+<div class="text-center group cursor-pointer" onclick="setActiveMode('sdk')">
+<div class="w-9 h-9 mx-auto mb-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 group-hover:border-emerald-400 flex items-center justify-center text-slate-300 group-hover:text-emerald-400 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="16 18 22 12 16 6"></polyline>
+<polyline points="8 6 2 12 8 18"></polyline>
+</svg>
+</div>
+<span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition-colors">SDK</span>
+</div>
+<!-- Gateway 3: Browser plug-in -->
+<div class="text-center group cursor-pointer" onclick="setActiveMode('browser')">
+<div class="w-9 h-9 mx-auto mb-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 group-hover:border-emerald-400 flex items-center justify-center text-slate-300 group-hover:text-emerald-400 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" x2="22" y1="12" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+</div>
+<span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition-colors whitespace-nowrap">Browser plug-in</span>
+</div>
+<!-- Gateway 4: Embedded -->
+<div class="text-center group cursor-pointer" onclick="setActiveMode('embedded')">
+<div class="w-9 h-9 mx-auto mb-1.5 rounded-lg bg-slate-800/80 border border-slate-700/80 group-hover:border-emerald-400 flex items-center justify-center text-slate-300 group-hover:text-emerald-400 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="16" rx="2" width="16" x="4" y="4"></rect>
+<rect height="6" width="6" x="9" y="9"></rect>
+<line x1="9" x2="9" y1="1" y2="4"></line>
+<line x1="15" x2="15" y1="1" y2="4"></line>
+<line x1="9" x2="9" y1="20" y2="23"></line>
+<line x1="15" x2="15" y1="20" y2="23"></line>
+<line x1="20" x2="23" y1="9" y2="9"></line>
+<line x1="20" x2="23" y1="14" y2="14"></line>
+<line x1="1" x2="4" y1="9" y2="9"></line>
+<line x1="1" x2="4" y1="14" y2="14"></line>
+</svg>
+</div>
+<span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition-colors">Embedded</span>
+</div>
+</div>
+</div>
+<!-- Stack Anchor Label Footer -->
+<div class="mt-8 pt-4 border-t border-slate-800/80 flex items-center justify-center">
+<div class="text-center">
+<span class="font-mono text-[11px] tracking-[0.25em] uppercase text-slate-500 font-semibold">
+              YOUR EXISTING IDENTITY STACK
+            </span>
+<div class="flex items-center justify-center gap-6 mt-2 text-xs text-slate-400 font-mono">
+<span class="hover:text-emerald-400 transition-colors">Okta</span>
+<span class="text-slate-700">•</span>
+<span class="hover:text-emerald-400 transition-colors">Microsoft Entra ID</span>
+<span class="text-slate-700">•</span>
+<span class="hover:text-emerald-400 transition-colors">Ping Identity</span>
+<span class="text-slate-700">•</span>
+<span class="hover:text-emerald-400 transition-colors">Duo Security</span>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Pipeline Visual Schematic -->
+<!-- BEGIN: Deployment Mode Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="deployment-options-grid">
+<!-- Card 1: Wavekey app -->
+<div class="relative group p-6 rounded-2xl bg-[#090D16]/90 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)] flex flex-col justify-between" data-purpose="deployment-card" id="card-app">
+<div>
+<!-- Header Icon & Status -->
+<div class="flex items-center justify-between mb-5">
+<div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="20" rx="2" ry="2" width="14" x="5" y="2"></rect>
+<path d="M12 18h.01"></path>
+</svg>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase text-emerald-400 bg-emerald-950/40 border border-emerald-500/20">
+                Zero Touch
+              </span>
+</div>
+<!-- Title & Description -->
+<h3 class="text-xl font-semibold text-white tracking-tight mb-2">Wavekey app</h3>
+<p class="text-sm text-slate-400 leading-relaxed mb-6">
+              Users install it. Their phone becomes the key.
+            </p>
+</div>
+<!-- Deployment Metadata -->
+<div class="pt-5 border-t border-slate-800/80 space-y-3 font-mono">
+<div>
+<div class="text-[10px] tracking-wider uppercase text-slate-500">DEPLOYED BY</div>
+<div class="text-xs text-slate-300 font-medium">For end users</div>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-emerald-400/90">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span>Self-serve or MDM roll-out</span>
+</div>
+</div>
+</div>
+<!-- Card 2: SDK -->
+<div class="relative group p-6 rounded-2xl bg-[#090D16]/90 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)] flex flex-col justify-between" data-purpose="deployment-card" id="card-sdk">
+<div>
+<!-- Header Icon & Status -->
+<div class="flex items-center justify-between mb-5">
+<div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="16 18 22 12 16 6"></polyline>
+<polyline points="8 6 2 12 8 18"></polyline>
+</svg>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase text-emerald-400 bg-emerald-950/40 border border-emerald-500/20">
+                Custom UX
+              </span>
+</div>
+<!-- Title & Description -->
+<h3 class="text-xl font-semibold text-white tracking-tight mb-2">SDK</h3>
+<p class="text-sm text-slate-400 leading-relaxed mb-6">
+              Add Wavekey to your own mobile or desktop apps.
+            </p>
+</div>
+<!-- Deployment Metadata -->
+<div class="pt-5 border-t border-slate-800/80 space-y-3 font-mono">
+<div>
+<div class="text-[10px] tracking-wider uppercase text-slate-500">DEPLOYED BY</div>
+<div class="text-xs text-slate-300 font-medium">For your engineers</div>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-emerald-400/90">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span>Swift, Kotlin, React Native, Rust</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Browser plug-in -->
+<div class="relative group p-6 rounded-2xl bg-[#090D16]/90 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)] flex flex-col justify-between" data-purpose="deployment-card" id="card-browser">
+<div>
+<!-- Header Icon & Status -->
+<div class="flex items-center justify-between mb-5">
+<div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" x2="22" y1="12" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase text-emerald-400 bg-emerald-950/40 border border-emerald-500/20">
+                No Code
+              </span>
+</div>
+<!-- Title & Description -->
+<h3 class="text-xl font-semibold text-white tracking-tight mb-2">Browser plug-in</h3>
+<p class="text-sm text-slate-400 leading-relaxed mb-6">
+              Protect web apps and SSO portals with no code changes.
+            </p>
+</div>
+<!-- Deployment Metadata -->
+<div class="pt-5 border-t border-slate-800/80 space-y-3 font-mono">
+<div>
+<div class="text-[10px] tracking-wider uppercase text-slate-500">DEPLOYED BY</div>
+<div class="text-xs text-slate-300 font-medium">Pushed by IT via policy</div>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-emerald-400/90">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span>Chrome, Edge, Safari GPO push</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Embedded -->
+<div class="relative group p-6 rounded-2xl bg-[#090D16]/90 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)] flex flex-col justify-between" data-purpose="deployment-card" id="card-embedded">
+<div>
+<!-- Header Icon & Status -->
+<div class="flex items-center justify-between mb-5">
+<div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="16" rx="2" width="16" x="4" y="4"></rect>
+<rect height="6" width="6" x="9" y="9"></rect>
+<line x1="9" x2="9" y1="1" y2="4"></line>
+<line x1="15" x2="15" y1="1" y2="4"></line>
+<line x1="9" x2="9" y1="20" y2="23"></line>
+<line x1="15" x2="15" y1="20" y2="23"></line>
+<line x1="20" x2="23" y1="9" y2="9"></line>
+<line x1="20" x2="23" y1="14" y2="14"></line>
+<line x1="1" x2="4" y1="9" y2="9"></line>
+<line x1="1" x2="4" y1="14" y2="14"></line>
+</svg>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase text-emerald-400 bg-emerald-950/40 border border-emerald-500/20">
+                Bare Metal
+              </span>
+</div>
+<!-- Title & Description -->
+<h3 class="text-xl font-semibold text-white tracking-tight mb-2">Embedded</h3>
+<p class="text-sm text-slate-400 leading-relaxed mb-6">
+              Build Wavekey into your devices, terminals or OT endpoints.
+            </p>
+</div>
+<!-- Deployment Metadata -->
+<div class="pt-5 border-t border-slate-800/80 space-y-3 font-mono">
+<div>
+<div class="text-[10px] tracking-wider uppercase text-slate-500">DEPLOYED BY</div>
+<div class="text-xs text-slate-300 font-medium">For product teams</div>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-emerald-400/90">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span>Linux, RTOS, kiosk firmware</span>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Deployment Mode Cards Grid -->
+<!-- BEGIN: Identity Integration Banner -->
+<div class="mt-16 p-6 rounded-xl bg-obsidian-900/60 border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left" data-purpose="call-to-action-banner">
+<div class="flex items-center gap-3">
+<div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 hidden sm:block">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-white">Ready to deploy passwordless acoustic auth?</h4>
+<p class="text-xs text-slate-400">No tokens to distribute. Zero hardware procurement cycles.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<a class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition-colors" href="#docs">
+            Read Integration Docs
+          </a>
+<a class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-obsidian-950 font-semibold text-xs font-mono transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)]" href="#contact">
+            Request Demo
+          </a>
+</div>
+</div>
+<!-- END: Identity Integration Banner -->
+</div>
+</section>
+<!-- END: SoftwareOnlySection -->
+<!-- BEGIN: Script for Node Highlighting Interactivity -->
+<script data-purpose="pipeline-card-focus">
+    function setActiveMode(targetMode) {
+      const cardIds = ['app', 'sdk', 'browser', 'embedded'];
+      cardIds.forEach(mode => {
+        const card = document.getElementById(`card-${mode}`);
+        if (mode === targetMode) {
+          card.classList.add('ring-2', 'ring-emerald-400/80', 'bg-obsidian-850');
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          card.classList.remove('ring-2', 'ring-emerald-400/80', 'bg-obsidian-850');
+        }
+      });
+    }
+  </script>
+<!-- END: Script for Node Highlighting Interactivity -->
+</body></html>

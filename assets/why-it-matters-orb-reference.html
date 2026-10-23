@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_14 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_14" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_14');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  // Interactive Three.js dynamic morphing acoustic particle orb for WaveKey
+const width = container.clientWidth || window.innerWidth || 800;
+const height = container.clientHeight || window.innerHeight || 800;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+camera.position.z = 230;
+
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+renderer.setSize(width, height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+container.appendChild(renderer.domElement);
+
+// Particle configuration: dense volumetric shell matching image.png exactly
+const particleCount = 18000;
+const geometry = new THREE.BufferGeometry();
+const basePositions = new Float32Array(particleCount * 3);
+const currentPositions = new Float32Array(particleCount * 3);
+const colors = new Float32Array(particleCount * 3);
+const depths = new Float32Array(particleCount);
+const phases = new Float32Array(particleCount);
+
+// Brand colors derived directly from image.png:
+// Radiant Gold: #f59e0b / #fbbf24
+// Solar Orange: #f97316
+// Warm Crimson / Coral: #e11d48 / #f43f5e
+// Deep Electric Violet: #9333ea
+// Core Indigo / Purple: #6366f1 / #7c3aed
+const cGold = new THREE.Color(0xfbbf24);
+const cOrange = new THREE.Color(0xf97316);
+const cCoral = new THREE.Color(0xf43f5e);
+const cRuby = new THREE.Color(0xd946ef);
+const cViolet = new THREE.Color(0x9333ea);
+const cIndigo = new THREE.Color(0x6366f1);
+
+const numLayers = 10;
+const ptsPerLayer = Math.floor(particleCount / numLayers);
+
+let pIdx = 0;
+const rMin = 28.0;
+const rMax = 72.0;
+
+for (let L = 0; L < numLayers; L++) {
+  const layerNorm = L / (numLayers - 1); // 0 (core) to 1 (outer rim)
+  const layerR = rMin + Math.pow(layerNorm, 0.8) * (rMax - rMin);
+  const countInLayer = (L === numLayers - 1) ? (particleCount - pIdx) : ptsPerLayer;
+  const phiStep = Math.PI * (3.0 - Math.sqrt(5.0)); // Golden angle
+
+  for (let k = 0; k < countInLayer; k++) {
+    if (pIdx >= particleCount) break;
+
+    const yNorm = 1.0 - (k / (countInLayer - 1 || 1)) * 2.0;
+    const rAtY = Math.sqrt(Math.max(0.001, 1.0 - yNorm * yNorm));
+    const theta = phiStep * k;
+
+    const x = Math.cos(theta) * rAtY * layerR;
+    const y = yNorm * layerR;
+    const z = Math.sin(theta) * rAtY * layerR;
+
+    const i3 = pIdx * 3;
+    basePositions[i3] = x;
+    basePositions[i3 + 1] = y;
+    basePositions[i3 + 2] = z;
+
+    currentPositions[i3] = x;
+    currentPositions[i3 + 1] = y;
+    currentPositions[i3 + 2] = z;
+
+    depths[pIdx] = layerNorm;
+    phases[pIdx] = Math.random() * Math.PI * 2.0;
+
+    // Palette mapping matching the reference image:
+    // Outer crinkles & peaks: Vibrant amber/orange/gold
+    // Intermediate ridges: Coral & magenta
+    // Hollowed / folded interior core: Deep electric purple / indigo
+    const clr = new THREE.Color();
+    if (layerNorm > 0.65) {
+      const t = (layerNorm - 0.65) / 0.35;
+      clr.lerpColors(cOrange, cGold, t);
+    } else if (layerNorm > 0.3) {
+      const t = (layerNorm - 0.3) / 0.35;
+      clr.lerpColors(cCoral, cOrange, t);
+    } else {
+      const t = layerNorm / 0.3;
+      clr.lerpColors(cIndigo, cViolet, t);
+    }
+
+    // Modulate latitude for organic coloration like image.png
+    if (Math.abs(yNorm) > 0.5) {
+      clr.lerp(cRuby, (Math.abs(yNorm) - 0.5) * 0.7);
+    }
+
+    colors[i3] = clr.r;
+    colors[i3 + 1] = clr.g;
+    colors[i3 + 2] = clr.b;
+
+    pIdx++;
+  }
+}
+
+geometry.setAttribute('position', new THREE.BufferAttribute(currentPositions, 3));
+geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+// Custom radial soft circular particle sprite
+const pCanvas = document.createElement('canvas');
+pCanvas.width = 64;
+pCanvas.height = 64;
+const pCtx = pCanvas.getContext('2d');
+const pGrad = pCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+pGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+pGrad.addColorStop(0.2, 'rgba(255, 235, 205, 0.9)');
+pGrad.addColorStop(0.5, 'rgba(249, 115, 22, 0.5)');
+pGrad.addColorStop(0.8, 'rgba(147, 51, 234, 0.15)');
+pGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+pCtx.fillStyle = pGrad;
+pCtx.fillRect(0, 0, 64, 64);
+
+const pTexture = new THREE.CanvasTexture(pCanvas);
+
+// Subtle additive point material
+const pMaterial = new THREE.PointsMaterial({
+  size: 2.2,
+  map: pTexture,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.88,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+});
+
+const particleSystem = new THREE.Points(geometry, pMaterial);
+scene.add(particleSystem);
+
+// Ambient halo aura for gentle back-glow matching image.png
+const haloGeo = new THREE.PlaneGeometry(220, 220);
+const haloCanvas = document.createElement('canvas');
+haloCanvas.width = 128;
+haloCanvas.height = 128;
+const hCtx = haloCanvas.getContext('2d');
+const hGrad = hCtx.createRadialGradient(64, 64, 8, 64, 64, 64);
+hGrad.addColorStop(0, 'rgba(147, 51, 234, 0.16)');
+hGrad.addColorStop(0.4, 'rgba(249, 115, 22, 0.10)');
+hGrad.addColorStop(0.75, 'rgba(251, 146, 60, 0.03)');
+hGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+hCtx.fillStyle = hGrad;
+hCtx.fillRect(0, 0, 128, 128);
+
+const haloTexture = new THREE.CanvasTexture(haloCanvas);
+const haloMat = new THREE.MeshBasicMaterial({
+  map: haloTexture,
+  transparent: true,
+  opacity: 0.38,
+  blending: THREE.AdditiveBlending,
+  side: THREE.DoubleSide,
+  depthWrite: false
+});
+const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+haloMesh.position.z = -20;
+scene.add(haloMesh);
+
+// Mouse interaction for smooth parallax
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+
+window.addEventListener('mousemove', (e) => {
+  const rect = container.getBoundingClientRect();
+  const relX = (e.clientX - rect.left) / (rect.width || 1) - 0.5;
+  const relY = (e.clientY - rect.top) / (rect.height || 1) - 0.5;
+  targetX = relX * 2.0;
+  targetY = relY * 2.0;
+});
+
+// Resize handler
+const handleResize = () => {
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+};
+window.addEventListener('resize', handleResize);
+
+// Dynamic 3D Harmonic Shape Morphing
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const elapsedTime = clock.getElapsedTime();
+  const t = elapsedTime * 0.8;
+
+  const pos = geometry.attributes.position.array;
+
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+    const bx = basePositions[i3];
+    const by = basePositions[i3 + 1];
+    const bz = basePositions[i3 + 2];
+
+    const r = Math.sqrt(bx * bx + by * by + bz * bz) || 1.0;
+    const u = Math.atan2(bz, bx); // Azimuth (-PI to PI)
+    const v = Math.asin(Math.max(-1, Math.min(1, by / r))); // Elevation (-PI/2 to PI/2)
+    const d = depths[i]; // Depth ratio
+
+    // Dynamic morphing soundwave displacement equations:
+    // Wave 1: 5-lobed fluted ridges echoing the perimeter crinkles of the reference image
+    const wave1 = Math.sin(u * 5.0 + t * 1.5) * Math.cos(v * 4.0 - t * 0.8) * 12.0 * (0.35 + 0.65 * d);
+
+    // Wave 2: Continuous organic shape morphing between folded torus and acoustic breathing sphere
+    const morphCycle = Math.sin(t * 0.4); // Smooth morphing progression
+    const wave2 = Math.sin(u * 3.0 - t * 1.1) * Math.sin(v * 6.0 + t * 1.3) * (7.0 + morphCycle * 5.0) * (0.3 + 0.7 * d);
+
+    // Wave 3: Higher frequency ripples for acoustic flutter
+    const wave3 = Math.cos(v * 8.0 + u * 2.0 + t * 2.0) * 4.5 * (0.4 + 0.6 * d);
+
+    const displacement = (wave1 + wave2 + wave3) * (0.85 + 0.15 * Math.sin(t * 0.7));
+    const newR = Math.max(12.0, r + displacement);
+    const scale = newR / r;
+
+    pos[i3] = bx * scale;
+    pos[i3 + 1] = by * (scale * (1.0 + 0.12 * Math.sin(t * 0.9 + v * 3.0)));
+    pos[i3 + 2] = bz * scale;
+  }
+
+  geometry.attributes.position.needsUpdate = true;
+
+  // Continuous 3D rotation across axes
+  particleSystem.rotation.y = elapsedTime * 0.26;
+  particleSystem.rotation.x = Math.sin(elapsedTime * 0.16) * 0.22 + 0.12;
+  particleSystem.rotation.z = Math.cos(elapsedTime * 0.12) * 0.15;
+
+  // Smooth mouse tilt parallax
+  mouseX += (targetX - mouseX) * 0.05;
+  mouseY += (targetY - mouseY) * 0.05;
+  particleSystem.position.x = mouseX * 10.0;
+  particleSystem.position.y = -mouseY * 10.0;
+
+  // Gentle, calm luminescence pulse (non-punchy)
+  const glow = 0.35 + Math.sin(elapsedTime * 1.2) * 0.07;
+  haloMat.opacity = glow;
+  haloMesh.scale.setScalar(1.0 + Math.sin(elapsedTime * 0.6) * 0.05);
+
+  renderer.render(scene, camera);
+}
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_14 -->
+</body>
+</html>

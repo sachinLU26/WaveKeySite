@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #030712;
+    }
+
+    /* Ambient breath on subtle background lighting */
+    @keyframes ambientBreath {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.5; }
+    }
+    .ambient-glow {
+      animation: ambientBreath 7s ease-in-out infinite;
+    }
+
+    /* Water droplet acoustic ripple physics */
+    @keyframes waterDropletRipple {
+      0% {
+        r: 35px;
+        opacity: 0.95;
+        stroke-width: 3.2px;
+      }
+      20% {
+        opacity: 0.8;
+        stroke-width: 2.6px;
+      }
+      50% {
+        opacity: 0.45;
+        stroke-width: 1.8px;
+      }
+      80% {
+        opacity: 0.18;
+        stroke-width: 1.1px;
+      }
+      100% {
+        r: 580px;
+        opacity: 0;
+        stroke-width: 0.3px;
+      }
+    }
+
+    /* Staggered ripples originating from phone center (cx=800, cy=500) */
+    .ripple-1 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 0s; transform-origin: 800px 500px; }
+    .ripple-2 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 0.9s; transform-origin: 800px 500px; }
+    .ripple-3 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 1.8s; transform-origin: 800px 500px; }
+    .ripple-4 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 2.7s; transform-origin: 800px 500px; }
+    .ripple-5 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 3.6s; transform-origin: 800px 500px; }
+    .ripple-6 { animation: waterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite; animation-delay: 4.5s; transform-origin: 800px 500px; }
+
+    /* Subtle slow drift on texture background */
+    @keyframes bgSlightPan {
+      0%, 100% { transform: scale(1.02) translate(0px, 0px); }
+      50% { transform: scale(1.04) translate(-10px, -6px); }
+    }
+    .bg-animated-texture {
+      animation: bgSlightPan 18s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen flex items-center justify-center bg-[#030712] overflow-hidden select-none">
+<!-- Background Layer: User texture image https://lh3.googleusercontent.com/aida-public/AB6AXuBCIbpYgfbiNx1tKYJrMcityB7brZbpYpHCIsgXd60r11ej5qAK2Ae6rqoDDeBzjNtAJ3aa_J2Mtmh4Z7-6cvBMQiVPoBqb3iUKcFR_ukdXP-k-ycqSDGt1FDfS5ep4tnx87wsolEFUVQDXKR0kAijn9G7ZGX1GM3-2Xl_Iuk4AqinsYYnVod-AqnYXn6gb4JOH4Fetos7wQg8FONIIdOySZPjyJY-JTeWlUgK0F-8FGKhBIm08UQycGL4-Rab3QR7ZpQ -->
+<div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<img alt="WaveKey Acoustic Texture Background" class="w-full h-full object-cover object-center bg-animated-texture filter brightness-90 contrast-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrtGUlCeZcgahyqAeZC9GC-XpY4r3g1_yz_juSP2lQrBB5RkRDW0DwnszrlPbQ71kzmnDLc6VX42qQ4lNBUxlsA9joN3Gm_Kbjuu9WNV6uvyMk103Orro7wFVDg5fqsSSIgggbztq_MPrQCT7YlwmChkFElZ8o1lf2x70zR2waLMaorn3i9Y7rwlkFhi1WxevCOkznq9YNh-j8lWuKQAyrJMVVMe4vPep6QOtmswjTdtNRI3XDKQQOZANQ5pjQvP7-Kw"/>
+<!-- Deep vignette & gradient overlays to blend seamlessly -->
+<div class="absolute inset-0 bg-gradient-to-t from-[#02050b]/80 via-transparent to-[#02050b]/60"></div>
+<div class="absolute inset-0 bg-radial from-transparent via-[#02050b]/40 to-[#02050b]/90"></div>
+</div>
+<!-- SVG Animation & Foreground Phone Container -->
+<div class="relative z-10 w-full h-full flex items-center justify-center">
+<svg class="w-full h-full" fill="none" preserveaspectratio="xMidYMid meet" viewbox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Luminous Glow Filter for Acoustic Wave Rings -->
+<filter height="160%" id="crispAcousticGlow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="blur" stddeviation="3.5"></fegaussianblur>
+<femerge>
+<femergenode in="blur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+<!-- Phone Chassis Drop Shadow -->
+<filter height="160%" id="phoneRealisticShadow" width="160%" x="-30%" y="-30%">
+<fedropshadow dx="0" dy="28" flood-color="#000000" flood-opacity="0.95" stddeviation="36"></fedropshadow>
+<fedropshadow dx="0" dy="8" flood-color="#000000" flood-opacity="0.8" stddeviation="14"></fedropshadow>
+</filter>
+<!-- Subtle ambient radial light around phone emitter -->
+<radialgradient cx="50%" cy="50%" id="centerEmitterAura" r="50%">
+<stop offset="0%" stop-color="#00f2fe" stop-opacity="0.18"></stop>
+<stop offset="60%" stop-color="#0284c7" stop-opacity="0.06"></stop>
+<stop offset="100%" stop-color="#000000" stop-opacity="0"></stop>
+</radialgradient>
+<radialgradient cx="50%" cy="50%" id="oledScreenLight" r="55%"><stop offset="0%" stop-color="#1d3b72" stop-opacity="0.95"></stop><stop offset="30%" stop-color="#0e2246" stop-opacity="0.9"></stop><stop offset="65%" stop-color="#081226" stop-opacity="0.98"></stop><stop offset="100%" stop-color="#040711" stop-opacity="1"></stop></radialgradient><radialgradient cx="50%" cy="50%" id="badgeGlowGradient" r="50%"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"></stop><stop offset="40%" stop-color="#0284c7" stop-opacity="0.22"></stop><stop offset="80%" stop-color="#0369a1" stop-opacity="0.08"></stop><stop offset="100%" stop-color="#0369a1" stop-opacity="0"></stop></radialgradient><lineargradient id="titaniumFrameGradient" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#3b485d"></stop><stop offset="25%" stop-color="#1e293b"></stop><stop offset="50%" stop-color="#334155"></stop><stop offset="75%" stop-color="#111827"></stop><stop offset="100%" stop-color="#283548"></stop></lineargradient><lineargradient id="screenGlassSheen" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"></stop><stop offset="35%" stop-color="#ffffff" stop-opacity="0.04"></stop><stop offset="60%" stop-color="#ffffff" stop-opacity="0"></stop><stop offset="100%" stop-color="#38bdf8" stop-opacity="0.03"></stop></lineargradient><filter height="200%" id="centerEmblemGlow" width="200%" x="-50%" y="-50%"><fegaussianblur result="blur1" stddeviation="5"></fegaussianblur><fegaussianblur result="blur2" stddeviation="14"></fegaussianblur><femerge><femergenode in="blur2"></femergenode><femergenode in="blur1"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter></defs>
+<!-- Center Acoustic Aura behind phone -->
+<circle class="ambient-glow" cx="800" cy="500" fill="url(#centerEmitterAura)" r="420"></circle>
+<!-- Water Droplet Acoustic Ripples Behind Phone (Originating at cx=800, cy=500) -->
+<g id="acousticWaterRipples">
+<!-- Dynamic Expanding Rings -->
+<circle class="ripple-1" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#22d3ee"></circle>
+<circle class="ripple-2" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#38bdf8"></circle>
+<circle class="ripple-3" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#22d3ee"></circle>
+<circle class="ripple-4" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#67e8f9"></circle>
+<circle class="ripple-5" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#22d3ee"></circle>
+<circle class="ripple-6" cx="800" cy="500" fill="none" filter="url(#crispAcousticGlow)" r="35" stroke="#38bdf8"></circle>
+<!-- Static Faint Concentric Acoustic Wave Guides -->
+<circle cx="800" cy="500" fill="none" r="140" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.2"></circle>
+<circle cx="800" cy="500" fill="none" r="230" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="1.2"></circle>
+<circle cx="800" cy="500" fill="none" r="340" stroke="#0284c7" stroke-opacity="0.12" stroke-width="1.0"></circle>
+<circle cx="800" cy="500" fill="none" r="460" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="0.9"></circle>
+<circle cx="800" cy="500" fill="none" r="580" stroke="#38bdf8" stroke-opacity="0.04" stroke-width="0.8"></circle>
+</g>
+<!-- Smartphone Mockup (Centered: Width 310, Height 640; bounds x=645..955, y=180..820. Center is cx=800, cy=500) -->
+<!-- STRICTLY STATIC: NO MOTION, NO TEXT, NO BADGES -->
+<g filter="url(#phoneRealisticShadow)" id="phoneMockup" transform="translate(645, 180)"><!-- Outer Titanium Bezel & Subtle Specular Chamfer Edge -->
+<rect fill="none" height="644" rx="54" stroke="#475569" stroke-opacity="0.6" stroke-width="1.5" width="314" x="-2" y="-2"></rect>
+<rect fill="url(#titaniumFrameGradient)" height="640" rx="52" stroke="#1e293b" stroke-width="1" width="310" x="0" y="0"></rect>
+<!-- Sleek Side Buttons / Mute / Volume / Power indicators -->
+<rect fill="#334155" height="28" rx="1.5" width="3" x="-4" y="120"></rect>
+<rect fill="#334155" height="48" rx="1.5" width="3" x="-4" y="164"></rect>
+<rect fill="#334155" height="48" rx="1.5" width="3" x="-4" y="224"></rect>
+<rect fill="#334155" height="68" rx="1.5" width="3" x="311" y="170"></rect>
+<!-- Inner Bezel -->
+<rect fill="#050811" height="630" rx="48" stroke="#090d18" stroke-width="1.5" width="300" x="5" y="5"></rect>
+<!-- Clip Path for Screen Contents to round neatly within bezel -->
+<clippath id="phoneDisplayClip">
+<rect height="624" rx="45" width="294" x="8" y="8"></rect>
+</clippath>
+<g clip-path="url(#phoneDisplayClip)">
+<!-- Illuminated Midnight Sapphire / OLED Gradient Screen -->
+<rect fill="url(#oledScreenLight)" height="624" width="294" x="8" y="8"></rect>
+<!-- Soft Wide Radial Screen Aura -->
+<circle cx="155" cy="320" fill="url(#badgeGlowGradient)" opacity="0.95" r="220"></circle>
+<circle cx="155" cy="320" fill="#00f2fe" filter="url(#crispAcousticGlow)" opacity="0.08" r="120"></circle>
+<!-- Subtle Concentric Wave Resonance Lines on Screen Glass (Echoing the water ripples) -->
+<!-- Center Glowing Infinity Badge matching IMAGE_2 -->
+<g class="emblem-pulse"><!-- Exactly 2 concentric circles total: 1 outer ring, 1 inner circular badge framing infinity symbol -->
+<circle cx="155" cy="320" fill="none" r="42" stroke="#38bdf8" stroke-opacity="0.8" stroke-width="2"></circle>
+<circle cx="155" cy="320" fill="#07142b" r="32" stroke="#67e8f9" stroke-width="1.8"></circle>
+<!-- Crisp White Infinity Symbol inside Badge -->
+<path d="M 142,320 C 142,313.5 149.5,313.5 155,320 C 160.5,326.5 168,326.5 168,320 C 168,313.5 160.5,313.5 155,320 C 149.5,326.5 142,326.5 142,320 Z" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></g>
+<!-- Status Bar: Time '9:41' and iOS Battery Pill (Matching IMAGE_2 and IMAGE_36) -->
+<text fill="#E2E8F0" fill-opacity="0.85" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="13" font-weight="600" letter-spacing="-0.2px" x="34" y="37">9:41</text>
+<!-- Battery Indicator on Right -->
+<g fill-opacity="0.85" transform="translate(252, 27)">
+<rect fill="none" height="11.5" rx="3.5" stroke="#E2E8F0" stroke-width="1.2" width="21" x="0" y="0"></rect>
+<rect fill="#E2E8F0" height="7.5" rx="2" width="13" x="2" y="2"></rect>
+<path d="M 22 3.8 C 22.8 4.2 22.8 7.3 22 7.7" stroke="#E2E8F0" stroke-linecap="round" stroke-width="1"></path>
+</g>
+<!-- Dynamic Island Pill at Top Center with Camera lens reflection -->
+<g transform="translate(112, 17)">
+<rect fill="#000000" height="24" rx="12" width="86" x="0" y="0"></rect>
+<!-- Front camera lens highlight -->
+<circle cx="67" cy="12" fill="#070d18" r="5"></circle>
+<circle cx="68" cy="11" fill="#172554" opacity="0.8" r="2"></circle>
+<circle cx="67.5" cy="10.5" fill="#38bdf8" opacity="0.6" r="0.8"></circle>
+<!-- Sensor array dot -->
+<circle cx="24" cy="12" fill="#070d18" r="3"></circle>
+</g>
+<!-- Diagonal Realistic Screen Glass Sheen -->
+<rect fill="url(#screenGlassSheen)" height="624" pointer-events="none" width="294" x="8" y="8"></rect>
+<!-- Home Indicator Bar at Bottom -->
+<rect fill="#FFFFFF" fill-opacity="0.45" height="4.5" rx="2.25" width="114" x="98" y="612"></rect>
+</g></g>
+</svg>
+</div>
+</body></html>
