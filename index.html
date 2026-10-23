@@ -8,10 +8,7 @@
       name="description"
       content="Wavekey uses an inaudible signal from the user's phone to protect the sign-in, the active session and every sensitive action."
     />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2306070b'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='%23f2f3f6' font-family='Inter,sans-serif'>∞</text></svg>"
-    />
+    <link rel="icon" type="image/png" href="assets/wavekey-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,10 +38,7 @@
     <header class="site-header">
       <a class="brand" href="#top">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <circle cx="7.8" cy="12" r="4.4"></circle>
-            <circle cx="16.2" cy="12" r="4.4"></circle>
-          </svg>
+          <img src="assets/wavekey-icon.png" alt="" width="184" height="176" />
         </span>
         <span>Wavekey</span>
       </a>
@@ -56,12 +50,12 @@
 
       </nav>
 
-      <div class="header-actions">
-        <a class="button button-ghost" href="#contact">Request Access</a>
+      <!-- <div class="header-actions">
+        <a class="button button-ghost" href="#top">Get a demo</a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle navigation menu">
           <span></span><span></span><span></span>
         </button>
-      </div>
+      </div> -->
     </header>
 
     <main id="top">
@@ -70,52 +64,157 @@
           <div class="hero-text">
             <div class="presence-badge">
               <span class="presence-dot" aria-hidden="true"></span>
-              Phishing resistant MFA
+              Next Generation Phishing resistant MFA
             </div>
-            <h2>Protecting organizations with continuous, invisible MFA</h2>
+            <h2>Protecting business <span class="risk-accent">critical identities</span> without friction</h2>
+            <p class="hero-subhead">Security that checks the person, not just the password. Stolen credentials and hijacked sessions stop being enough on their own, and your team never slows down to prove it's them.</p>
             <div class="hero-actions">
-              <a class="button" href="#contact">Request Access</a>
-              <a class="button button-ghost" href="#solution">How it works</a>
+              <form class="hero-demo-form" action="mailto:contact@everlink.co" method="post" enctype="text/plain">
+                <label class="hero-demo-field">
+                  <span class="visually-hidden">Work email</span>
+                  <input type="email" name="email" placeholder="Your work email here" autocomplete="email" required />
+                </label>
+                <button class="button hero-demo-submit" type="submit">
+                  Get a demo
+                  <svg class="hero-demo-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </form>
+              <!-- <a class="button button-ghost" href="#solution">How it works</a> -->
             </div>
             <!-- <p class="hero-meta">Ultrasonic MFA · Passive, on-demand · Works offline</p> -->
           </div>
 
           <div class="solution-reveal hero-reveal">
             <div class="solution-reveal-frame" role="img" aria-label="Wavekey active on a phone, with the ultrasonic presence signal rippling outward from the app icon">
-              <div class="solution-ripples" aria-hidden="true">
-                <span class="solution-ripple r1"></span>
-                <span class="solution-ripple secondary r2"></span>
-                <span class="solution-ripple r3"></span>
-                <span class="solution-ripple secondary r4"></span>
-                <span class="solution-ripple r5"></span>
-                <span class="solution-ripple secondary r6"></span>
-              </div>
-              <div class="solution-phone" aria-hidden="true">
-                <span class="solution-phone-btn solution-phone-btn-mute"></span>
-                <span class="solution-phone-btn solution-phone-btn-vol-up"></span>
-                <span class="solution-phone-btn solution-phone-btn-vol-down"></span>
-                <span class="solution-phone-btn solution-phone-btn-power"></span>
-                <div class="solution-phone-screen">
-                  <div class="solution-phone-statusbar">
-                    <span>9:41</span>
-                    <span class="solution-phone-island"></span>
-                    <span class="solution-phone-status-icons">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" opacity="0.2"></path><path d="M12 4c4.41 0 8 3.59 8 8 0 1.83-.62 3.53-1.68 4.88L12 20.85l-6.32-3.97C4.62 15.53 4 13.83 4 12c0-4.41 3.59-8 8-8z"></path></svg>
-                      <span class="solution-phone-battery"></span>
-                    </span>
-                  </div>
-                  <div class="solution-phone-core">
-                    <span class="solution-core-ring ring-1"></span>
-                    <span class="solution-core-ring ring-2"></span>
-                    <span class="solution-core-ring ring-3"></span>
-                    <span class="solution-core-ring ring-4"></span>
-                    <span class="solution-core-badge">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.228-8-5.096 0-5.096 8 0 8 5.095 0 7.133-8 12.228-8z"></path></svg>
-                    </span>
-                  </div>
-                  <div class="solution-phone-home-bar"></div>
-                </div>
-              </div>
+              <!-- Phone chassis + ripple animation ported from
+                   assets/phone-animation-reference.html (see
+                   assets/phone-animation-design.md); only the phone and its
+                   emission effect are reused here, not that reference's
+                   photographic background. -->
+              <svg class="solution-phone-art" viewBox="0 0 310 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <filter id="phoneRippleGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur"></feGaussianBlur>
+                    <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+                  </filter>
+                  <filter id="phoneChassisShadow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="20" stdDeviation="26" flood-color="#000000" flood-opacity="0.9"></feDropShadow>
+                    <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.75"></feDropShadow>
+                  </filter>
+                  <radialGradient id="phoneEmitterAura" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.18"></stop>
+                    <stop offset="60%" stop-color="#0284c7" stop-opacity="0.06"></stop>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"></stop>
+                  </radialGradient>
+                  <radialGradient id="phoneOledLight" cx="50%" cy="50%" r="55%">
+                    <stop offset="0%" stop-color="#1d3b72" stop-opacity="0.95"></stop>
+                    <stop offset="30%" stop-color="#0e2246" stop-opacity="0.9"></stop>
+                    <stop offset="65%" stop-color="#081226" stop-opacity="0.98"></stop>
+                    <stop offset="100%" stop-color="#040711" stop-opacity="1"></stop>
+                  </radialGradient>
+                  <radialGradient id="phoneBadgeGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"></stop>
+                    <stop offset="40%" stop-color="#0284c7" stop-opacity="0.22"></stop>
+                    <stop offset="80%" stop-color="#0369a1" stop-opacity="0.08"></stop>
+                    <stop offset="100%" stop-color="#0369a1" stop-opacity="0"></stop>
+                  </radialGradient>
+                  <linearGradient id="phoneTitaniumFrame" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#3b485d"></stop>
+                    <stop offset="25%" stop-color="#1e293b"></stop>
+                    <stop offset="50%" stop-color="#334155"></stop>
+                    <stop offset="75%" stop-color="#111827"></stop>
+                    <stop offset="100%" stop-color="#283548"></stop>
+                  </linearGradient>
+                  <linearGradient id="phoneGlassSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"></stop>
+                    <stop offset="35%" stop-color="#ffffff" stop-opacity="0.04"></stop>
+                    <stop offset="60%" stop-color="#ffffff" stop-opacity="0"></stop>
+                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.03"></stop>
+                  </linearGradient>
+                  <clipPath id="phoneDisplayClip">
+                    <rect x="8" y="8" width="294" height="624" rx="45"></rect>
+                  </clipPath>
+                  <!-- Fades the ripple layer out toward the left (the side
+                       facing the hero copy) so the waves dissolve well
+                       before they'd ever reach the text column, however wide
+                       the frame is rendered. Right/top/bottom stay
+                       unmasked (opaque) since nothing sits on that side.
+                       Pushed out to -220/-20 (vs. a tighter -90/10) so the
+                       rings travel most of the real gap to the text — which
+                       .hero-inner's CSS keeps at 130px+ now that the frame
+                       is hidden below 1024px — and read as dissolving, not
+                       as being cut off halfway through their reach. -->
+                  <linearGradient id="phoneRippleTextFade" gradientUnits="userSpaceOnUse" x1="-220" y1="0" x2="-20" y2="0">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0"></stop>
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="1"></stop>
+                  </linearGradient>
+                  <mask id="phoneRippleTextFadeMask" maskUnits="userSpaceOnUse" x="-400" y="-400" width="1200" height="1400">
+                    <rect x="-400" y="-400" width="1200" height="1400" fill="url(#phoneRippleTextFade)"></rect>
+                  </mask>
+                </defs>
+
+                <!-- Ultrasonic ripples radiating from behind the phone's
+                     emitter — drawn before (beneath) the chassis so the
+                     opaque phone body occludes them like a physical object,
+                     with only the portion extending past its silhouette
+                     visible, matching phone_animation_redesign/code.html.
+                     Masked so they dissolve before reaching the hero copy
+                     beside the phone instead of bleeding into it. -->
+                <g mask="url(#phoneRippleTextFadeMask)">
+                  <circle class="phone-ambient-glow" cx="155" cy="320" r="200" fill="url(#phoneEmitterAura)"></circle>
+                  <circle class="phone-ripple ripple-1" cx="155" cy="320" fill="none" stroke="#22d3ee" filter="url(#phoneRippleGlow)"></circle>
+                  <circle class="phone-ripple ripple-2" cx="155" cy="320" fill="none" stroke="#38bdf8" filter="url(#phoneRippleGlow)"></circle>
+                  <circle class="phone-ripple ripple-3" cx="155" cy="320" fill="none" stroke="#22d3ee" filter="url(#phoneRippleGlow)"></circle>
+                  <circle class="phone-ripple ripple-4" cx="155" cy="320" fill="none" stroke="#67e8f9" filter="url(#phoneRippleGlow)"></circle>
+                  <circle class="phone-ripple ripple-5" cx="155" cy="320" fill="none" stroke="#22d3ee" filter="url(#phoneRippleGlow)"></circle>
+                  <circle class="phone-ripple ripple-6" cx="155" cy="320" fill="none" stroke="#38bdf8" filter="url(#phoneRippleGlow)"></circle>
+                  <!-- Static guide rings — sized so the outermost sits just
+                       past the phone's corner-to-center distance (~356
+                       units), matching the ripples' own max radius below. -->
+                  <circle cx="155" cy="320" r="130" fill="none" stroke="#22d3ee" stroke-opacity="0.22" stroke-width="1.2"></circle>
+                  <circle cx="155" cy="320" r="230" fill="none" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="1.2"></circle>
+                  <circle cx="155" cy="320" r="330" fill="none" stroke="#0284c7" stroke-opacity="0.12" stroke-width="1"></circle>
+                  <circle cx="155" cy="320" r="420" fill="none" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="0.9"></circle>
+                </g>
+
+                <!-- Phone chassis -->
+                <g filter="url(#phoneChassisShadow)">
+                  <rect x="-2" y="-2" width="314" height="644" rx="54" fill="none" stroke="#475569" stroke-opacity="0.6" stroke-width="1.5"></rect>
+                  <rect x="0" y="0" width="310" height="640" rx="52" fill="url(#phoneTitaniumFrame)" stroke="#1e293b" stroke-width="1"></rect>
+                  <rect x="-4" y="120" width="3" height="28" rx="1.5" fill="#334155"></rect>
+                  <rect x="-4" y="164" width="3" height="48" rx="1.5" fill="#334155"></rect>
+                  <rect x="-4" y="224" width="3" height="48" rx="1.5" fill="#334155"></rect>
+                  <rect x="311" y="170" width="3" height="68" rx="1.5" fill="#334155"></rect>
+                  <rect x="5" y="5" width="300" height="630" rx="48" fill="#050811" stroke="#090d18" stroke-width="1.5"></rect>
+                  <g clip-path="url(#phoneDisplayClip)">
+                    <rect x="8" y="8" width="294" height="624" fill="url(#phoneOledLight)"></rect>
+                    <circle cx="155" cy="320" r="220" fill="url(#phoneBadgeGlow)" opacity="0.95"></circle>
+                    <circle cx="155" cy="320" r="120" fill="#00f2fe" filter="url(#phoneRippleGlow)" opacity="0.08"></circle>
+                    <g class="phone-badge-pulse">
+                      <circle cx="155" cy="320" r="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2"></circle>
+                      <circle cx="155" cy="320" r="32" fill="#10131f" stroke="#ffffff" stroke-opacity="0.9" stroke-width="1.8"></circle>
+                      <path d="M 142,320 C 142,313.5 149.5,313.5 155,320 C 160.5,326.5 168,326.5 168,320 C 168,313.5 160.5,313.5 155,320 C 149.5,326.5 142,326.5 142,320 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+                    </g>
+                    <text x="34" y="37" fill="#e2e8f0" fill-opacity="0.85" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif" font-size="13" font-weight="600" letter-spacing="-0.2px">9:41</text>
+                    <g transform="translate(252, 27)" fill-opacity="0.85">
+                      <rect x="0" y="0" width="21" height="11.5" rx="3.5" fill="none" stroke="#e2e8f0" stroke-width="1.2"></rect>
+                      <rect x="2" y="2" width="13" height="7.5" rx="2" fill="#e2e8f0"></rect>
+                      <path d="M 22 3.8 C 22.8 4.2 22.8 7.3 22 7.7" stroke="#e2e8f0" stroke-linecap="round" stroke-width="1"></path>
+                    </g>
+                    <g transform="translate(112, 17)">
+                      <rect x="0" y="0" width="86" height="24" rx="12" fill="#000000"></rect>
+                      <circle cx="67" cy="12" r="5" fill="#070d18"></circle>
+                      <circle cx="68" cy="11" r="2" fill="#172554" opacity="0.8"></circle>
+                      <circle cx="67.5" cy="10.5" r="0.8" fill="#38bdf8" opacity="0.6"></circle>
+                      <circle cx="24" cy="12" r="3" fill="#070d18"></circle>
+                    </g>
+                    <rect x="8" y="8" width="294" height="624" fill="url(#phoneGlassSheen)" pointer-events="none"></rect>
+                    <rect x="98" y="612" width="114" height="4.5" rx="2.25" fill="#ffffff" fill-opacity="0.45"></rect>
+                  </g>
+                </g>
+              </svg>
             </div>
           </div>
         </div>
@@ -467,46 +566,54 @@
 
       <section id="how" class="section">
         <div class="section-head">
-          <h2>Increasing cyber resilience across</h2>
-          <!-- <h2>Three checkpoints, one signal, no prompts.</h2> -->
+          <h2>Increasing cyber resilience across every friction point</h2>
         </div>
         <div class="stages">
-          <article class="stage">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M13 4h5a1 1 0 011 1v14a1 1 0 01-1 1h-5"></path><path d="M3 12h11"></path><path d="M10 8l4 4-4 4"></path></svg>
-            </span>
+          <article class="stage stage--perimeter">
+            <div class="stage-top">
+              <span class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M13 4h5a1 1 0 011 1v14a1 1 0 01-1 1h-5"></path><path d="M3 12h11"></path><path d="M10 8l4 4-4 4"></path></svg>
+              </span>
+              <span class="stage-tag">Perimeter</span>
+            </div>
             <p class="stage-head">At login (SSO)</p>
             <!-- <p class="stage-body">One tap signs you in to every enabled service</p> -->
             <p class="stage-label">Where it adds resistance</p>
             <ul class="stops">
-              <li>Phishing</li>
+              <li><svg viewBox="0 0 24 24"><path d="M12 2.5l8 3.5v6c0 5-3.4 8.4-8 9.5-4.6-1.1-8-4.5-8-9.5V6l8-3.5z"></path><path d="M9.5 12l1.8 1.8L15 10"></path></svg><span>Phishing</span></li>
               <!-- <li>Credential theft</li> -->
-              <li>MFA relay and fatigue</li>
+              <li><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7a4 4 0 018 0v3.5"></path></svg><span>MFA relay and fatigue</span></li>
             </ul>
           </article>
-          <article class="stage">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 00-14.2-5"></path><path d="M5.5 3v4.5H10"></path><path d="M4 12a8 8 0 0014.2 5"></path><path d="M18.5 21v-4.5H14"></path></svg>
-            </span>
+          <article class="stage stage--session">
+            <div class="stage-top">
+              <span class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 00-14.2-5"></path><path d="M5.5 3v4.5H10"></path><path d="M4 12a8 8 0 0014.2 5"></path><path d="M18.5 21v-4.5H14"></path></svg>
+              </span>
+              <span class="stage-tag">In-session</span>
+            </div>
             <p class="stage-head">Continuously</p>
             <!-- <p class="stage-body">Authenticate periodically for shorter session token duration</p> -->
             <p class="stage-label">Where it adds resistance</p>
             <ul class="stops">
-              <li>Session hijacking</li>
-              <li>Remote access</li>
+              <li><svg viewBox="0 0 24 24"><path d="M9 7h8a2 2 0 012 2v3"></path><path d="M15 17H7a2 2 0 01-2-2v-3"></path><path d="M12 4l3 3-3 3"></path><path d="M12 20l-3-3 3-3"></path></svg><span>Session hijacking</span></li>
+              <li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"></rect><line x1="8" y1="20" x2="16" y2="20"></line><line x1="12" y1="16" x2="12" y2="20"></line></svg><span>Remote access</span></li>
             </ul>
           </article>
-          <article class="stage">
-            <span class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 2.2c1 .6 2 1.1 2 2 0 .9-1.6 1.1-1.6 2.3"></path><path d="M12 8.5a4.5 4.5 0 014.5 4.5v1h-4.5v-5.5z" fill="currentColor" stroke="none"></path><rect x="7.5" y="8.5" width="9" height="13" rx="4.5"></rect><line x1="7.5" y1="13.5" x2="16.5" y2="13.5"></line><line x1="12" y1="8.5" x2="12" y2="13.5"></line></svg>
-            </span>
+          <article class="stage stage--risk">
+            <div class="stage-top">
+              <span class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 2.2c1 .6 2 1.1 2 2 0 .9-1.6 1.1-1.6 2.3"></path><path d="M12 8.5a4.5 4.5 0 014.5 4.5v1h-4.5v-5.5z" fill="currentColor" stroke="none"></path><rect x="7.5" y="8.5" width="9" height="13" rx="4.5"></rect><line x1="7.5" y1="13.5" x2="16.5" y2="13.5"></line><line x1="12" y1="8.5" x2="12" y2="13.5"></line></svg>
+              </span>
+              <span class="stage-tag">High-risk</span>
+            </div>
             <p class="stage-head">At sensitive actions</p>
             <!-- <p class="stage-body">On demand authentication prevents lateral movement</p> -->
             <p class="stage-label">Where it adds resistance</p>
             <ul class="stops">
               <!-- <li>Lateral movement, once a system is breached</li> -->
-              <li>Privileged action misuse</li>
-              <li>Walk-away takeover</li>
+              <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><line x1="5.5" y1="5.5" x2="18.5" y2="18.5"></line></svg><span>Privileged action misuse</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M14 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"></path><path d="M10 8l-4 4 4 4"></path><line x1="6" y1="12" x2="17" y2="12"></line></svg><span>Walk-away takeover</span></li>
             </ul>
           </article>
         </div>
@@ -514,56 +621,21 @@
 
       <section id="problem" class="section">
         <div class="problem-art" aria-hidden="true">
-          <img src="assets/why_it_matters.webp" alt="" width="820" height="751" loading="lazy" decoding="async" />
+          <canvas class="problem-orb" width="820" height="751"></canvas>
         </div>
         <div class="problem-top">
           <div class="section-head">
             <!-- <p class="kicker">Why it matters</p> -->
-            <h2 class="problem-title">Bad actors are rapidly adapting to phishing resistant MFA</h2><br/>
+            <h2 class="problem-title">Bad actors are <span class="risk-accent">rapidly adapting</span> to phishing resistant MFA</h2><br/>
             <!-- <br/> -->
-            <h3>AI is supercharging the sophistication and scale of remote attacks</h3>
+            <h3><span class="risk-accent">AI is supercharging</span> the sophistication and scale of remote attacks</h3>
           </div>
 
-          <!-- <div class="story">
-            <p data-read>A sign-in only proves who was at the keyboard for one moment.<br>
-            After that, the session is just a token that can be copied and reused.<br>
-            Attackers steal those tokens rather than attempting a login, so your MFA is never challenged, because it is never reached.<br>
-            And the stricter you make the login, the more people find ways around it. <br>
-            Friction is why controls get bypassed from the inside too.<br>
-            The result is a persistent gap in front of production consoles, admin panels and deploy pipelines, exactly where a single compromised session can cause outsized damage.<br>
-            WaveKey exists to close that session gap.</p>
-          </div> -->
+  
         </div>
 
-        <div class="figures">
-          <!--
-          <div class="figure">
-            <p class="figure-label">Session hijack needs no login</p>
-            <p class="figure-value">82% <p>Logins attempted</p></p>
-            <p class="figure-note">The attacker never touches your MFA. There is nothing for it to challenge.</p>
-            <p class="figure-source">SpyCloud · 2026</p>
-          </div>
-          <div class="figure">
-            <p class="figure-label">Stolen tokens are already at scale</p>
-            <p class="figure-value">8.6bn</p>
-            <p class="figure-note">Last year, 8.6bn session tokens were stolen, many from devices already running AV.</p>
-            <p class="figure-source">SpyCloud · March 2026</p>
-          </div>
-          <div class="figure">
-            <p class="figure-label">Most incidents don't use malware</p>
-            <p class="figure-value">82%</p>
-            <p class="figure-note">In most cases, attackers simply sign in or reuse a trusted session - no malware at all.</p>
-            <p class="figure-source">CrowdStrike · 2026</p>
-          </div>
-          <div class="figure">
-            <p class="figure-label">Cyber incidents at an unprecedented rate</p>
-            <p class="figure-value">2x</p>
-            <p class="figure-note">UK nationally significant incidents have doubled in a year.</p>
-            <p class="figure-source">NCSC Annual Review · 2025</p>
-          </div>
-          -->
-        </div>
-
+        
+<!-- 
         <div class="section-head section-head-sub">
           <p class="kicker"></p>
           <h3 class="sub-title">Wavekey defends against remote attacks using proximity as an MFA factor</h3>
@@ -591,16 +663,17 @@
             </svg>
             <p>Until Wavekey</p>
           </div>
-        </div>
+        </div> -->
 
         <div class="section-head surfaces-head" id="products">
-          <h2>It drops into what you already run (Software only)</h2>
-          <!-- <p class="lead">Wavekey ships as an app, an SDK, a browser plug-in or embedded software. Every surface uses the speaker and microphone already in your devices.</p> -->
+          <!-- <p class="surfaces-eyebrow"><span class="surfaces-eyebrow-dot" aria-hidden="true"></span>Zero hardware &bull; 100% software</p> -->
+          <h2>Software change to integrate into your existing security stack<br /></h2>
+          <!-- <p class="lead">Wavekey uses the phones and laptops your people already have, and sits alongside your existing identity provider. Choose how to deploy it.</p> -->
         </div>
 
         <!-- Integration diagram: the phone emits, the wave carries it into
              whichever surface sits in front of your existing identity stack. -->
-        <div class="surfaces-diagram">
+        <!-- <div class="surfaces-diagram">
           <div class="surfaces-emit">
             <svg viewBox="0 0 28 42" fill="none" aria-hidden="true">
               <rect x="1" y="1" width="26" height="40" rx="4.5" stroke="currentColor" stroke-width="1.25"></rect>
@@ -641,99 +714,87 @@
             <div class="surfaces-hairline"></div>
             <p class="surfaces-stack-label">Your existing identity stack</p>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Same four surfaces, who deploys each one — separated by
-             whitespace only, no cards or borders. -->
+        <!-- Same four surfaces, who deploys each one. Ported from
+             assets/end-section-reference.html: each surface is now a bordered
+             card carrying a mono tag (how much work it is to adopt), the
+             deploying team, and the concrete platforms it lands on. -->
         <div class="surfaces-grid">
-          <div class="surfaces-col">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          <article class="surfaces-card">
+            <div class="surfaces-card-top">
+              <span class="surfaces-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              </span>
+              <!-- <span class="surfaces-tag">Zero touch</span> -->
+            </div>
             <h3>Wavekey app</h3>
-            <p>Install the app and the phone becomes the key.</p>
+            <p>Users install it and configured phone becomes the trusted device</p>
             <div class="surfaces-deployed">
               <span>Deployed by</span>
-              <p>End users</p>
+              <p>For end users</p>
+              
             </div>
-          </div>
-          <div class="surfaces-col">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="10" y1="20" x2="14" y2="4"></line></svg>
+          </article>
+          <article class="surfaces-card">
+            <div class="surfaces-card-top">
+              <span class="surfaces-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline><line x1="10" y1="20" x2="14" y2="4"></line></svg>
+              </span>
+              <!-- <span class="surfaces-tag">Custom UX</span> -->
+            </div>
             <h3>SDK</h3>
-            <p>Embed emit-and-verify directly into your own mobile or desktop app.</p>
+            <p>Add Wavekey to your own mobile or desktop apps</p>
             <div class="surfaces-deployed">
               <span>Deployed by</span>
-              <p>Your engineers</p>
+              <p>For your engineers</p>
+              
             </div>
-          </div>
-          <div class="surfaces-col">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          </article>
+          <article class="surfaces-card">
+            <div class="surfaces-card-top">
+              <span class="surfaces-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </span>
+              <!-- <span class="surfaces-tag">No code</span> -->
+            </div>
             <h3>Browser plug-in</h3>
-            <p>Protect web apps and SSO portals without touching their code.</p>
+            <p>Protect web apps and SSO portals with no code changes</p>
             <div class="surfaces-deployed">
               <span>Deployed by</span>
-              <p>IT, via policy</p>
+              <p>Pushed by IT via policy</p>
             </div>
-          </div>
-          <div class="surfaces-col">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+          </article>
+          <article class="surfaces-card">
+            <div class="surfaces-card-top">
+              <span class="surfaces-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+              </span>
+              <!-- <span class="surfaces-tag">Bare metal</span> -->
+            </div>
             <h3>Embedded</h3>
-            <p>Ship Wavekey inside your own device, terminal or OT endpoint.</p>
+            <p>Build Wavekey into your devices, terminals or OT endpoints.</p>
             <div class="surfaces-deployed">
               <span>Deployed by</span>
-              <p>Product teams</p>
+              <p>For product teams</p>
             </div>
-          </div>
+          </article>
         </div>
       </section>
 
-      <section id="contact" class="section request">
-        <p class="kicker"><span class="kicker-dot" aria-hidden="true"></span>Request access to Wavekey</p>
-        <h2 class="request-title">Request Access</h2>
-
-        <form class="request-form" action="mailto:contact@everlink.co" method="post" enctype="text/plain">
-          <label class="field">
-            <span class="field-label">Full Name<span class="req" aria-hidden="true">*</span></span>
-            <input type="text" name="name" placeholder="Jane Okafor" autocomplete="name" required />
-          </label>
-
-          <div class="field-row">
-            <label class="field">
-              <span class="field-label">Phone</span>
-              <input type="tel" name="phone" placeholder="+44 20 1234 5678" autocomplete="tel" />
-            </label>
-            <label class="field">
-              <span class="field-label">Email Address<span class="req" aria-hidden="true">*</span></span>
-              <input type="email" name="email" placeholder="jane@company.com" autocomplete="email" required />
-            </label>
-          </div>
-
-          <label class="field">
-            <span class="field-label">Company Name<span class="req" aria-hidden="true">*</span></span>
-            <input type="text" name="company" placeholder="Company" autocomplete="organization" required />
-          </label>
-
-          <label class="field">
-            <span class="field-label">Message</span>
-            <textarea name="message" rows="6" placeholder="Which session surfaces are you trying to cover first?"></textarea>
-          </label>
-
-          <p class="form-note">Information submitted is processed in line with our privacy policy.</p>
-
-          <button class="button button-wide" type="submit">Submit</button>
-        </form>
-      </section>
     </main>
 
     <footer class="site-footer section">
       <p>Wavekey</p>
-      <p>Presence-led access assurance</p>
+      <p>Ultrasonic technology based MFA solution</p>
       <div>
-        <a href="#contact">Contact</a>
         <a href="mailto:contact@everlink.co">contact@everlink.co</a>
       </div>
     </footer>
 
     <script src="field.js"></script>
     <script src="steps-demo.js"></script>
+    <script src="orb.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -21,6 +21,16 @@
 
   --max: 1120px;
 
+  /* ---- vertical rhythm ------------------------------------------------
+     One section's worth of padding. Every section boundary on the page is
+     two of these (one section's bottom plus the next one's top), and the
+     blocks that read as sections without being one — #products inside
+     #problem — reproduce that same boundary with `calc(var(--section-gap)
+     * 2)` rather than inventing their own smaller number. Change it here
+     and the whole page breathes with it.
+  -------------------------------------------------------------------- */
+  --section-gap: clamp(4.5rem, 8vw, 6.5rem);
+
   /* ---- type scale ----------------------------------------------------
      Every font-size on the site now resolves to one of these. Change a
      number here and it moves everywhere that tier is used.
@@ -208,8 +218,8 @@ textarea:focus-visible {
   height: 2.5rem;
   display: inline-grid;
   place-items: center;
-  border: 1px solid var(--line-hover);
   border-radius: 999px;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
@@ -217,8 +227,14 @@ textarea:focus-visible {
   width: 62%;
   height: 62%;
   display: block;
-  stroke: currentColor;
-  stroke-width: 1.7;
+  fill: currentColor;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 nav {
@@ -315,11 +331,9 @@ nav a:hover,
 }
 
 /* Every section shares this padding so the gap between any two of them is
-   identical — this is the size .trusted (the logo strip) used to use on its
-   own, now applied everywhere instead of singling that one section out as
-   tighter than its neighbours. */
+   identical — see --section-gap. */
 .section {
-  padding: clamp(3rem, 6vw, 5rem) 0;
+  padding: var(--section-gap) 0;
   position: relative;
 }
 
@@ -389,6 +403,9 @@ nav a:hover,
   object-fit: cover;
   object-position: 60% 32%;
   display: block;
+  filter: blur(1.35px) saturate(0.92) brightness(0.8);
+  opacity: 0.88;
+  transform: scale(1.02);
 }
 
 .hero-inner {
@@ -403,14 +420,19 @@ nav a:hover,
 .hero-text {
   flex: 1 1 auto;
   min-width: 0;
+  max-width: 38rem;
 }
 
 /* The phone mockup from .solution-reveal (see its own block further down),
    reused here beside the hero copy instead of only inside #problem. Sits
    directly on the hero image with no card/background of its own, same as
    the original — it's meant to read as part of the scene, not a tile
-   dropped on top of it. Hidden below 900px, where .hero-inner stacks and
-   there isn't room for both the text and a second focal point. */
+   dropped on top of it. Hidden below 1024px, where .hero-inner stacks and
+   there isn't room for both the text and a second focal point — also the
+   point (see .hero-inner's flex gap) below which the real gap between the
+   text column and the frame drops too low for the ripple layer's text-side
+   fade (index.html) to have room to read as a long dissolve rather than an
+   abrupt cutoff. */
 .hero-reveal {
   flex: 0 0 auto;
   margin-top: 0;
@@ -421,7 +443,7 @@ nav a:hover,
   margin: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   /* Specificity needs to beat .solution-reveal's own unconditional
      display: flex (same single-class weight, but it comes later in the
      cascade), so this targets the compound .hero-reveal.solution-reveal
@@ -745,9 +767,9 @@ h1 {
 
 h2 {
   font-size: var(--display-md);
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.22;
 }
 
 /* This heading's column is narrower than most (it shares #problem's row
@@ -772,11 +794,128 @@ h3 {
   margin-top: 1.4rem;
 }
 
+/* Shared danger/urgency accent — coral-red, the same hue the why-it-matters
+   orb is built from, so flagged copy in that section reads as part of the
+   same warm threat palette rather than a clashing one-off colour. A soft
+   glow on hover gives it the same "live signal" feel as the site's other
+   drop-shadow accents (e.g. the presence dot, .field-readout-dot). */
+.risk-accent {
+  color: #ff6b5e;
+  filter: drop-shadow(0 0 0 rgba(255, 107, 94, 0));
+  transition: filter var(--dur-sm) var(--ease-out);
+}
+
+.risk-accent:hover {
+  filter: drop-shadow(0 0 10px rgba(255, 107, 94, 0.65));
+}
+
+.hero-subhead {
+  margin-top: 1.1rem;
+  font-size: var(--text-md);
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .hero-actions {
   margin-top: 2.2rem;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.9rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hero-demo-form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.hero-demo-field {
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 242, 192, 0.35);
+  background: var(--surface);
+  transition: border-color var(--dur-sm) var(--ease-out), background-color var(--dur-sm) var(--ease-out), box-shadow var(--dur-sm) var(--ease-out);
+}
+
+.hero-demo-field:hover {
+  border-color: var(--positive);
+  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.15), 0 0 18px rgba(126, 242, 192, 0.35);
+}
+
+.hero-demo-field:focus-within {
+  border-color: var(--positive);
+  background: var(--surface-strong);
+  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.2), 0 0 22px rgba(126, 242, 192, 0.45);
+}
+
+.hero-demo-field input {
+  width: 14.5rem;
+  max-width: 55vw;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  padding: 0.68rem 1.1rem;
+}
+
+/* The Tailwind CDN's forms plugin puts its own blue focus ring
+   (box-shadow) directly on [type='email']:focus — overrides it here so
+   the pill's own green glow (.hero-demo-field:focus-within above) is the
+   only focus indicator, instead of the two clashing. */
+.hero-demo-field input:focus {
+  box-shadow: none;
+}
+
+.hero-demo-field input::placeholder {
+  color: var(--faint);
+}
+
+.hero-demo-submit {
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.hero-demo-arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform var(--dur-sm) var(--ease-out);
+}
+
+.hero-demo-submit:hover .hero-demo-arrow {
+  transform: translateX(2px);
+}
+
+@media (max-width: 560px) {
+  .hero-demo-form {
+    width: 100%;
+  }
+
+  .hero-demo-field {
+    flex: 1 1 auto;
+  }
+
+  .hero-demo-field input {
+    width: 100%;
+    max-width: none;
+  }
 }
 
 .presence-badge {
@@ -933,6 +1072,12 @@ h3 {
 
 .site-footer {
   position: relative;
+  /* Extra clearance above the footer's own divider/padding, on top of
+     #problem's section-gap bottom padding, so the footer reads as a
+     distinct close to the page rather than sitting right under the last
+     cards row. Scales with --section-gap like everything else rather than
+     a fixed value, so it stays proportionate at the mobile breakpoint too. */
+  margin-top: calc(var(--section-gap) * 0.5);
   padding-top: 2.6rem;
   padding-bottom: 2.5rem;
   display: flex;
@@ -1219,8 +1364,12 @@ h3 {
     width: min(var(--max), calc(100% - 1.5rem));
   }
 
-  .section {
-    padding: 3rem 0;
+  /* Narrow screens scroll past a boundary far faster than they read one,
+     so the rhythm tightens here. Retuning the token rather than .section's
+     padding keeps everything else derived from it — #products' boundary
+     inside #problem — in the same proportion. */
+  :root {
+    --section-gap: 3.75rem;
   }
 
   .hero {
@@ -1830,22 +1979,60 @@ html.field-ready .presence-field {
     box-shadow 0.5s var(--ease-out), transform 0.5s var(--ease-out);
 }
 
+/* Per-stage accent, inspired by the checkpoint reference (teal / green /
+   violet) — only used as a hover tint on the tag pill, stat icons and stop
+   chips below, never as the card's resting colour. */
+.stage--perimeter { --stage-accent: #5eead4; }
+.stage--session { --stage-accent: #7ef2c0; }
+.stage--risk { --stage-accent: #b9a6ff; }
+
 .stage:hover {
-  border-color: var(--positive);
+  border-color: var(--stage-accent, var(--positive));
   background: var(--surface-strong);
-  box-shadow: 0 0 0 3px rgba(126, 242, 192, 0.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--stage-accent, var(--positive)) 12%, transparent);
   transform: translateY(-2px);
 }
 
 .stage:hover .icon-badge {
-  color: var(--text);
+  color: var(--stage-accent, var(--text));
+}
+
+.stage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.stage-top .icon-badge {
+  margin-bottom: 0;
+}
+
+.stage-tag {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--faint);
+  white-space: nowrap;
+  transition: color var(--dur-sm) var(--ease-out), border-color var(--dur-sm) var(--ease-out),
+    background-color var(--dur-sm) var(--ease-out);
+}
+
+.stage:hover .stage-tag {
+  color: var(--stage-accent, var(--positive));
+  border-color: var(--stage-accent, var(--positive));
+  background: color-mix(in srgb, var(--stage-accent, var(--positive)) 14%, transparent);
 }
 
 .stage-head {
   display: flex;
   align-items: baseline;
   gap: 0.7rem;
-  margin: 0 0 0.9rem;
+  margin: 0.9rem 0 0.9rem;
   font-size: var(--text-lg);
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -1883,21 +2070,41 @@ html.field-ready .presence-field {
 
 .stops li {
   position: relative;
-  padding-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.015);
   color: var(--muted);
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
+  transition: border-color var(--dur-sm) var(--ease-out), color var(--dur-sm) var(--ease-out),
+    background-color var(--dur-sm) var(--ease-out);
 }
 
-.stops li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: 0.55;
+.stops li svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+  transition: color var(--dur-sm) var(--ease-out), opacity var(--dur-sm) var(--ease-out);
+}
+
+.stage:hover .stops li {
+  border-color: color-mix(in srgb, var(--stage-accent, var(--positive)) 45%, var(--line));
+  color: var(--text);
+  background: color-mix(in srgb, var(--stage-accent, var(--positive)) 6%, transparent);
+}
+
+.stage:hover .stops li svg {
+  color: var(--stage-accent, var(--positive));
+  opacity: 1;
 }
 
 /* ===========================================================================
@@ -1912,21 +2119,53 @@ html.field-ready .presence-field {
    payoff for "Until Wavekey" (see .coverage-bracket) rather than living as
    its own section — this is the introduction to what Wavekey actually is.
    =========================================================================== */
+/* This block (#products) is a section in everything but markup — it lives
+   inside #problem as that section's payoff. A full section boundary, not
+   the half one a single --section-gap would give, so the page's rhythm
+   doesn't quietly tighten right here. */
 .surfaces-head {
-  margin-top: clamp(3rem, 6vw, 5rem);
-  text-align: center;
+  margin-top: calc(var(--section-gap) * 2);
 }
 
 .surfaces-head .lead {
-  max-width: 54ch;
-  margin-inline: auto;
+  max-width: 62ch;
+  margin-top: 1.2rem;
+}
+
+/* Mono pill over the headline — the one place in this section that states
+   the hardware claim outright, so it reads before the headline does. */
+.surfaces-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 1.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(126, 242, 192, 0.28);
+  border-radius: 999px;
+  background: rgba(126, 242, 192, 0.06);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-2xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--positive);
+}
+
+.surfaces-eyebrow-dot {
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 999px;
+  background: var(--positive);
+}
+
+.surfaces-head-accent {
+  color: var(--positive);
 }
 
 .surfaces-diagram {
   display: flex;
   align-items: center;
   gap: clamp(1.5rem, 4vw, 3rem);
-  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-top: var(--section-gap);
   padding-bottom: clamp(2.5rem, 5vw, 4rem);
   border-bottom: 1px solid var(--line);
 }
@@ -2022,46 +2261,94 @@ html.field-ready .presence-field {
 
 .surfaces-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: clamp(2rem, 4vw, 3rem);
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(1.2rem, 2.2vw, 1.6rem);
   margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.surfaces-col {
+.surfaces-card {
   display: flex;
   flex-direction: column;
+  padding: clamp(1.4rem, 2vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
 }
 
-.surfaces-col svg {
-  width: 1.4rem;
-  height: 1.4rem;
+.surfaces-card:hover {
+  border-color: rgba(126, 242, 192, 0.35);
+  background: var(--surface-strong);
+  transform: translateY(-2px);
+}
+
+.surfaces-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Square tile rather than a bare glyph — gives the tag on the opposite
+   side something of equal weight to sit against. */
+.surfaces-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid rgba(126, 242, 192, 0.25);
+  border-radius: 0.6rem;
+  background: rgba(126, 242, 192, 0.06);
   color: var(--positive);
-  margin-bottom: 1.1rem;
 }
 
-.surfaces-col h3 {
+.surfaces-card-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.surfaces-tag {
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(126, 242, 192, 0.22);
+  border-radius: 0.35rem;
+  background: rgba(126, 242, 192, 0.05);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--positive);
+}
+
+.surfaces-card h3 {
   margin: 0 0 0.5rem;
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--text);
 }
 
-.surfaces-col > p {
-  margin: 0 0 1.4rem;
+.surfaces-card > p {
+  margin: 0 0 1.6rem;
   color: var(--muted);
-  font-size: var(--text-md);
-  min-height: 2.8em;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  min-height: 3.2em;
 }
 
 .surfaces-deployed {
   margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .surfaces-deployed span {
   display: block;
-  margin-bottom: 0.2rem;
-  font-size: var(--text-xs);
+  margin-bottom: 0.3rem;
+  font-size: var(--text-2xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
@@ -2070,7 +2357,28 @@ html.field-ready .presence-field {
 .surfaces-deployed p {
   margin: 0;
   color: var(--muted);
-  font-size: var(--text-md);
+  font-size: var(--text-xs);
+}
+
+/* Reserving two lines keeps the four cards' footers the same height, so
+   their hairlines land on one row however the platform list wraps. */
+.surfaces-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.9rem !important;
+  min-height: 2.8em;
+  line-height: 1.4;
+  color: var(--positive) !important;
+}
+
+.surfaces-detail-dot {
+  flex-shrink: 0;
+  width: 0.32rem;
+  height: 0.32rem;
+  margin-top: 0.5em;
+  border-radius: 999px;
+  background: var(--positive);
 }
 
 @media (max-width: 900px) {
@@ -2095,6 +2403,15 @@ html.field-ready .presence-field {
   }
 }
 
+/* Single column: the reserved line heights that keep the four cards level
+   side by side only leave dead space once they stack. */
+@media (max-width: 620px) {
+  .surfaces-card > p,
+  .surfaces-detail {
+    min-height: 0;
+  }
+}
+
 /* ===========================================================================
    FIGURES — the statistics
    =========================================================================== */
@@ -2103,7 +2420,7 @@ html.field-ready .presence-field {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: clamp(1.4rem, 2.6vw, 2rem);
-  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-top: var(--section-gap);
 }
 
 /* The stat cards are commented out in markup right now, but the div (and
@@ -2291,188 +2608,66 @@ html.field-ready .presence-field {
 .solution-reveal-frame {
   position: relative;
   width: 10rem;
-  aspect-ratio: 270 / 560;
+  aspect-ratio: 310 / 640;
   overflow: visible;
   margin: 1.5rem 0 2.5rem;
 }
 
-/* Six staggered rings expanding outward from the phone's core and fading as
-   they grow — direct port of the reference's ripple-pulse keyframes. */
-.solution-ripples {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-/* Scale tops out at 1.7 (well short of the source's 2.8) and opacity reaches
-   0 at the same 68% mark, rather than staying faintly visible all the way to
-   100% — at this component's compact size that used to let the rings bleed
-   up into the "Continuously" row above before fading, so now they dissolve
-   comfortably short of it instead. */
-@keyframes solutionRipplePulse {
-  0% { transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
-  14% { opacity: 0.62; }
-  40% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.32; }
-  68% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
-  100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
-}
-
-.solution-ripple {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 20.5rem;
-  height: 20.5rem;
-  border-radius: 50%;
-  border: 1.5px solid rgba(0, 242, 254, 0.55);
-  box-shadow: 0 0 16px rgba(0, 220, 230, 0.28), inset 0 0 12px rgba(0, 242, 254, 0.15);
-  transform: translate(-50%, -50%) scale(0.18);
-  opacity: 0;
-  animation: solutionRipplePulse 7s cubic-bezier(0.1, 0.45, 0.3, 1) infinite;
-}
-
-.solution-ripple.secondary {
-  border-color: rgba(67, 237, 205, 0.45);
-  box-shadow: 0 0 20px rgba(0, 208, 178, 0.25);
-}
-
-.solution-ripple.r1 { animation-delay: 0s; }
-.solution-ripple.r2 { animation-delay: 1.16s; }
-.solution-ripple.r3 { animation-delay: 2.33s; }
-.solution-ripple.r4 { animation-delay: 3.5s; }
-.solution-ripple.r5 { animation-delay: 4.66s; }
-.solution-ripple.r6 { animation-delay: 5.83s; }
-
-.solution-phone {
-  position: relative;
-  z-index: 1;
+/* SVG phone chassis + ripple animation, ported from
+   phone_animation_redesign/code.html — a titanium-framed mockup with a
+   water-droplet ripple emission. The ripple layer is drawn behind the
+   chassis (see index.html) so the opaque phone body occludes it like a
+   real object, with only the portion extending past the phone's
+   silhouette visible — rather than painting on top, which made the rings
+   look like they were coming from inside the screen. An SVG mask on that
+   layer (also in index.html) fades the rings out before they'd reach the
+   hero copy beside the phone. */
+.solution-phone-art {
   width: 100%;
   height: 100%;
-  border-radius: 1.7rem;
-  padding: 0.35rem;
-  background: #1a1c22;
-  border: 1px solid #3a3f4d;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 242, 254, 0.06);
+  overflow: visible;
 }
 
-.solution-phone-btn {
-  position: absolute;
-  background: #2e3340;
-}
-.solution-phone-btn-mute { left: -0.1rem; top: 2.2rem; width: 0.12rem; height: 0.95rem; border-radius: 0.1rem 0 0 0.1rem; }
-.solution-phone-btn-vol-up { left: -0.1rem; top: 3.4rem; width: 0.12rem; height: 1.7rem; border-radius: 0.1rem 0 0 0.1rem; }
-.solution-phone-btn-vol-down { left: -0.1rem; top: 5.3rem; width: 0.12rem; height: 1.7rem; border-radius: 0.1rem 0 0 0.1rem; }
-.solution-phone-btn-power { right: -0.1rem; top: 3.9rem; width: 0.12rem; height: 2.3rem; border-radius: 0 0.1rem 0.1rem 0; }
-
-.solution-phone-screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 1.4rem;
-  overflow: hidden;
-  background: var(--bg);
-  border: 1px solid #161c28;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.55rem 0.7rem;
+.phone-ambient-glow {
+  animation: phoneAmbientBreath 7s ease-in-out infinite;
 }
 
-.solution-phone-statusbar {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #d6e0ea;
-  font-size: 0.5rem;
-  font-weight: 500;
-  z-index: 2;
+@keyframes phoneAmbientBreath {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
 }
 
-.solution-phone-island {
-  width: 2.2rem;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: #000;
+@keyframes phoneWaterDropletRipple {
+  0% { r: 25px; opacity: 0.95; stroke-width: 3.2px; }
+  20% { opacity: 0.8; stroke-width: 2.6px; }
+  50% { opacity: 0.45; stroke-width: 1.8px; }
+  80% { opacity: 0.18; stroke-width: 1.1px; }
+  100% { r: 420px; opacity: 0; stroke-width: 0.3px; }
 }
 
-.solution-phone-status-icons {
-  display: flex;
-  align-items: center;
-  gap: 0.15rem;
-  opacity: 0.9;
+.phone-ripple {
+  transform-origin: 155px 320px;
+  animation: phoneWaterDropletRipple 5.4s cubic-bezier(0.12, 0.6, 0.18, 1) infinite;
 }
-.solution-phone-status-icons svg { width: 0.5rem; height: 0.5rem; }
-.solution-phone-battery {
-  width: 0.6rem;
-  height: 0.32rem;
-  border: 1px solid currentColor;
-  border-radius: 0.1rem;
-  display: block;
-  position: relative;
-}
-.solution-phone-battery::after {
-  content: "";
-  position: absolute;
-  inset: 0.06rem;
-  background: currentColor;
-  border-radius: 0.03rem;
-}
+.phone-ripple.ripple-1 { animation-delay: 0s; }
+.phone-ripple.ripple-2 { animation-delay: 0.9s; }
+.phone-ripple.ripple-3 { animation-delay: 1.8s; }
+.phone-ripple.ripple-4 { animation-delay: 2.7s; }
+.phone-ripple.ripple-5 { animation-delay: 3.6s; }
+.phone-ripple.ripple-6 { animation-delay: 4.5s; }
 
-.solution-phone-core {
-  position: relative;
-  margin: auto 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.solution-core-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(34, 211, 238, 0.2);
-}
-.solution-core-ring.ring-1 { width: 4.4rem; height: 4.4rem; }
-.solution-core-ring.ring-2 { width: 3.8rem; height: 3.8rem; border-color: rgba(34, 211, 238, 0.35); }
-.solution-core-ring.ring-3 { width: 3.1rem; height: 3.1rem; border-color: rgba(103, 232, 249, 0.5); }
-.solution-core-ring.ring-4 { width: 2.5rem; height: 2.5rem; border-color: rgba(165, 243, 252, 0.7); }
-
-@keyframes solutionCoreGlow {
+@keyframes phoneBadgeGlow {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.35)); }
   50% { filter: drop-shadow(0 0 9px rgba(0, 242, 254, 0.75)); }
 }
-
-.solution-core-badge {
-  position: relative;
-  z-index: 1;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #0a1120;
-  border: 1px solid rgba(34, 211, 238, 0.4);
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
-  color: #a5f3fc;
-  animation: solutionCoreGlow 3.5s ease-in-out infinite;
-}
-.solution-core-badge svg { width: 1.25rem; height: 1.25rem; }
-
-.solution-phone-home-bar {
-  width: 2.6rem;
-  height: 0.1rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 2;
+.phone-badge-pulse {
+  animation: phoneBadgeGlow 3.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .solution-ripple,
-  .solution-core-badge {
+  .phone-ripple,
+  .phone-ambient-glow,
+  .phone-badge-pulse {
     animation: none;
   }
 }
@@ -2629,17 +2824,9 @@ html.field-ready .presence-field {
   overflow: hidden;
 }
 
-/* `contain`, not `cover`. The orb is a self-contained object with its own
-   transparent margin, and it rotates (see the motion block at the end of this
-   file). Under `cover` the image is scaled up to fill the column, so the orb
-   is already cropped left and right — and rotating a cropped image sweeps
-   those cut edges through the frame as visible straight lines. `contain`
-   fits the whole object, so the rotation stays clean. */
-.problem-art img {
+.problem-art canvas {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
   display: block;
 }
 
@@ -2648,24 +2835,37 @@ html.field-ready .presence-field {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     column-gap: clamp(2rem, 5vw, 5rem);
+    /* The heading reads as a caption to the orb, so it sits on the orb's
+       centre line rather than at the top of the column — top-aligning left
+       a ~300px void under the text, which looked like a mistake. See
+       .problem-art for how the row is kept short enough that centring
+       doesn't push the heading out of the page's rhythm. */
     align-items: center;
   }
 
   .problem-top {
     grid-column: 1;
     grid-row: 1;
-    /* #problem's own align-items: center applies here, centering this
-       column vertically against the orb (.problem-art below) so the two
-       read as sitting side by side rather than pinned to different edges
-       of row 1 — row 1's height is set by the orb, not by this column's
-       own (shorter) content. */
   }
 
+  /* 28rem is just over this column's own width, and orb.js scales the
+     sphere to the *shorter* side of the canvas — so the box can come down
+     this far from the 30rem it used to be without the orb itself getting
+     any smaller.
+
+     It is decorative, transparent and pointer-events:none, so the box is
+     then allowed to bleed up and down into the section's own padding: the
+     negative margins keep 8rem of its height out of the row's measured
+     height while it still renders full size. Without that, a graphic this
+     much taller than the heading beside it would set the row height on its
+     own and push the centred heading ~130px further down the page — making
+     this the one section whose spacing didn't match the rest. */
   .problem-art {
     grid-column: 2;
     grid-row: 1;
-    align-self: stretch;
-    min-height: 30rem;
+    align-self: center;
+    height: 28rem;
+    margin-block: -4rem;
   }
 
   /* The grid only governs the top two elements; figures, "the gap", and the
@@ -2689,36 +2889,16 @@ html.field-ready .presence-field {
 /* ===========================================================================
    WHY-IT-MATTERS ORB — motion
    ---------------------------------------------------------------------------
-   Two animations on two different elements, deliberately: the container
-   breathes (scale + opacity) while the image inside turns. Putting both on
-   one element would mean two rules competing for the same `transform`
-   property, where the last one declared silently wins and the other simply
-   never runs.
-
-   The turn is very slow — a full revolution takes 96s — so it reads as the
-   object being alive rather than as a spinning graphic. The orb is close to
-   radially symmetric, which is what lets a flat 2D rotation pass for the
-   form actually turning.
+   The orb itself now turns and morphs inside the canvas (orb.js draws the
+   rotation into the particle cloud every frame, see render()), so only the
+   container's breathe (scale + opacity) is left as a CSS animation —
+   putting a second `transform` on the canvas on top of that would just
+   compete with it.
    =========================================================================== */
-
-.problem-art img {
-  animation: orb-turn 96s linear infinite;
-  transform-origin: 50% 50%;
-  will-change: transform;
-}
 
 .problem-art {
   animation: orb-breathe 11s ease-in-out infinite alternate;
   transform-origin: 50% 50%;
-}
-
-@keyframes orb-turn {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes orb-breathe {
@@ -2734,15 +2914,14 @@ html.field-ready .presence-field {
 
 /* Pausing while off-screen keeps a permanently-running animation from
    burning cycles on a section nobody is looking at. script.js toggles this
-   class from the shared scroll driver. */
-.problem-art.is-paused,
-.problem-art.is-paused img {
+   class from the shared scroll driver; orb.js watches the same class to
+   stop its own rAF loop. */
+.problem-art.is-paused {
   animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .problem-art,
-  .problem-art img {
+  .problem-art {
     animation: none;
     transform: none;
     opacity: 0.85;

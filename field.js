@@ -39,7 +39,13 @@
     waveSpeed: 1.9,     // rad/s
     falloff: 0.0055,    // amplitude decay per px from source
     ringSpeed: 190,     // px/s
-    dprCap: 2,
+    dprCap: 1.5,        // lower than device max: halves the pixels the canvas
+                         // has to blend every frame on retina displays, which
+                         // is what was competing with the scroll for main-
+                         // thread time.
+    renderFps: 30,       // the wave is slow and ambient; painting it faster
+                         // than this is wasted work the scroll never gets
+                         // back.
     focalRatio: 0.42,   // where on screen the "playhead" sits
 
     // --- Flow ---------------------------------------------------------
@@ -157,6 +163,13 @@
   let dpr = 1;
   let grid = [];
   let jitter = [];
+  // Per-point shear phase, precomputed once per lattice build instead of
+  // re-deriving sin/cos(py*0.006), sin/cos(px*0.005) for every point on every
+  // frame. render() recombines these with the frame's own sin/cos(t) via the
+  // angle-sum identity, which is algebraically identical to the original
+  // sin(py*0.006 + t*0.5) / cos(px*0.005 - t*0.4) but costs 2 trig calls per
+  // frame total instead of 2 per lattice point per frame.
+  let shearPhase = [];
 
   function buildLattice() {
     dpr = Math.min(window.devicePixelRatio || 1, CONFIG.dprCap);
@@ -174,15 +187,22 @@
 
     grid = new Float32Array(cols * rows * 2);
     jitter = new Float32Array(cols * rows * 2);
+    shearPhase = new Float32Array(cols * rows * 4);
 
     let i = 0;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         // Slight offset per row: a perfect square grid reads as a spreadsheet.
-        grid[i * 2] = c * step + (r % 2 ? step * 0.5 : 0);
-        grid[i * 2 + 1] = r * step;
+        const px = c * step + (r % 2 ? step * 0.5 : 0);
+        const py = r * step;
+        grid[i * 2] = px;
+        grid[i * 2 + 1] = py;
         jitter[i * 2] = Math.random() * Math.PI * 2;
         jitter[i * 2 + 1] = 0.5 + Math.random() * 0.5;
+        shearPhase[i * 4] = Math.sin(py * 0.006);
+        shearPhase[i * 4 + 1] = Math.cos(py * 0.006);
+        shearPhase[i * 4 + 2] = Math.sin(px * 0.005);
+        shearPhase[i * 4 + 3] = Math.cos(px * 0.005);
         i++;
       }
     }
@@ -219,7 +239,7 @@
     //   how         -> token exfiltrated   (the three checkpoints and what they stop)
     //   why-matters -> presence lost       (the threat framing)
     //   use-cases   -> session terminated  (final act runs through to contact)
-    const sel = ['.hero', '#solution', '#how', '#problem', '#contact'];
+    const sel = ['.hero', '#solution', '#how', '#problem', '.site-footer'];
     const tops = sel.map((q) => {
       const el = document.querySelector(q);
       if (!el) return null;
@@ -446,6 +466,15 @@
     const shearAmp = clamp(Math.abs(vel) * CONFIG.shear, 0, 26);
     const advect = flow.advected;
 
+    // sin(py*0.006 + t*0.5) and cos(px*0.005 - t*0.4), expanded via the
+    // angle-sum identity so only the t-dependent half is computed here —
+    // the py/px-dependent half comes from shearPhase, precomputed once per
+    // lattice build (see buildLattice).
+    const cosT1 = Math.cos(t * 0.5);
+    const sinT1 = Math.sin(t * 0.5);
+    const cosT2 = Math.cos(t * 0.4);
+    const sinT2 = Math.sin(t * 0.4);
+
     ctx.globalCompositeOperation = 'lighter';
 
     for (let i = 0; i < gridCount; i++) {
@@ -455,8 +484,8 @@
       // Lateral smear: the lattice is dragged sideways in a slow standing
       // wave whose amplitude rises with scroll speed, so the medium visibly
       // shears rather than sliding rigidly.
-      const sx = px + Math.sin(py * 0.006 + t * 0.5) * shearAmp;
-      const sy = py + Math.cos(px * 0.005 - t * 0.4) * shearAmp * 0.4;
+      const sx = px + (shearPhase[i * 4] * cosT1 + shearPhase[i * 4 + 1] * sinT1) * shearAmp;
+      const sy = py + (shearPhase[i * 4 + 3] * cosT2 + shearPhase[i * 4 + 2] * sinT2) * shearAmp * 0.4;
 
       let v = 0;
       for (let s = 0; s < sources.length; s++) {
@@ -557,6 +586,13 @@
   let last = 0;
   let running = false;
   let rafId = null;
+  // This is a slow, ambient background wash — painting it at full display
+  // refresh (90/120Hz, or even 60Hz under scroll contention) burns main-
+  // thread time the scroll never gets back for no visible gain. State still
+  // advances every rAF tick below so easing stays smooth; only the actual
+  // canvas repaint is throttled.
+  const RENDER_INTERVAL = 1000 / CONFIG.renderFps;
+  let lastRender = 0;
 
   function frame(now) {
     if (!running) return;
@@ -586,7 +622,10 @@
     updateRings(dt, emitter, live.emitRate);
     updateToken(dt, live.token, endpointsAt(live.endpoints));
 
-    render(t);
+    if (now - lastRender >= RENDER_INTERVAL) {
+      lastRender = now;
+      render(t);
+    }
     rafId = requestAnimationFrame(frame);
   }
 
