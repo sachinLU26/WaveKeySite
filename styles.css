@@ -780,6 +780,17 @@ h2 {
   font-size: var(--display-sm);
 }
 
+/* The three section headlines ("Powered by ultrasonic keys...", "Increasing
+   cyber resilience...", "Software change to integrate..."): already the
+   same size as plain h2's (--display-md), called out here with their own
+   class so that's guaranteed rather than coincidental, and set a step
+   lighter than the base h2 weight. Needs Inter 300 loaded (see index.html's
+   font link) — without it the browser falls back to the nearest loaded
+   weight (400) and this rule would be a no-op. */
+.section-heading {
+  font-weight: 300;
+}
+
 h3 {
   font-weight: 600;
   letter-spacing: -0.015em;
